@@ -43,10 +43,10 @@ void drawQuad(float x, float y, float width, float height)
 	glPushMatrix();
     glTranslatef(x, y, 0);
 	glBegin(GL_QUADS);
-		glTexCoord2f(0, 1); glVertex2i(0,     0);
-		glTexCoord2f(0, 0); glVertex2i(0,     height);
-		glTexCoord2f(1, 0); glVertex2i(width, height);
-		glTexCoord2f(1, 1); glVertex2i(width, 0);
+		glVertex2i(0,     0);
+		glVertex2i(0,     height);
+		glVertex2i(width, height);
+		glVertex2i(width, 0);
 	glEnd();
 	glPopMatrix();
 }
