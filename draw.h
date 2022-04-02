@@ -33,9 +33,11 @@ void init_texture(Image *img)
 
 void init_graphics()
 {
-	//intialize textures
+	//intialize tile textures
 	init_texture(&grass);
 	init_texture(&dirt);
+	//intialize tower textures
+	init_texture(&tower);
 }
 
 void drawQuad(float x, float y, float width, float height) 
@@ -67,6 +69,5 @@ void drawQuadTex(Image img, float x, float y, float width, float height)
 	glPopMatrix();
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
-
 
 #endif //_DRAW_H_
