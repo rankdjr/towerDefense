@@ -44,7 +44,7 @@ public:
 			unlink(newfile);
 	}
 } grass("res/grass.png"),
-  dirt("res/dirt.png");
-
+  dirt("res/dirt.png"),
+  tower("res/tower1.png");
 
 #endif //_IMAGE_H_
