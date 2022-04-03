@@ -70,3 +70,4 @@ void drawQuadTex(Image img, float x, float y, float width, float height)
 
 
 #endif //_DRAW_H_
+
