@@ -15,10 +15,11 @@
 #include "fonts.h"
 #include "global.h"
 #include "image.h"
+#include "draw.h"
+#include "tower.h"
 #include "tile.h"
 #include "TileGrid.h"
 #include "X11wrapper.h"
-#include "draw.h"
 
 
 using namespace std;
@@ -32,6 +33,22 @@ int main()
 	init_opengl();
 	init_graphics();
     initialize_fonts();
+	//manually declare map
+	int map[10][10] = { 
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
+		{0, 0, 0, 1, 1, 0, 1, 0, 0, 0},
+		{1, 1, 1, 1, 1, 0, 1, 1, 1, 1},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	};
+	//initialize map
+	grid.setMap(map);
+
 	//main game loop
 	int done = 0;
 	while (!done) {
@@ -58,23 +75,11 @@ void physics()
 
 void render()
 {
-	int map[10][10] = { 
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	};
-	
-	TileGrid *grid = new TileGrid(map);
-	grid->draw();
-	//Tile *temp = new Tile(&dirt, 0, 0, 64, 64);
-	//grid->setTile(*temp, 0, 0, 64, 64);
+	grid.draw();
 
+	if (g.gameState == BUILD) {
+		//get tile based off of mouse position
+		grid.drawTileOutline();
+	}
 
 }
