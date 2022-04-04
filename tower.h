@@ -8,19 +8,32 @@
 class Tower {
 public:
 	float x, y, width, height;
+	bool active;
 	Image *texture;
 
-	Tower(Image *img, float width, float height);
+	Tower();
+	Tower(Image *img, float x, float y, int width, int height, bool active);
 	void setxy(int x, int y);
 	void setwh(int w, int h);
 	void draw();
 
-} tower1(&tower, g.towerWidth, g.towerWidth);
+} nullTower;
 
-Tower::Tower(Image *img, float width, float height) {
+Tower::Tower()
+{
+	texture = &towerBasic;
+	x = y = -10; //if drawn without setting x and y, this will be a red flag
+	width = height = 50;
+	active = 0;
+}
+
+Tower::Tower(Image *img, float x, float y, int width, int height, bool active) {
 	texture = img;
+	this->x = x;
+	this->y = y;
 	this->width = width;
 	this->height = height;
+	this->active = active;
 }
 
 void Tower::setxy(int x, int y)
@@ -38,7 +51,7 @@ void Tower::setwh(int w, int h)
 void Tower::draw()
 {
 	//x and y offset is used to center tower to tile
-	int offset = 6;
+	int offset = 7;
 	drawQuadTex(*texture, x+offset, y+offset, width, height);
 }
 

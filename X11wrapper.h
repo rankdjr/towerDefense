@@ -6,6 +6,7 @@
 #include <X11/extensions/Xdbe.h>
 #include <GL/glx.h>
 #include "global.h"
+#include "draw.h"
 using namespace std;
 
 // X11 setup --------------------------------------------------------------------------------------
@@ -76,7 +77,7 @@ X11_wrapper::X11_wrapper()
 		XDestroyWindow(dpy, win);
 		XCloseDisplay(dpy);
 	}
-	printf("Xdbe version %d.%d\n",major,minor);
+	//printf("Xdbe version %d.%d\n",major,minor);
 	//Get back buffer and attributes (used for swapping)
 	backBuffer = XdbeAllocateBackBufferName(dpy, win, XdbeUndefined);
 	backAttr = XdbeGetBackBufferAttributes(dpy, backBuffer);
@@ -157,15 +158,28 @@ void X11_wrapper::check_mouse(XEvent *e)
 	}
 	//
 	if (e->type == ButtonRelease) {
+		if(g.buildTower)
+			g.buildTower = 0;
 		return;
 	}
 	if (e->type == ButtonPress) {
 		if (e->xbutton.button==1) {
 			//Left button was pressed.
-            return;
+			if(!g.buildTower && g.gameState == BUILD) {
+				g.buildTower = 1;
+				//add tower to tile --> should we add this somewhere else? to a class? in main?
+				int mapi = g.xMousePos/64;
+				int mapj = 9-g.yMousePos/64;
+				Tile *t = grid.getTile(mapi,mapj);
+				t->addTower();
+				printf("t.numOfTowers: %i\n", t->numOfTowers);
+			}
+			return;
 		}
 		if (e->xbutton.button==3) {
 			//Right button was pressed.
+			int mapi = g.xMousePos/64;
+			int mapj = 9-g.yMousePos/64;
 			return;
 		}
 	}
@@ -175,8 +189,9 @@ void X11_wrapper::check_mouse(XEvent *e)
 			savex = e->xbutton.x;
 			savey = e->xbutton.y;
 			//Code placed here will execute whenever the mouse moves.
-
-
+			//printf("mouse moved\n");
+			g.xMousePos = (int)savex;
+			g.yMousePos = (int)savey;
 		}
 	}
 }
@@ -188,8 +203,13 @@ int X11_wrapper::check_keys(XEvent *e)
 	int key = XLookupKeysym(&e->xkey, 0);
 	if (e->type == KeyPress) {
 		switch (key) {
-			case XK_1:
-				//Key 1 was pressed
+			case XK_b:
+				//Key 'b' was pressed
+				if(g.gameState == BUILD) {
+					g.gameState = PLAYING;
+					break;
+				}
+				g.gameState = BUILD;
 				break;
 			case XK_Escape:
 				//Escape key was pressed
