@@ -37,7 +37,7 @@ void init_graphics()
 	init_texture(&grass);
 	init_texture(&dirt);
 	//intialize tower textures
-	init_texture(&tower);
+	init_texture(&towerBasic);
 }
 
 void drawQuad(float x, float y, float width, float height) 
