@@ -34,6 +34,6 @@ public:
         yres = mapHeight * tileHeight; //640px
 
     }
-} g;
+}g;
 
 #endif //_GLOBAL_H_
