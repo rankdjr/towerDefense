@@ -178,8 +178,7 @@ void X11_wrapper::check_mouse(XEvent *e)
 		}
 		if (e->xbutton.button==3) {
 			//Right button was pressed.
-			int mapi = g.xMousePos/64;
-			int mapj = 9-g.yMousePos/64;
+			
 			return;
 		}
 	}

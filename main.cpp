@@ -20,7 +20,6 @@
 #include "tile.h"
 #include "TileGrid.h"
 #include "X11wrapper.h"
-#include "draw.h"
 #include "enemy.h"
 
 
@@ -61,6 +60,9 @@ int main()
 	init_opengl();
 	init_graphics();
     initialize_fonts();
+    clock_gettime(CLOCK_REALTIME, &timePause);
+    clock_gettime(CLOCK_REALTIME, &timeStart);
+
 	//manually declare map
 	int map[10][10] = { 
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -87,7 +89,6 @@ int main()
 			x11.check_mouse(&e);
 			done = x11.check_keys(&e);
 		}
-		//physics();           //move things
         //
         //Below is a process to apply physics at a consistent rate.
         //1. Get the time right now.
@@ -113,6 +114,7 @@ int main()
             //7. Reduce the countdown by our physics-rate
             physicsCountdown -= physicsRate;
         }
+		physics();
 		render();            //draw things
 		x11.swapBuffers();   //make video memory visible
 		usleep(1000);        //pause to let X11 work better
@@ -172,7 +174,7 @@ void physics()
 void render()
 {
 	grid.draw();
-
+	enemy->Draw();
 	if (g.gameState == BUILD) {
 		//get tile based off of mouse position
 		grid.drawTileOutline();
