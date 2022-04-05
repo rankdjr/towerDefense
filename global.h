@@ -2,15 +2,37 @@
 #define _GLOBAL_H_
 
 
+enum GameState { START = 0, BUILD, PLAYING, END };
+
 class Global {
 public:
 	int xres, yres;
+    int xMousePos, yMousePos;
+    int towerWidth, towerHeight;
+    int tileWidth, tileHeight;
+    int mapWidth, mapHeight;
+    bool buildTower;
+    GameState gameState;
+
     Global() {
-        //xres = 1280;
-        //yres = 960;
-        //Enemy *enemy = new Enemy(2, 3, 64, 64, 2);
- 		xres = 640;
-		yres = 640;
+        gameState = START;
+        //map vars **update map var in TileGrid.h if changed**
+        mapWidth = 10;
+        mapHeight = 10;
+        //
+        //tile vars
+        tileWidth = 64;
+        tileHeight = 64;
+        //
+        //tower vars
+		towerWidth = 50;
+        towerHeight = 50;
+        buildTower = 0;
+        //
+        //initialize x,y resolution
+        xres = mapWidth * tileWidth; //640px
+        yres = mapHeight * tileHeight; //640px
+
     }
 }g;
 

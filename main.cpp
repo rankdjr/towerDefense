@@ -15,9 +15,11 @@
 #include "fonts.h"
 #include "global.h"
 #include "image.h"
-#include "tile.h"
-#include "X11wrapper.h"
 #include "draw.h"
+#include "tower.h"
+#include "tile.h"
+#include "TileGrid.h"
+#include "X11wrapper.h"
 #include "enemy.h"
 
 
@@ -26,7 +28,6 @@ using namespace std;
 //Function prototypes
 void physics(void);
 void render(void);
-void initEnemies(int enemies);
 
 
 //Setup timers
@@ -50,9 +51,8 @@ void timeCopy(struct timespec *dest, struct timespec *source)
     memcpy(dest, source, sizeof(struct timespec));
 }
 
-const int numEnemies = 5;
 // xpos, ypos, width, height, speed, direction
-Enemy enemy[numEnemies];
+Enemy *enemy = new Enemy(0, 5, 48, 48, 2, 0);
 
 
 int main()
@@ -60,17 +60,25 @@ int main()
 	init_opengl();
 	init_graphics();
     initialize_fonts();
-
-    initEnemies(numEnemies);
-    
-   
-    //printf("\n%i", enemy[i].speed);
-    
-   
-    
     clock_gettime(CLOCK_REALTIME, &timePause);
     clock_gettime(CLOCK_REALTIME, &timeStart);
-      
+
+	//manually declare map
+	int map[10][10] = { 
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
+		{0, 0, 0, 1, 1, 0, 1, 0, 0, 0},
+		{1, 1, 1, 1, 1, 0, 1, 1, 1, 1},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	};
+	//initialize map
+	grid.setMap(map);
+
 	//main game loop
 	int done = 0;
 	while (!done) {
@@ -81,8 +89,7 @@ int main()
 			x11.check_mouse(&e);
 			done = x11.check_keys(&e);
 		}
-		//physics();           //move things
-           //
+        //
         //Below is a process to apply physics at a consistent rate.
         //1. Get the time right now.
         clock_gettime(CLOCK_REALTIME, &timeCurrent);
@@ -107,28 +114,13 @@ int main()
             //7. Reduce the countdown by our physics-rate
             physicsCountdown -= physicsRate;
         }
+		physics();
 		render();            //draw things
 		x11.swapBuffers();   //make video memory visible
 		usleep(1000);        //pause to let X11 work better
 	}
     cleanup_fonts();
 	return 0;
-}
-
-
-void initEnemies(int numEnemies)
-{  
-    for( int i = 0; i<numEnemies; i++){
-        enemy[i].x = 0;
-        enemy[i].y = 5*64;
-        enemy[i].width = 48;
-        enemy[i].height = 48;
-        enemy[i].speed = i+1;
-        enemy[i].dir = 0;
-        enemy[i].health = 100;
-        enemy[i].alive = 1;
-    }
-
 }
 
 void physics()
@@ -143,41 +135,49 @@ void physics()
     struct timespec tt;
     clock_gettime(CLOCK_REALTIME, &tt);
     double timeSpan = timeDiff(&towerTime, &tt);
-    if (timeSpan < .15)
+    if (timeSpan < enemy->delay)
         return;
     timeCopy(&towerTime, &tt);
     
-    
-    for (int i = 0; i<numEnemies; i++){
-    if(enemy[i].dir == 0) {
-        enemy[i].x += enemy[i].speed;
-    }
+    /*
+    //move the snake segments...
+    int curpos[2];
+    int newpos[2];
+    int oldpos[2];
+    //save the head position.
+    curpos[0] = enemy->x;
+    curpos[1] = enemy->y;
+    //printf("\n%d %d", g.pacman.pos[0][0], g.pacman.pos[0][1]);
+    */
+    if(enemy->dir == 0)
+    enemy->x += 10;
 
-    
+    /*
+    newpos[0] = curpos[0];
+    newpos[1] = curpos[1];
+     for (int i=1; i<1; i++) {
+        oldpos[0] = enemy->x;
+        oldpos[1] = enemy->y;
+        if (enemy->x  == newpos[0] &&
+            enemy->y  == newpos[1])
+            break;
+          
+        enemy->x = newpos[0];
+        enemy->y = newpos[1];
+        newpos[0] = oldpos[0];
+        newpos[1] = oldpos[1];
+        
+     }
+     */
 }
-}
+
 void render()
 {
-	int map[10][10] = { 
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
-		{0, 0, 0, 1, 1, 0, 1, 0, 0, 0},
-		{1, 1, 1, 1, 1, 0, 1, 1, 1, 1},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	};
-	
-	TileGrid *grid = new TileGrid(map);
-	grid->draw();
-    
-    for(int i = 0; i<numEnemies; i++){
-    enemy[i].Draw();
-    }
-	//Tile *temp = new Tile(&dirt, 0, 0, 64, 64);
-	//grid->setTile(*temp, 0, 0, 64, 64);
+	grid.draw();
+	enemy->Draw();
+	if (g.gameState == BUILD) {
+		//get tile based off of mouse position
+		grid.drawTileOutline();
+	}
 
 }

@@ -10,10 +10,12 @@ class Image {
 public:	
 	int width, height, max;
 	char *data;
+	const char *fname;
     unsigned int texid;
 
 	Image() { }
 	Image(const char *fname) {
+		this->fname = fname;
 		bool isPPM = true;
 		char str[1200];
 		char newfile[200];
@@ -44,7 +46,49 @@ public:
 			unlink(newfile);
 	}
 } grass("res/grass.png"),
-  dirt("res/dirt.png");
+  dirt("res/dirt.png"),
+  towerBasic("res/tower2.png");
 
+unsigned char *buildAlphaData(Image *img)
+{
+    //Add 4th component to an RGB stream...
+    //RGBA
+    //When you do this, OpenGL is able to use the A component to determine
+    //transparency information.
+    //It is used in this application to erase parts of a texture-map from view.
+    int i;
+    int a,b,c;
+    unsigned char *newdata, *ptr;
+    unsigned char *data = (unsigned char *)img->data;
+    newdata = (unsigned char *)malloc(img->width * img->height * 4);
+    ptr = newdata;
+    for (i=0; i<img->width * img->height * 3; i+=3) {
+        a = *(data+0);
+        b = *(data+1);
+        c = *(data+2);
+        *(ptr+0) = a;
+        *(ptr+1) = b;
+        *(ptr+2) = c;
+        //-----------------------------------------------
+        //get largest color component...
+        //*(ptr+3) = (unsigned char)((
+        //        (int)*(ptr+0) +
+        //        (int)*(ptr+1) +
+        //        (int)*(ptr+2)) / 3);
+        //d = a;
+        //if (b >= a && b >= c) d = b;
+        //if (c >= a && c >= b) d = c;
+        //*(ptr+3) = d;
+        //-----------------------------------------------
+        //this code optimizes the commented code above.
+        //code contributed by student: Chris Smith
+        //
+        *(ptr+3) = (a!=0 && b!=0 && c!=0);
+        //-----------------------------------------------
+        ptr += 4;
+        data += 3;
+    }
+    return newdata;
+}
 
 #endif //_IMAGE_H_
