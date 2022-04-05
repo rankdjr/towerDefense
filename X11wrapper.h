@@ -160,6 +160,8 @@ void X11_wrapper::check_mouse(XEvent *e)
 	if (e->type == ButtonRelease) {
 		if(g.buildTower)
 			g.buildTower = 0;
+		if(g.showTowerRange)
+			g.showTowerRange = 0;
 		return;
 	}
 	if (e->type == ButtonPress) {
@@ -167,7 +169,6 @@ void X11_wrapper::check_mouse(XEvent *e)
 			//Left button was pressed.
 			if(!g.buildTower && g.gameState == BUILD) {
 				g.buildTower = 1;
-				//add tower to tile --> should we add this somewhere else? to a class? in main?
 				int mapi = g.xMousePos/64;
 				int mapj = 9-g.yMousePos/64;
 				Tile *t = grid.getTile(mapi,mapj);
@@ -178,7 +179,11 @@ void X11_wrapper::check_mouse(XEvent *e)
 		}
 		if (e->xbutton.button==3) {
 			//Right button was pressed.
-			
+			int mapi = g.xMousePos/64;
+			int mapj = 9-g.yMousePos/64;
+			Tile *t = grid.getTile(mapi,mapj);
+			if (t->numOfTowers > 0)
+				g.showTowerRange = 1;
 			return;
 		}
 	}
