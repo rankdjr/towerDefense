@@ -3,7 +3,7 @@
 all: main
 
 main: main.cpp
-	g++ main.cpp libggfonts.a timers.cpp -Wall -omain -lX11 -lGL -lGLU -lXext -lm -lpthread
+	g++ main.cpp libggfonts.a -Wall -omain -lX11 -lGL -lGLU -lXext -lm -lpthread
 
 clean:
 	rm -f main
