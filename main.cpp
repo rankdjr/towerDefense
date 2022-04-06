@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <cstring>
 #include <GL/glx.h>
+#include <math.h>
 #include "fonts.h"
 #include "global.h"
 #include "image.h"
@@ -169,9 +170,19 @@ void render()
 {
 	grid.draw();
 
+
     for(int i = 0; i<numEnemies; i++){
         enemy[i].Draw();
         }
+
+	
+	if (g.showTowerRange) {
+		int mapi = g.xMousePos/64;
+		int mapj = 9-g.yMousePos/64;
+		Tile *t = grid.getTile(mapi,mapj);
+		t->tower.showRange();
+	}
+
 	if (g.gameState == BUILD) {
 		//get tile based off of mouse position
 		grid.drawTileOutline();

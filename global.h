@@ -11,7 +11,7 @@ public:
     int towerWidth, towerHeight;
     int tileWidth, tileHeight;
     int mapWidth, mapHeight;
-    bool buildTower;
+    bool buildTower, showTowerRange;
     GameState gameState;
 
     Global() {
@@ -28,11 +28,12 @@ public:
 		towerWidth = 50;
         towerHeight = 50;
         buildTower = 0;
+        showTowerRange = 0;
+
         //
         //initialize x,y resolution
         xres = mapWidth * tileWidth; //640px
         yres = mapHeight * tileHeight; //640px
-
     }
 }g;
 
