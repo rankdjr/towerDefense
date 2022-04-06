@@ -49,7 +49,7 @@ public:
   dirt("res/dirt.png"),
   towerBasic("res/tower2.png");
 
-unsigned char *buildAlphaData(Image *img)
+unsigned char *buildAlphaData(Image *img, int r1, int g1, int b1)
 {
     //Add 4th component to an RGB stream...
     //RGBA
@@ -83,7 +83,7 @@ unsigned char *buildAlphaData(Image *img)
         //this code optimizes the commented code above.
         //code contributed by student: Chris Smith
         //
-        *(ptr+3) = (a!=0 && b!=0 && c!=0);
+        *(ptr+3) = (a!=r1 && b!=g1 && c!=b1);
         //-----------------------------------------------
         ptr += 4;
         data += 3;
