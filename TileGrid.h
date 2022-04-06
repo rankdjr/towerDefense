@@ -21,8 +21,8 @@ public:
 TileGrid::TileGrid()
 {
 	//set map dimensions
-	height = 10;
-	width = 10;
+	height = g.mapHeight;
+	width = g.mapWidth;
 	//
 	//allocate 2d array for map tiles
 	for (int i = 0; i < height; i++) {
@@ -34,8 +34,8 @@ TileGrid::TileGrid()
 TileGrid::TileGrid(int newMap[][10])
 {
 	//set map dimensions
-	height = 10;
-	width = 10;
+	height = g.mapHeight;
+	width = g.mapWidth;
 	//
 	//allocate 2d array for map tiles
 	//Nested for loop iterates through 2d array and assigns tiles based on
