@@ -29,7 +29,6 @@ public:
         towerHeight = 50;
         buildTower = 0;
         showTowerRange = 0;
-
         //
         //initialize x,y resolution
         xres = mapWidth * tileWidth; //640px
