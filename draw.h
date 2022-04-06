@@ -31,6 +31,19 @@ void init_texture(Image *img)
 							GL_RGB, GL_UNSIGNED_BYTE, img->data);
 }
 
+void init_texture_alpha(Image *img, int r, int g, int b)
+{
+	unsigned char *alphaData = buildAlphaData(img,r,g,b);
+	//intialize textures for background
+	glGenTextures(1, &(img->texid));
+	glBindTexture(GL_TEXTURE_2D, img->texid);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, img->width, img->height, 0,
+							GL_RGB, GL_UNSIGNED_BYTE, alphaData);
+	delete alphaData;
+}
+
 void init_graphics()
 {
 	//intialize tile textures
