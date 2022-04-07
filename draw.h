@@ -83,4 +83,30 @@ void drawQuadTex(Image img, float x, float y, float width, float height)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+void drawCircle(float x, float y, int radius)
+{
+	int i;
+	static int firstTime=1;
+	static float verts[32][2];
+	static int n=32;
+	if (firstTime) {
+		float ang=0.0;
+		float inc = 3.14159 * 2.0 / (float)n;
+		for (i=0; i<n; i++) {
+			verts[i][0] = sin(ang);
+			verts[i][1] = cos(ang);
+			ang += inc;
+		}
+		firstTime=0;
+	}
+
+	glPushMatrix();
+	glTranslatef(x, y, 0);
+	glBegin(GL_TRIANGLE_FAN);
+		for (i=0; i<n; i++) {
+			glVertex2f(verts[i][0]*radius, verts[i][1]*radius);
+		}
+	glEnd();
+	glPopMatrix();
+}
 #endif //_DRAW_H_
