@@ -32,7 +32,7 @@ void render(void);
 void initEnemies(int enemies);
 
 //Setup timers
-const double physicsRate = 1.0 / 60.0;
+const double physicsRate = 1.0 / 30.0;
 const double oobillion = 1.0 / 1e9;
 struct timespec timeStart, timeCurrent;
 struct timespec timePause;
@@ -93,31 +93,14 @@ int main()
 			done = x11.check_keys(&e);
 		}
         //
-        //Below is a process to apply physics at a consistent rate.
-        //1. Get the time right now.
         clock_gettime(CLOCK_REALTIME, &timeCurrent);
-        //2. How long since we were here last?
         timeSpan = timeDiff(&timeStart, &timeCurrent);
-        //3. Save the current time as our new starting time.
         timeCopy(&timeStart, &timeCurrent);
-        //4. Add time-span to our countdown amount.
         physicsCountdown += timeSpan;
-        //5. Has countdown gone beyond our physics rate?
-        //       if yes,
-        //           In a loop...
-        //              Apply physics
-        //              Reducing countdown by physics-rate.
-        //              Break when countdown < physics-rate.
-        //       if no,
-        //           Apply no physics this frame.
         while(physicsCountdown >= physicsRate) {
-            //6. Apply physics
-            //
             physics();
-            //7. Reduce the countdown by our physics-rate
             physicsCountdown -= physicsRate;
         }
-		physics();
 		render();            //draw things
 		x11.swapBuffers();   //make video memory visible
 		usleep(1000);        //pause to let X11 work better
@@ -129,14 +112,12 @@ int main()
 void initEnemies(int numEnemies)
 {  
     for( int i = 0; i<numEnemies; i++){
-        enemy[i].x = 0;
+        enemy[i].x = -64;
         enemy[i].y = 4*64;
         enemy[i].width = 48;
         enemy[i].height = 48;
-        enemy[i].speed = i+1;
+        enemy[i].speed = 0.5+(0.10*i);
         enemy[i].dir = 0;
-        enemy[i].health = 100;
-        enemy[i].alive = 1;
     }
 }
 
@@ -144,38 +125,35 @@ void initEnemies(int numEnemies)
 
 void physics()
 {
-   //  int i;    
-    static struct timespec towerTime;
-    static int firsttime=1;
-    if (firsttime) {
-        firsttime=0;
-        clock_gettime(CLOCK_REALTIME, &towerTime);
-     }
-    struct timespec tt;
-    clock_gettime(CLOCK_REALTIME, &tt);
-    double timeSpan = timeDiff(&towerTime, &tt);
-    if (timeSpan < .15)
-        return;
-    timeCopy(&towerTime, &tt);
+    // int i;    
+    // static struct timespec towerTime;
+    // static int firsttime=1;
+    // if (firsttime) {
+    //     firsttime=0;
+    //     clock_gettime(CLOCK_REALTIME, &towerTime);
+    //  }
+    // struct timespec tt;
+    // clock_gettime(CLOCK_REALTIME, &tt);
+    // double timeSpan = timeDiff(&towerTime, &tt);
+    // if (timeSpan < .15)
+    //     return;
+    // timeCopy(&towerTime, &tt);
     
     
     for (int i = 0; i<numEnemies; i++){
-    if(enemy[i].dir == 0) {
-        enemy[i].x += enemy[i].speed;
-    }
-
+        if(enemy[i].dir == 0) {
+            enemy[i].x += enemy[i].speed;
+        }
     }
 }
 void render()
 {
 	grid.draw();
 
-
     for(int i = 0; i<numEnemies; i++){
         enemy[i].Draw();
-        }
+    }
 
-	
 	if (g.showTowerRange) {
 		int mapi = g.xMousePos/64;
 		int mapj = 9-g.yMousePos/64;
