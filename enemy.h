@@ -11,7 +11,7 @@ public:
     int dir;
     bool alive;
     Image *texture;
-    Enemy() : x(0), y(0), width(0), height(0), health(0), speed(0), dir(0), alive(0)
+    Enemy() : x(0), y(0), width(0), height(0), health(0), speed(0), dir(0), alive(0), texture(&enemyBasic)
     {}
     Enemy(float x, float y, float speed, int dir){
         this->x = x*64;
@@ -27,7 +27,8 @@ public:
     }
 
     void Draw() {
-        drawQuad(x, y,width,height);
+        //drawQuad(x, y,width,height);
+        drawQuadTex(*texture,x,y,width,height);
     } 
 };
 
