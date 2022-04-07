@@ -61,8 +61,6 @@ int main()
 	init_opengl();
 	init_graphics();
     initialize_fonts();
-    initEnemies(numEnemies);
-
     clock_gettime(CLOCK_REALTIME, &timePause);
     clock_gettime(CLOCK_REALTIME, &timeStart);
 
@@ -73,7 +71,7 @@ int main()
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
 		{0, 0, 0, 1, 1, 0, 1, 0, 0, 0},
-		{1, 1, 1, 1, 1, 0, 1, 1, 1, 1},
+		{8, 1, 1, 1, 1, 0, 1, 1, 1, 9},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -81,6 +79,7 @@ int main()
 	};
 	//initialize map
 	grid.setMap(map);
+    initEnemies(numEnemies);
 
 	//main game loop
 	int done = 0;
@@ -112,8 +111,8 @@ int main()
 void initEnemies(int numEnemies)
 {  
     for( int i = 0; i<numEnemies; i++){
-        enemy[i].x = -64;
-        enemy[i].y = 4*64;
+        enemy[i].x = grid.startTile.x-64;
+        enemy[i].y = grid.startTile.y;
         enemy[i].width = 48;
         enemy[i].height = 48;
         enemy[i].speed = 0.5+(0.10*i);
