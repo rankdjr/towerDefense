@@ -60,33 +60,11 @@ void Tower::draw()
 
 void Tower::showRange()
 {
-	int i;
-	static int firstTime=1;
-	static float verts[32][2];
-	static int n=32;
-	if (firstTime) {
-		float ang=0.0;
-		float inc = 3.14159 * 2.0 / (float)n;
-		for (i=0; i<n; i++) {
-			verts[i][0] = sin(ang);
-			verts[i][1] = cos(ang);
-			ang += inc;
-		}
-		firstTime=0;
-	}
-
 	int offset = g.tileWidth/2;
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glColor4f(0.68, 0.85, 0.90, 0.60);
-	glPushMatrix();
-	glTranslatef(x+offset, y+offset, 0);
-	glBegin(GL_TRIANGLE_FAN);
-		for (i=0; i<n; i++) {
-			glVertex2f(verts[i][0]*range, verts[i][1]*range);
-		}
-	glEnd();
-	glPopMatrix();
+	drawCircle(x+offset, y+offset, range);
 	glDisable(GL_BLEND);
 }
 
