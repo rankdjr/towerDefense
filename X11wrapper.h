@@ -30,8 +30,6 @@ public:
 	void check_resize(XEvent *e);
 	void check_mouse(XEvent *e);
 	int check_keys(XEvent *e);
-	void set_color_3i(int r, int g, int b);
-	void drawPoint(int x, int y);
 } x11;
 
 
