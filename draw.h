@@ -51,6 +51,8 @@ void init_graphics()
 	init_texture(&dirt);
 	//intialize tower textures
 	init_texture(&towerBasic);
+	//initialize enemy textures
+	init_texture(&enemyBasic);
 }
 
 void drawQuad(float x, float y, float width, float height) 
