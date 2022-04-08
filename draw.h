@@ -53,6 +53,7 @@ void init_graphics()
 	init_texture(&towerBasic);
 	//initialize enemy textures
 	init_texture(&enemyBasic);
+	//init_texture_alpha(&enemyBasic, 0, 0, 0);
 }
 
 void drawQuad(float x, float y, float width, float height) 
@@ -83,6 +84,26 @@ void drawQuadTex(Image img, float x, float y, float width, float height)
 	glEnd();
 	glPopMatrix();
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void drawQuadTexAlpha(Image img, float x, float y, float width, float height) 
+{
+	//draw texture to quad with alpha channel
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.0f);
+	glColor4ub(255,255,255,255);
+	glBindTexture(GL_TEXTURE_2D, img.texid);
+	glPushMatrix();
+    glTranslatef(x, y, 0);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0, 1); glVertex2i(0,     0);
+		glTexCoord2f(0, 0); glVertex2i(0,     height);
+		glTexCoord2f(1, 0); glVertex2i(width, height);
+		glTexCoord2f(1, 1); glVertex2i(width, 0);
+	glEnd();
+	glPopMatrix();
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_ALPHA_TEST);
 }
 
 void drawCircle(float x, float y, int radius)
