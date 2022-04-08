@@ -137,11 +137,11 @@ void physics()
     // if (timeSpan < .15)
     //     return;
     // timeCopy(&towerTime, &tt);
-    
-    
-    for (int i = 0; i<numEnemies; i++){
-        if(enemy[i].dir == 0) {
-            enemy[i].x += enemy[i].speed;
+    if (g.gameState == PLAYING) {
+        for (int i = 0; i<numEnemies; i++){
+            if(enemy[i].dir == 0) {
+                enemy[i].x += enemy[i].speed;
+            }
         }
     }
 }
@@ -160,7 +160,7 @@ void render()
 		t->tower.showRange();
 	}
 
-	if (g.gameState == BUILD) {
+	if (g.buildState == 1) {
 		//get tile based off of mouse position
 		grid.drawTileOutline();
 	}
