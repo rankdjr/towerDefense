@@ -6,6 +6,7 @@
 class TileGrid {
 public:
 	int width, height;
+	Tile startTile, endTile;
 	Tile map[10][10]; //**update global vars if changed**
 
 	TileGrid();
@@ -53,6 +54,16 @@ TileGrid::TileGrid(int newMap[][10])
 					//dirt
 					map[i][j] = Tile(&dirt, i*64, j*64, 64, 64, dirtType);
 					break;
+				case 8:
+					//start tile
+					map[i][j] = Tile(&dirt, i*64, j*64, 64, 64, dirtType);
+					startTile = map[i][j];
+					break;
+				case 9:
+					//end tile
+					map[i][j] = Tile(&dirt, i*64, j*64, 64, 64, dirtType);
+					endTile = map[i][j];
+					break;
 				default:
 					break;
 			}
@@ -76,6 +87,16 @@ void TileGrid::setMap(int newMap[][10])
 				case 1:
 					//dirt
 					map[i][j] = Tile(&dirt, i*64, j*64, 64, 64, dirtType);
+					break;
+				case 8:
+					//start tile
+					map[i][j] = Tile(&dirt, i*64, j*64, 64, 64, dirtType);
+					startTile = map[i][j];
+					break;
+				case 9:
+					//end tile
+					map[i][j] = Tile(&dirt, i*64, j*64, 64, 64, dirtType);
+					endTile = map[i][j];
 					break;
 				default:
 					break;

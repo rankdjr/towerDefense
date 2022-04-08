@@ -47,7 +47,8 @@ public:
 	}
 } grass("res/grass.png"),
   dirt("res/dirt.png"),
-  towerBasic("res/tower2.png");
+  towerBasic("res/tower2.png"),
+  enemyBasic("res/enemy1.png");
 
 unsigned char *buildAlphaData(Image *img, int r1, int g1, int b1)
 {
