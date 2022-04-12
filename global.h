@@ -1,7 +1,6 @@
 #ifndef _GLOBAL_H_
 #define _GLOBAL_H_
 
-
 enum GameState { START = 0, BUILD, PLAYING, END };
 
 class Global {
@@ -13,9 +12,11 @@ public:
     int mapWidth, mapHeight;
     bool buildTower, showTowerRange;
     GameState gameState;
+    bool buildState;
 
     Global() {
         gameState = START;
+        buildState = 0;
         //map vars **update map var in TileGrid.h if changed**
         mapWidth = 10;
         mapHeight = 10;

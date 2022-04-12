@@ -3,6 +3,7 @@
 //
 // Credit to Gordon Griesel for X11 code, libggfontsa, timers.cpp, and timers.h
 //
+#include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
 #include <X11/Xlib.h>
@@ -22,9 +23,8 @@
 #include "TileGrid.h"
 #include "X11wrapper.h"
 #include "enemy.h"
+#include "player.h"
 
-
-using namespace std;
 
 //Function prototypes
 void physics(void);
@@ -69,9 +69,9 @@ int main()
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
-		{0, 0, 0, 1, 1, 0, 1, 0, 0, 0},
-		{8, 1, 1, 1, 1, 0, 1, 1, 1, 9},
+		{0, 0, 0, 1, 1, 1, 1, 1, 0, 0},
+		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+		{8, 1, 1, 1, 0, 0, 0, 1, 1, 9},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -100,6 +100,7 @@ int main()
             physics();
             physicsCountdown -= physicsRate;
         }
+        
 		render();            //draw things
 		x11.swapBuffers();   //make video memory visible
 		usleep(1000);        //pause to let X11 work better
@@ -120,7 +121,10 @@ void initEnemies(int numEnemies)
     }
 }
 
-
+Enemy returnEnemy(Enemy* enemy)
+{
+    return *enemy;
+}
 
 void physics()
 {
@@ -137,13 +141,15 @@ void physics()
     // if (timeSpan < .15)
     //     return;
     // timeCopy(&towerTime, &tt);
-    
-    
-    for (int i = 0; i<numEnemies; i++){
-        if(enemy[i].dir == 0) {
-            enemy[i].x += enemy[i].speed;
+    if (g.gameState == PLAYING) {
+        for (int i = 0; i<numEnemies; i++){
+            if(enemy[i].dir == 0) {
+                enemy[i].x += enemy[i].speed;
+            }
         }
     }
+
+    grid.getTile(0,0)->tower.targetEnemy(enemy[0]);
 }
 void render()
 {
@@ -160,7 +166,7 @@ void render()
 		t->tower.showRange();
 	}
 
-	if (g.gameState == BUILD) {
+	if (g.buildState == 1) {
 		//get tile based off of mouse position
 		grid.drawTileOutline();
 	}

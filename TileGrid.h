@@ -10,7 +10,6 @@ public:
 	Tile map[10][10]; //**update global vars if changed**
 
 	TileGrid();
-	TileGrid(int newMap[][10]);
 	void setMap(int newMap[][10]);
 	void draw();
 	void drawTileOutline();
@@ -32,52 +31,13 @@ TileGrid::TileGrid()
 	}
 }
 
-TileGrid::TileGrid(int newMap[][10])
-{
-	//set map dimensions
-	height = g.mapHeight;
-	width = g.mapWidth;
-	//
-	//allocate 2d array for map tiles
-	//Nested for loop iterates through 2d array and assigns tiles based on
-	//integer values in array
-	for (int i = 0; i < width; i++) {
-		for (int j = 0; j < height; j++) {
-			int row = (width - 1) - j; //start reading vals from top of 2d array
-			switch (newMap[row][i])
-			{
-				case 0:
-					//grass
-					map[i][j] = Tile(&grass, i*64, j*64, 64, 64, grassType);
-					break;
-				case 1:
-					//dirt
-					map[i][j] = Tile(&dirt, i*64, j*64, 64, 64, dirtType);
-					break;
-				case 8:
-					//start tile
-					map[i][j] = Tile(&dirt, i*64, j*64, 64, 64, dirtType);
-					startTile = map[i][j];
-					break;
-				case 9:
-					//end tile
-					map[i][j] = Tile(&dirt, i*64, j*64, 64, 64, dirtType);
-					endTile = map[i][j];
-					break;
-				default:
-					break;
-			}
-		}
-	}
-}
-
 void TileGrid::setMap(int newMap[][10]) 
 {
 	//Nested for loop iterates through 2d array and assigns tiles based on
 	//integer values in array
 	for (int i = 0; i < width; i++) {
 		for (int j = 0; j < height; j++) {
-			int row = (width - 1) - j; //start reading vals from top of 2d array
+			int row = (width - 1) - j; //start reading vals from "top" of 2d array
 			switch (newMap[row][i])
 			{
 				case 0:
@@ -113,8 +73,6 @@ Tile* TileGrid::getTile(int i, int j)
 
 void TileGrid::draw()
 {
-	int width = 10;
-	int height = 10;
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
 			Tile t = map[i][j];
@@ -137,7 +95,7 @@ void TileGrid::drawTileOutline()
 	glColor4f(1.0, 1.0, 1.0, 0.50);
 	drawQuad(tile.x,        tile.y,        weight,         tile.height);//left side
 	drawQuad(tile.x+offset, tile.y,        weight,         tile.height);//right side
-	drawQuad(tile.x+weight, tile.y+offset, offset-weight,     weight);  	//top
+	drawQuad(tile.x+weight, tile.y+offset, offset-weight,     weight);  //top
 	drawQuad(tile.x+weight, tile.y,        offset-weight,     weight); 	//bottom
 	glDisable(GL_BLEND);
 }

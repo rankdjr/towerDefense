@@ -165,7 +165,7 @@ void X11_wrapper::check_mouse(XEvent *e)
 	if (e->type == ButtonPress) {
 		if (e->xbutton.button==1) {
 			//Left button was pressed.
-			if(!g.buildTower && g.gameState == BUILD) {
+			if(!g.buildTower && g.buildState == 1) {
 				g.buildTower = 1;
 				int mapi = g.xMousePos/64;
 				int mapj = 9-g.yMousePos/64;
@@ -207,11 +207,15 @@ int X11_wrapper::check_keys(XEvent *e)
 		switch (key) {
 			case XK_b:
 				//Key 'b' was pressed
-				if(g.gameState == BUILD) {
-					g.gameState = PLAYING;
+				if(g.buildState == 0) {
+					g.buildState = 1;
 					break;
 				}
-				g.gameState = BUILD;
+				g.buildState = 0;
+				break;
+			case XK_s:
+				//Key 'b' was pressed
+				g.gameState = PLAYING;
 				break;
 			case XK_Escape:
 				//Escape key was pressed
