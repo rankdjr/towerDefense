@@ -7,9 +7,10 @@
 
 class Tower {
 public:
-	float x, y, width, height, range;
+	float x, y, cx, cy, width, height, range;
 	bool active;
 	Image *texture;
+	Enemy *currEnemy;
 
 	Tower();
 	Tower(Image *img, float x, float y, int width, int height, bool active);
@@ -17,7 +18,8 @@ public:
 	void setwh(int w, int h);
 	void draw();
 	void showRange();
-	void targetEnemy(Enemy enemy);
+	void acquireEnemy(Enemy *enemy);
+	void attackEnemy();
 } nullTower;
 
 Tower::Tower()
@@ -33,10 +35,13 @@ Tower::Tower(Image *img, float x, float y, int width, int height, bool active) {
 	texture = img;
 	this->x = x;
 	this->y = y;
+	cx = x+g.tileWidth/2;
+	cy = y+g.tileHeight/2;
 	this->width = width;
 	this->height = height;
 	this->active = active;
 	range = 200;
+	currEnemy = nullptr;
 }
 
 void Tower::setxy(int x, int y)
@@ -68,8 +73,9 @@ void Tower::showRange()
 	glDisable(GL_BLEND);
 }
 
-void Tower::targetEnemy(Enemy enemy)
+void Tower::acquireEnemy(Enemy *enemy)
 {
+	currEnemy = enemy;
 	// for (int i = 0; i < numEnemies; i++) {
 	// 	glPushMatrix();
 	// 	glBegin(GL_LINES);
@@ -79,19 +85,34 @@ void Tower::targetEnemy(Enemy enemy)
 	// 	glPopMatrix();
 	// }
 
-		glPushMatrix();
-		glBegin(GL_LINES);
-			glVertex2f(x, y);
-			glVertex2f(enemy.x, enemy.y);
-		glEnd();
-		glPopMatrix();
 
-		printf("x: %f,  y:%f\n", enemy.x, enemy.y);
+	//printf("x: %f,  y:%f\n", enemy.x, enemy.y);
 	//1. sort enemies from distance to endpoint
 	//2. search array for furthest enemy within range and set to activeEnemy
 	//3. while enemy is in range --> fire projectile
 	//4. if enemy dies or exits range of tower, go back to 1
 	//this should loop through the entirety of the game; call before render but after physics
 
+}
+
+void Tower::attackEnemy()
+{
+	bool inRange = 1;
+	float dx = cx - currEnemy->x;
+	float dy = cy - currEnemy->y;
+	float dist = dx*dx + dy*dy;
+	if (dist > 40000)
+		inRange = 0;
+	//change below if statement to while loop when implementing thread
+	if (currEnemy->alive && inRange) {
+		glPushMatrix();
+		glBegin(GL_LINES);
+			glVertex2f(x, y);
+			glVertex2f(currEnemy->x, currEnemy->y);
+		glEnd();
+		glPopMatrix();
+	} else {
+		currEnemy = nullptr;
+	}
 }
 #endif //_TOWER_H_
