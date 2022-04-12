@@ -18,12 +18,14 @@
 #include "global.h"
 #include "image.h"
 #include "draw.h"
+#include "enemy.h"
+#include "player.h"
 #include "tower.h"
 #include "tile.h"
 #include "TileGrid.h"
+#include "game.h"
 #include "X11wrapper.h"
-#include "enemy.h"
-#include "player.h"
+
 
 
 //Function prototypes
@@ -52,10 +54,6 @@ void timeCopy(struct timespec *dest, struct timespec *source)
     memcpy(dest, source, sizeof(struct timespec));
 }
 
-const int numEnemies = 5;
-// xpos, ypos, width, height, speed, direction
-Enemy enemy[numEnemies];
-
 int main()
 {
 	init_opengl();
@@ -79,7 +77,7 @@ int main()
 	};
 	//initialize map
 	grid.setMap(map);
-    initEnemies(numEnemies);
+    //game.initEnemies(game.numEnemies);
 
 	//main game loop
 	int done = 0;
@@ -109,54 +107,23 @@ int main()
 	return 0;
 }
 
-void initEnemies(int numEnemies)
-{  
-    for( int i = 0; i<numEnemies; i++){
-        enemy[i].x = grid.startTile.x-64;
-        enemy[i].y = grid.startTile.y;
-        enemy[i].width = 48;
-        enemy[i].height = 48;
-        enemy[i].speed = 0.5+(0.10*i);
-        enemy[i].dir = 0;
-    }
-}
-
-Enemy returnEnemy(Enemy* enemy)
-{
-    return *enemy;
-}
-
 void physics()
 {
-    // int i;    
-    // static struct timespec towerTime;
-    // static int firsttime=1;
-    // if (firsttime) {
-    //     firsttime=0;
-    //     clock_gettime(CLOCK_REALTIME, &towerTime);
-    //  }
-    // struct timespec tt;
-    // clock_gettime(CLOCK_REALTIME, &tt);
-    // double timeSpan = timeDiff(&towerTime, &tt);
-    // if (timeSpan < .15)
-    //     return;
-    // timeCopy(&towerTime, &tt);
     if (g.gameState == PLAYING) {
-        for (int i = 0; i<numEnemies; i++){
-            if(enemy[i].dir == 0) {
-                enemy[i].x += enemy[i].speed;
+        for (int i = 0; i<game.numEnemies; i++){
+            if(game.enemy[i].dir == 0) {
+                game.enemy[i].x += game.enemy[i].speed;
             }
         }
     }
-
-    grid.getTile(0,0)->tower.targetEnemy(enemy[0]);
 }
+
 void render()
 {
 	grid.draw();
 
-    for(int i = 0; i<numEnemies; i++){
-        enemy[i].Draw();
+    for(int i = 0; i<game.numEnemies; i++){
+        game.enemy[i].Draw();
     }
 
 	if (g.showTowerRange) {
@@ -171,4 +138,53 @@ void render()
 		grid.drawTileOutline();
 	}
 
+    //temporary code to test if function can access enemies and towers
+    if(!player.towers.empty()) {
+        //get enemies distance to end tile
+        for (int i = 0; i < game.numEnemies; i++) {
+            float dx = (grid.endTile.x + g.tileWidth)- game.enemy[i].x;
+            float dy = grid.endTile.y - game.enemy[i].y;
+            game.enemy[i].distToEnd = dx*dx + dy*dy;
+        }
+        //print enemy dist to end
+        // for (int i = 0; i < game.numEnemies; i++) {
+        //     printf("{ %i, %f }, ", i, game.enemy[i].distToEnd);
+        // }
+        // printf("\n");
+        //
+        //bubble sort enemies in descending order by distance to end tile
+        // if (g.gameState == PLAYING) {
+        //     for (int i = 0; i < game.numEnemies; i++) {
+        //         for (int j = 1; j < game.numEnemies-1; j++) {
+        //             if (game.enemy[i].distToEnd < game.enemy[j].distToEnd) {
+        //                 Enemy temp = game.enemy[j];
+        //                 game.enemy[j] = game.enemy[i];
+        //                 game.enemy[i] = temp;
+        //                 printf("swapped\n");
+        //             }
+        //         }
+        //     }   
+        // }
+        //
+        //loop through towers and set currEnemy in each tower object
+        for (long unsigned int i = 0; i < player.towers.size(); i++) {
+            if (!player.towers[i].currEnemy) {
+                for (int j = game.numEnemies; j > 0; --j) {
+                    float dx = player.towers[i].cx - game.enemy[j].x;
+                    float dy = player.towers[i].cy - game.enemy[j].y;
+                    float dist = dx*dx + dy*dy;
+                    //printf("{ %i, %f }, ", j, dist);
+                    if (dist < 40000) {
+                        player.towers[i].acquireEnemy(&game.enemy[j]);
+                        printf("tower[%li] --> enemy[%i]\n", i, j);
+                        j = 0;
+                    }
+                }
+            } else {
+                player.towers[i].attackEnemy();
+            }
+        }
+        
+        //player.towers[0].acquireEnemy(&game.enemy[0]);
+    }
 }
