@@ -3,7 +3,7 @@
 
 #include "image.h"
 #include "draw.h"
-
+#include "enemy.h"
 
 class Tower {
 public:
@@ -17,7 +17,7 @@ public:
 	void setwh(int w, int h);
 	void draw();
 	void showRange();
-
+	void targetEnemy(Enemy enemy);
 } nullTower;
 
 Tower::Tower()
@@ -68,4 +68,30 @@ void Tower::showRange()
 	glDisable(GL_BLEND);
 }
 
+void Tower::targetEnemy(Enemy enemy)
+{
+	// for (int i = 0; i < numEnemies; i++) {
+	// 	glPushMatrix();
+	// 	glBegin(GL_LINES);
+	// 		glVertex2f(x, y);
+	// 		glVertex2f(enemy[i].x, enemy[i].x);
+	// 	glEnd();
+	// 	glPopMatrix();
+	// }
+
+		glPushMatrix();
+		glBegin(GL_LINES);
+			glVertex2f(x, y);
+			glVertex2f(enemy.x, enemy.y);
+		glEnd();
+		glPopMatrix();
+
+		printf("x: %f,  y:%f\n", enemy.x, enemy.y);
+	//1. sort enemies from distance to endpoint
+	//2. search array for furthest enemy within range and set to activeEnemy
+	//3. while enemy is in range --> fire projectile
+	//4. if enemy dies or exits range of tower, go back to 1
+	//this should loop through the entirety of the game; call before render but after physics
+
+}
 #endif //_TOWER_H_
