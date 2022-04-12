@@ -1,7 +1,6 @@
 #ifndef _GLOBAL_H_
 #define _GLOBAL_H_
 
-
 enum GameState { START = 0, BUILD, PLAYING, END };
 
 class Global {
