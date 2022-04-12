@@ -14,8 +14,8 @@ public:
 
     Player();
     void addFunds(int amt);
-    void addTower(Tile tile);
-    void removeTower(Tile tile);
+    void addTower(Tile *tile);
+    void removeTower(Tile *tile);
     void updateHP(int dmg);
 } player;
 
@@ -30,24 +30,24 @@ void Player::addFunds(int amt)
     funds += amt;
 }
 
-void Player::addTower(Tile tile)
+void Player::addTower(Tile *tile)
 {
-    towers.push_back(tile.tower);
+    towers.push_back(tile->tower);
 }
 
-void Player::removeTower(Tile tile)
+void Player::removeTower(Tile *tile)
 {
     if (towers.empty())
         return;
     //
     //loop through towers and find matching x,y to tile paramater
     //once match is found, remove from vector and add funds to player
-    for (int i = 0; i < towers.size(); i++) {
-        if (towers[i].x == tile.x && towers[i].y == tile.y)
+    for (long unsigned int i = 0; i < towers.size(); i++) {
+        if (towers[i].x == tile->x && towers[i].y == tile->y)
             towers.erase(towers.begin()+i);
     }
     int sellCost = 0;
-    player.addFunds(sellCost);
+    funds += sellCost;
 }
 
 void Player::updateHP(int dmg)
