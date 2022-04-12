@@ -7,6 +7,7 @@
 #include <GL/glx.h>
 #include "global.h"
 #include "draw.h"
+#include "player.h"
 using namespace std;
 
 // X11 setup --------------------------------------------------------------------------------------
@@ -171,6 +172,8 @@ void X11_wrapper::check_mouse(XEvent *e)
 				int mapj = 9-g.yMousePos/64;
 				Tile *t = grid.getTile(mapi,mapj);
 				t->addTower();
+				player.addTower(t);
+				printf("e.x: %f\n", game.enemy[0].x);
 				printf("t.numOfTowers: %i\n", t->numOfTowers);
 			}
 			return;
@@ -215,6 +218,7 @@ int X11_wrapper::check_keys(XEvent *e)
 				break;
 			case XK_s:
 				//Key 'b' was pressed
+				game.initEnemies(game.numEnemies);
 				g.gameState = PLAYING;
 				break;
 			case XK_Escape:
