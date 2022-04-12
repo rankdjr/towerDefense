@@ -6,7 +6,7 @@
 
 class Enemy {
 public:
-    float x, y; 
+    float x, y, distToEnd; 
     int width, height, health;
     float speed;
     int dir;
@@ -22,6 +22,7 @@ public:
         this->speed = speed;
         // 0= right, 1= down, 2= left, 3=up
         this->dir = dir;
+        distToEnd = 0;
         health = 100;
         alive = 1;
         texture = &enemyBasic;
