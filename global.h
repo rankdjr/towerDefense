@@ -15,8 +15,10 @@ public:
     bool buildState;
 
     Global() {
+        //
         gameState = START;
         buildState = 0;
+        //
         //map vars **update map var in TileGrid.h if changed**
         mapWidth = 10;
         mapHeight = 10;

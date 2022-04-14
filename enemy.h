@@ -1,8 +1,8 @@
 #ifndef _ENEMY_H_
 #define _ENEMY_H_
 
-#include "global.h"
-#include "draw.h"
+//#include "global.h"
+//#include "draw.h"
 
 class Enemy {
 public:
