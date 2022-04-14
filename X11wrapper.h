@@ -7,6 +7,11 @@
 #include <GL/glx.h>
 #include "global.h"
 #include "draw.h"
+<<<<<<< Updated upstream
+=======
+#include "player.h"
+#include "enemy.h"
+>>>>>>> Stashed changes
 using namespace std;
 
 // X11 setup --------------------------------------------------------------------------------------
@@ -208,8 +213,22 @@ int X11_wrapper::check_keys(XEvent *e)
 					g.gameState = PLAYING;
 					break;
 				}
+<<<<<<< Updated upstream
 				g.gameState = BUILD;
+=======
+				g.buildState = 0;
 				break;
+			case XK_s:
+				//Key 'b' was pressed
+                printf("spawn!\n");
+				game.initEnemies(game.numEnemies);
+				g.gameState = PLAYING;
+>>>>>>> Stashed changes
+				break;
+            case XK_k:
+                printf("KL!\n");
+                game.killEnemy(&game.enemy[0]);
+                break;
 			case XK_Escape:
 				//Escape key was pressed
 				return 1;
