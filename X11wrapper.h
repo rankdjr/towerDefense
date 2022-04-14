@@ -6,7 +6,7 @@
 #include <X11/extensions/Xdbe.h>
 #include <GL/glx.h>
 #include "global.h"
-#include "draw.h"
+//#include "draw.h"
 #include "player.h"
 using namespace std;
 
@@ -173,7 +173,6 @@ void X11_wrapper::check_mouse(XEvent *e)
 				Tile *t = grid.getTile(mapi,mapj);
 				t->addTower();
 				player.addTower(t);
-				printf("e.x: %f\n", game.enemy[0].x);
 				printf("t.numOfTowers: %i\n", t->numOfTowers);
 			}
 			return;

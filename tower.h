@@ -40,7 +40,7 @@ Tower::Tower(Image *img, float x, float y, int width, int height, bool active) {
 	this->width = width;
 	this->height = height;
 	this->active = active;
-	range = 200;
+	range = 175;
 	currEnemy = nullptr;
 }
 
@@ -76,15 +76,6 @@ void Tower::showRange()
 void Tower::acquireEnemy(Enemy *enemy)
 {
 	currEnemy = enemy;
-	// for (int i = 0; i < numEnemies; i++) {
-	// 	glPushMatrix();
-	// 	glBegin(GL_LINES);
-	// 		glVertex2f(x, y);
-	// 		glVertex2f(enemy[i].x, enemy[i].x);
-	// 	glEnd();
-	// 	glPopMatrix();
-	// }
-
 
 	//printf("x: %f,  y:%f\n", enemy.x, enemy.y);
 	//1. sort enemies from distance to endpoint
@@ -98,20 +89,22 @@ void Tower::acquireEnemy(Enemy *enemy)
 void Tower::attackEnemy()
 {
 	bool inRange = 1;
-	float dx = cx - currEnemy->x;
-	float dy = cy - currEnemy->y;
+	static int range = this->range*this->range;
+	float dx = cx - (currEnemy->x+24);
+	float dy = cy - (currEnemy->y+24);
 	float dist = dx*dx + dy*dy;
-	if (dist > 40000)
+	if (dist > range)
 		inRange = 0;
 	//change below if statement to while loop when implementing thread
-	if (currEnemy->alive && inRange) {
+	//if (currEnemy->alive && inRange) {
 		glPushMatrix();
 		glBegin(GL_LINES);
-			glVertex2f(x, y);
-			glVertex2f(currEnemy->x, currEnemy->y);
+			glVertex2f(cx, cy);
+			glVertex2f(currEnemy->x+24, currEnemy->y+24);
 		glEnd();
 		glPopMatrix();
-	} else {
+	//} else {
+	if (!inRange) {
 		currEnemy = nullptr;
 	}
 }

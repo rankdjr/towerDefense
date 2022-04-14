@@ -51,6 +51,7 @@ void init_graphics()
 	init_texture(&dirt);
 	//intialize tower textures
 	init_texture(&towerBasic);
+	//init_texture_alpha(&towerBasic,0,0,0);
 	//initialize enemy textures
 	init_texture(&enemyBasic);
 	//init_texture_alpha(&enemyBasic, 0, 0, 0);
