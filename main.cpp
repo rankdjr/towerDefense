@@ -26,8 +26,6 @@
 #include "game.h"
 #include "X11wrapper.h"
 
-
-
 //Function prototypes
 void physics(void);
 void render(void);
@@ -40,8 +38,6 @@ struct timespec timeStart, timeCurrent;
 struct timespec timePause;
 double physicsCountdown = 0.0;
 double timeSpan = 0.0;
-
-
 
 double timeDiff(struct timespec *start, struct timespec *end) 
 {
@@ -61,7 +57,7 @@ int main()
     initialize_fonts();
     clock_gettime(CLOCK_REALTIME, &timePause);
     clock_gettime(CLOCK_REALTIME, &timeStart);
-
+    //
 	//manually declare map
 	int map[10][10] = { 
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -146,6 +142,7 @@ void render()
             float dy = grid.endTile.y - game.enemy[i].y;
             game.enemy[i].distToEnd = dx*dx + dy*dy;
         }
+        //
         //print enemy dist to end
         // for (int i = 0; i < game.numEnemies; i++) {
         //     printf("{ %i, %f }, ", i, game.enemy[i].distToEnd);
@@ -168,23 +165,24 @@ void render()
         //
         //loop through towers and set currEnemy in each tower object
         for (long unsigned int i = 0; i < player.towers.size(); i++) {
+            static int range = player.towers[i].range*player.towers[i].range;
             if (!player.towers[i].currEnemy) {
-                for (int j = game.numEnemies; j > 0; --j) {
-                    float dx = player.towers[i].cx - game.enemy[j].x;
-                    float dy = player.towers[i].cy - game.enemy[j].y;
+                for (int j = game.numEnemies; j >= 0; --j) {
+                    float dx = player.towers[i].cx - (game.enemy[j].x+24);
+                    float dy = player.towers[i].cy - (game.enemy[j].y+24);
                     float dist = dx*dx + dy*dy;
                     //printf("{ %i, %f }, ", j, dist);
-                    if (dist < 40000) {
+                    if (dist < range) {
                         player.towers[i].acquireEnemy(&game.enemy[j]);
-                        printf("tower[%li] --> enemy[%i]\n", i, j);
+                        //printf("tower[%li] --> enemy[%i]\n", i, j);
                         j = 0;
                     }
                 }
-            } else {
-                player.towers[i].attackEnemy();
             }
         }
-        
-        //player.towers[0].acquireEnemy(&game.enemy[0]);
+        for (long unsigned int i = 0; i < player.towers.size(); i++) {
+            if (player.towers[i].currEnemy)
+                player.towers[i].attackEnemy();
+        }    
     }
 }
