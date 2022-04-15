@@ -2,14 +2,16 @@
 #define _PLAYER_H_
 
 #include <vector>
-#include "global.h"
-#include "tower.h"
-#include "tile.h"
+// #include "global.h"
+// #include "tower.h"
+// #include "tile.h"
 
 class Player {
 public:
     int hp;
     int funds;
+    char strHp[100];
+	char strFunds[100];
     std::vector<Tower> towers;
 
     Player();
@@ -32,7 +34,13 @@ void Player::addFunds(int amt)
 
 void Player::addTower(Tile *tile)
 {
-    towers.push_back(tile->tower);
+    if (funds > g.towerCost) {
+        funds -= g.towerCost;
+        tile->addTower();
+        towers.push_back(tile->tower);
+    } else {
+        printf("Build tower failed: \tInsufficient funds\n");
+    }
 }
 
 void Player::removeTower(Tile *tile)
@@ -46,7 +54,9 @@ void Player::removeTower(Tile *tile)
         if (towers[i].x == tile->x && towers[i].y == tile->y)
             towers.erase(towers.begin()+i);
     }
-    int sellCost = 0;
+    tile->tower = nullTower;
+    tile->numOfTowers--;
+    int sellCost = 10;
     funds += sellCost;
 }
 

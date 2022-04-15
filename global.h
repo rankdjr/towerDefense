@@ -2,22 +2,23 @@
 #define _GLOBAL_H_
 
 enum GameState { START = 0, BUILD, PLAYING, END };
+enum BuildState { NONE = 0, BUY, SELL};
 
 class Global {
 public:
 	int xres, yres;
     int xMousePos, yMousePos;
-    int towerWidth, towerHeight;
+    int towerWidth, towerHeight, towerCost;
     int tileWidth, tileHeight;
     int mapWidth, mapHeight;
     bool buildTower, showTowerRange;
     GameState gameState;
-    bool buildState;
+    BuildState buildState;
 
     Global() {
         //
         gameState = START;
-        buildState = 0;
+        buildState = NONE;
         //
         //map vars **update map var in TileGrid.h if changed**
         mapWidth = 10;
@@ -30,6 +31,7 @@ public:
         //tower vars
 		towerWidth = 50;
         towerHeight = 50;
+        towerCost = 10;
         buildTower = 0;
         showTowerRange = 0;
         //

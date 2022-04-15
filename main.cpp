@@ -19,10 +19,10 @@
 #include "image.h"
 #include "draw.h"
 #include "enemy.h"
-#include "player.h"
 #include "tower.h"
 #include "tile.h"
 #include "TileGrid.h"
+#include "player.h"
 #include "game.h"
 #include "X11wrapper.h"
 
@@ -64,7 +64,7 @@ int main()
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 1, 1, 1, 1, 1, 0, 0},
-		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+		{0, 0, 0, 1, 0, 0, 0, 1, 0, 0},
 		{8, 1, 1, 1, 0, 0, 0, 1, 1, 9},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -146,59 +146,35 @@ void render()
 		t->tower.showRange();
 	}
 
-	if (g.buildState == 1) {
+	if (g.buildState) {
 		//get tile based off of mouse position
 		grid.drawTileOutline();
 	}
 
     //temporary code to test if function can access enemies and towers
     if(!player.towers.empty()) {
-        //get enemies distance to end tile
-        for (int i = 0; i < game.numEnemies; i++) {
-            float dx = (grid.endTile.x + g.tileWidth)- game.enemy[i].x;
-            float dy = grid.endTile.y - game.enemy[i].y;
-            game.enemy[i].distToEnd = dx*dx + dy*dy;
-        }
-        //
-        //print enemy dist to end
-        // for (int i = 0; i < game.numEnemies; i++) {
-        //     printf("{ %i, %f }, ", i, game.enemy[i].distToEnd);
-        // }
-        // printf("\n");
-        //
-        //bubble sort enemies in descending order by distance to end tile
-        // if (g.gameState == PLAYING) {
-        //     for (int i = 0; i < game.numEnemies; i++) {
-        //         for (int j = 1; j < game.numEnemies-1; j++) {
-        //             if (game.enemy[i].distToEnd < game.enemy[j].distToEnd) {
-        //                 Enemy temp = game.enemy[j];
-        //                 game.enemy[j] = game.enemy[i];
-        //                 game.enemy[i] = temp;
-        //                 printf("swapped\n");
-        //             }
-        //         }
-        //     }   
-        // }
-        //
-        //loop through towers and set currEnemy in each tower object
-        for (long unsigned int i = 0; i < player.towers.size(); i++) {
-            static int range = player.towers[i].range*player.towers[i].range;
-            if (!player.towers[i].currEnemy) {
-                for (int j = game.numEnemies; j >= 0; --j) {
-                    float dx = player.towers[i].cx - (game.enemy[j].x+24);
-                    float dy = player.towers[i].cy - (game.enemy[j].y+24);
-                    float dist = dx*dx + dy*dy;
-                    //printf("{ %i, %f }, ", j, dist);
-                    if (dist < range) {
-                        player.towers[i].acquireEnemy(&game.enemy[j]);
-                        //printf("tower[%li] --> enemy[%i]\n", i, j);
-                        j = 0;
-                    }
-                }
-            }
-        }
-        for (long unsigned int i = 0; i < player.towers.size(); i++) {
-            if (player.towers[i].currEnemy)
-                player.towers[i].attackEnemy();
-        }    
-    }}
+        game.updateTowerActions();
+    }
+
+    //Game information rendered at top right of screen
+    //draw backdrop for text on screen
+    static int recWidth = 100;
+    static int recHeight = 60;
+    static int xpos = g.xres-recWidth-10;
+    static int ypos = g.yres-recHeight-10;
+    glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glColor4f(0, 0, 0, 0.70);
+    drawQuad(xpos, ypos, recWidth, recHeight);
+    glDisable(GL_BLEND);
+    //print game text
+    Rect r;
+	r.left = xpos+5;
+	r.bot = ypos+recHeight-25;
+	r.center = 0;
+    sprintf(player.strHp,    "Health: %i", player.hp);
+	sprintf(player.strFunds, "Gold:    %i", player.funds);
+	ggprint12(&r, 20, x11.set_color_3i(255, 255, 0), "%s", player.strHp);
+	ggprint12(&r, 20, x11.set_color_3i(255, 255, 0), "%s", player.strFunds);
+	
+}

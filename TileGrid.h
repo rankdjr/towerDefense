@@ -90,9 +90,12 @@ void TileGrid::drawTileOutline()
 	Tile tile = *grid.getTile(i, j);
 	int weight = 10; //width of outline is 10 px wide
 	int offset = tile.width - weight;
+	if (g.buildState == BUY)
+		glColor4f(1.0, 1.0, 1.0, 0.50);
+	else if (g.buildState == SELL)
+		glColor4f(0, 0, 0, 0.50);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glColor4f(1.0, 1.0, 1.0, 0.50);
 	drawQuad(tile.x,        tile.y,        weight,         tile.height);//left side
 	drawQuad(tile.x+offset, tile.y,        weight,         tile.height);//right side
 	drawQuad(tile.x+weight, tile.y+offset, offset-weight,     weight);  //top
