@@ -34,7 +34,7 @@ void initEnemies(int enemies);
 //Setup timers
 const double physicsRate = 1.0 / 30.0;
 const double oobillion = 1.0 / 1e9;
-struct timespec timeStart, timeCurrent;
+struct timespec timeStart, timeCurrent, towerAtkStart;
 struct timespec timePause;
 double physicsCountdown = 0.0;
 double timeSpan = 0.0;
@@ -57,23 +57,6 @@ int main()
     initialize_fonts();
     clock_gettime(CLOCK_REALTIME, &timePause);
     clock_gettime(CLOCK_REALTIME, &timeStart);
-    //
-	//manually declare map
-	int map[10][10] = { 
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 1, 1, 1, 1, 1, 0, 0},
-		{0, 0, 0, 1, 0, 0, 0, 1, 0, 0},
-		{8, 1, 1, 1, 0, 0, 0, 1, 1, 9},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	};
-	//initialize map
-	grid.setMap(map);
-    //game.initEnemies(game.numEnemies);
 
 	//main game loop
 	int done = 0;
@@ -95,7 +78,6 @@ int main()
             physics();
             physicsCountdown -= physicsRate;
         }
-        
 		render();            //draw things
 		x11.swapBuffers();   //make video memory visible
 		usleep(1000);        //pause to let X11 work better
