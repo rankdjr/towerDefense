@@ -157,19 +157,24 @@ void render()
     }
 
     //Game information rendered at top right of screen
-    static int recWidth = 200;
+    //draw backdrop for text on screen
+    static int recWidth = 100;
     static int recHeight = 60;
     static int xpos = g.xres-recWidth-10;
     static int ypos = g.yres-recHeight-10;
     glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glColor4f(0, 0, 0, 0.80);
+	glColor4f(0, 0, 0, 0.70);
     drawQuad(xpos, ypos, recWidth, recHeight);
     glDisable(GL_BLEND);
     //print game text
-    sprintf(player.strHp, "Health: %i", player.hp);
-	sprintf(player.strFunds, "Gold: %i", player.funds);
-	x11.set_color_3i(255,255, 255);
-	x11.drawText(xpos+10, ypos-10, player.strHp);
-	x11.drawText(xpos+10, ypos-20, player.strFunds);
+    Rect r;
+	r.left = xpos+5;
+	r.bot = ypos+recHeight-25;
+	r.center = 0;
+    sprintf(player.strHp,    "Health: %i", player.hp);
+	sprintf(player.strFunds, "Gold:    %i", player.funds);
+	ggprint12(&r, 20, x11.set_color_3i(255, 255, 0), "%s", player.strHp);
+	ggprint12(&r, 20, x11.set_color_3i(255, 255, 0), "%s", player.strFunds);
+	
 }

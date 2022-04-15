@@ -32,7 +32,7 @@ public:
 	void check_mouse(XEvent *e);
 	int check_keys(XEvent *e);
 	void drawText(int x, int y, char *text);
-	void set_color_3i(int r, int g, int b);
+	unsigned long set_color_3i(int r, int g, int b);
 } x11;
 
 
@@ -142,7 +142,7 @@ void X11_wrapper::check_resize(XEvent *e)
 	}
 }
 
-void X11_wrapper::set_color_3i(int r, int g, int b) {
+unsigned long X11_wrapper::set_color_3i(int r, int g, int b) {
 	unsigned long cref = 0L;
 	cref += r;
 	cref <<= 8;
@@ -150,6 +150,7 @@ void X11_wrapper::set_color_3i(int r, int g, int b) {
 	cref <<= 8;
 	cref += b;
 	XSetForeground(dpy, gc, cref);
+	return cref;
 }
 
 void X11_wrapper::drawText(int x, int y, char *text) {
