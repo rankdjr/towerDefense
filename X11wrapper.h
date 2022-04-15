@@ -141,21 +141,6 @@ void X11_wrapper::check_resize(XEvent *e)
 		reshape_window(xce.width, xce.height);
 	}
 }
-
-unsigned long X11_wrapper::set_color_3i(int r, int g, int b) {
-	unsigned long cref = 0L;
-	cref += r;
-	cref <<= 8;
-	cref += g;
-	cref <<= 8;
-	cref += b;
-	XSetForeground(dpy, gc, cref);
-	return cref;
-}
-
-void X11_wrapper::drawText(int x, int y, char *text) {
-	XDrawString(dpy, backBuffer, gc, x, y, text, strlen(text));
-}
 // end x11 setup --------------------------------------------------------------------------------
 //
 

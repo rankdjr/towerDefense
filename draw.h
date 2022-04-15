@@ -57,6 +57,16 @@ void init_graphics()
 	//init_texture_alpha(&enemyBasic, 0, 0, 0);
 }
 
+unsigned long set_color_3i(int r, int g, int b) {
+	unsigned long cref = 0L;
+	cref += r;
+	cref <<= 8;
+	cref += g;
+	cref <<= 8;
+	cref += b;
+	return cref;
+}
+
 void drawQuad(float x, float y, float width, float height) 
 {
 	glPushMatrix();
