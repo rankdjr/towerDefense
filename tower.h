@@ -8,6 +8,7 @@
 class Tower {
 public:
 	float x, y, cx, cy, width, height, range;
+	float dmg;
 	bool active;
 	Image *texture;
 	Enemy *currEnemy;
@@ -25,9 +26,9 @@ public:
 Tower::Tower()
 {
 	texture = &towerBasic;
-	x = y = -10; //if drawn without setting x and y, this will be a red flag
-	width = height = 50;
-	range = 150;
+	x = y = -10;
+	width = height = 0;
+	range = 0;
 	active = 0;
 }
 
@@ -41,6 +42,7 @@ Tower::Tower(Image *img, float x, float y, int width, int height, bool active) {
 	this->height = height;
 	this->active = active;
 	range = 175;
+	dmg = 0.15;
 	currEnemy = nullptr;
 }
 
@@ -76,27 +78,11 @@ void Tower::showRange()
 void Tower::setCurrEnemy(Enemy *enemy)
 {
 	currEnemy = enemy;
-
-	//printf("x: %f,  y:%f\n", enemy.x, enemy.y);
-	//1. sort enemies from distance to endpoint
-	//2. search array for furthest enemy within range and set to activeEnemy
-	//3. while enemy is in range --> fire projectile
-	//4. if enemy dies or exits range of tower, go back to 1
-	//this should loop through the entirety of the game; call before render but after physics
-
 }
 
 void Tower::attackEnemy()
 {
-	bool inRange = 1;
-	static int range = this->range*this->range;
-	float dx = cx - (currEnemy->x+24);
-	float dy = cy - (currEnemy->y+24);
-	float dist = dx*dx + dy*dy;
-	if (dist > range)
-		inRange = 0;
 	//change below if statement to while loop when implementing thread
-	//if (currEnemy->alive && inRange) {
 	glColor4ub(255,255,255,255);
 	glPushMatrix();
 	glBegin(GL_LINES);
@@ -104,9 +90,7 @@ void Tower::attackEnemy()
 		glVertex2f(currEnemy->x+24, currEnemy->y+24);
 	glEnd();
 	glPopMatrix();
-	//} else {
-	if (!inRange) {
-		currEnemy = nullptr;
-	}
+	
+	currEnemy->health -= dmg;
 }
 #endif //_TOWER_H_
