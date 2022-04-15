@@ -31,6 +31,8 @@ public:
 	void check_resize(XEvent *e);
 	void check_mouse(XEvent *e);
 	int check_keys(XEvent *e);
+	void drawText(int x, int y, char *text);
+	void set_color_3i(int r, int g, int b);
 } x11;
 
 
@@ -140,6 +142,19 @@ void X11_wrapper::check_resize(XEvent *e)
 	}
 }
 
+void X11_wrapper::set_color_3i(int r, int g, int b) {
+	unsigned long cref = 0L;
+	cref += r;
+	cref <<= 8;
+	cref += g;
+	cref <<= 8;
+	cref += b;
+	XSetForeground(dpy, gc, cref);
+}
+
+void X11_wrapper::drawText(int x, int y, char *text) {
+	XDrawString(dpy, backBuffer, gc, x, y, text, strlen(text));
+}
 // end x11 setup --------------------------------------------------------------------------------
 //
 
@@ -157,8 +172,6 @@ void X11_wrapper::check_mouse(XEvent *e)
 	}
 	//
 	if (e->type == ButtonRelease) {
-		if(g.buildTower)
-			g.buildTower = 0;
 		if(g.showTowerRange)
 			g.showTowerRange = 0;
 		return;
@@ -166,14 +179,19 @@ void X11_wrapper::check_mouse(XEvent *e)
 	if (e->type == ButtonPress) {
 		if (e->xbutton.button==1) {
 			//Left button was pressed.
-			if(!g.buildTower && g.buildState == 1) {
-				g.buildTower = 1;
+			if (g.buildState == BUY) {
 				int mapi = g.xMousePos/64;
 				int mapj = 9-g.yMousePos/64;
 				Tile *t = grid.getTile(mapi,mapj);
-				t->addTower();
 				player.addTower(t);
 				printf("t.numOfTowers: %i\n", t->numOfTowers);
+			} 
+			else if (g.buildState == SELL) {
+				int mapi = g.xMousePos/64;
+				int mapj = 9-g.yMousePos/64;
+				Tile *t = grid.getTile(mapi,mapj);
+				player.removeTower(t);
+				printf("t.numOfTowers: %i\n", t->numOfTowers);			
 			}
 			return;
 		}
@@ -208,23 +226,27 @@ int X11_wrapper::check_keys(XEvent *e)
 	if (e->type == KeyPress) {
 		switch (key) {
 			case XK_b:
-				//Key 'b' was pressed
-				if(g.buildState == 0) {
-					g.buildState = 1;
+				if(g.buildState != BUY) {
+					g.buildState = BUY;
 					break;
 				}
-				g.buildState = 0;
+				g.buildState = NONE;
 				break;
 			case XK_s:
-				//Key 's' was pressed
 				game.initEnemies(game.numEnemies);
 				g.gameState = PLAYING;
 				break;
             case XK_k:
                 game.killEnemy(&game.enemy[0]);
                 break;
+            case XK_x:
+				if(g.buildState != SELL) {
+					g.buildState = SELL;
+					break;
+				}
+				g.buildState = NONE;
+				break;
 			case XK_Escape:
-				//Escape key was pressed
 				return 1;
 		}
 	}

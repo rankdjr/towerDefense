@@ -18,7 +18,7 @@ public:
 	void setwh(int w, int h);
 	void draw();
 	void showRange();
-	void acquireEnemy(Enemy *enemy);
+	void setCurrEnemy(Enemy *enemy);
 	void attackEnemy();
 } nullTower;
 
@@ -27,7 +27,7 @@ Tower::Tower()
 	texture = &towerBasic;
 	x = y = -10; //if drawn without setting x and y, this will be a red flag
 	width = height = 50;
-	range = 200;
+	range = 150;
 	active = 0;
 }
 
@@ -73,7 +73,7 @@ void Tower::showRange()
 	glDisable(GL_BLEND);
 }
 
-void Tower::acquireEnemy(Enemy *enemy)
+void Tower::setCurrEnemy(Enemy *enemy)
 {
 	currEnemy = enemy;
 
@@ -97,12 +97,13 @@ void Tower::attackEnemy()
 		inRange = 0;
 	//change below if statement to while loop when implementing thread
 	//if (currEnemy->alive && inRange) {
-		glPushMatrix();
-		glBegin(GL_LINES);
-			glVertex2f(cx, cy);
-			glVertex2f(currEnemy->x+24, currEnemy->y+24);
-		glEnd();
-		glPopMatrix();
+	glColor4ub(255,255,255,255);
+	glPushMatrix();
+	glBegin(GL_LINES);
+		glVertex2f(cx, cy);
+		glVertex2f(currEnemy->x+24, currEnemy->y+24);
+	glEnd();
+	glPopMatrix();
 	//} else {
 	if (!inRange) {
 		currEnemy = nullptr;
