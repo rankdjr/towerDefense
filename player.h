@@ -34,10 +34,26 @@ void Player::addFunds(int amt)
 
 void Player::addTower(Tile *tile)
 {
+    if (!tile->build) {
+        printf("Invalid tile\n");
+        return;
+    }
+    
     if (funds > g.towerCost) {
-        funds -= g.towerCost;
-        tile->addTower();
-        towers.push_back(tile->tower);
+        if(tile->numOfTowers == 3) {
+            //tower limit reached
+            printf("max tower limit reached\n");
+            return;
+        } else if(tile->numOfTowers < 1) {
+            //add new tower
+            tile->addTower();        
+            towers.push_back(tile->tower);
+            funds -= g.towerCost;
+        } else {
+            //upgrade tower
+            tile->upgradeTower();
+            funds -= g.towerCost;
+        }
     } else {
         printf("Build tower failed: \tInsufficient funds\n");
     }

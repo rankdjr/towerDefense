@@ -34,7 +34,7 @@ void initEnemies(int enemies);
 //Setup timers
 const double physicsRate = 1.0 / 30.0;
 const double oobillion = 1.0 / 1e9;
-struct timespec timeStart, timeCurrent;
+struct timespec timeStart, timeCurrent, towerAtkStart;
 struct timespec timePause;
 double physicsCountdown = 0.0;
 double timeSpan = 0.0;
@@ -57,23 +57,6 @@ int main()
     initialize_fonts();
     clock_gettime(CLOCK_REALTIME, &timePause);
     clock_gettime(CLOCK_REALTIME, &timeStart);
-    //
-	//manually declare map
-	int map[10][10] = { 
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 1, 1, 1, 1, 1, 0, 0},
-		{0, 0, 0, 1, 0, 0, 0, 1, 0, 0},
-		{8, 1, 1, 1, 0, 0, 0, 1, 1, 9},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	};
-	//initialize map
-	grid.setMap(map);
-    //game.initEnemies(game.numEnemies);
 
 	//main game loop
 	int done = 0;
@@ -95,7 +78,6 @@ int main()
             physics();
             physicsCountdown -= physicsRate;
         }
-        
 		render();            //draw things
 		x11.swapBuffers();   //make video memory visible
 		usleep(1000);        //pause to let X11 work better
@@ -159,7 +141,7 @@ void render()
     //Game information rendered at top right of screen
     //draw backdrop for text on screen
     static int recWidth = 100;
-    static int recHeight = 60;
+    static int recHeight = 40;
     static int xpos = g.xres-recWidth-10;
     static int ypos = g.yres-recHeight-10;
     glEnable(GL_BLEND);
@@ -169,12 +151,11 @@ void render()
     glDisable(GL_BLEND);
     //print game text
     Rect r;
-	r.left = xpos+5;
-	r.bot = ypos+recHeight-25;
+	r.left = xpos+10;
+	r.bot = ypos+recHeight-15;
 	r.center = 0;
-    sprintf(player.strHp,    "Health: %i", player.hp);
+    sprintf(player.strHp,    "Health:  %i", player.hp);
 	sprintf(player.strFunds, "Gold:    %i", player.funds);
-	ggprint12(&r, 20, x11.set_color_3i(255, 255, 0), "%s", player.strHp);
-	ggprint12(&r, 20, x11.set_color_3i(255, 255, 0), "%s", player.strFunds);
-	
+	ggprint8b(&r, 20, set_color_3i(255, 255, 0), "%s", player.strHp);
+	ggprint8b(&r, 20, set_color_3i(255, 255, 0), "%s", player.strFunds);
 }

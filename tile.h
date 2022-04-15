@@ -21,6 +21,7 @@ public:
 	Tile(Image *img, float x, float y, float width, float height, TileType type, int dir);
 	void draw();
 	void addTower();
+	void upgradeTower();
 	
 } nullTile;
 
@@ -77,26 +78,16 @@ void Tile::draw()
 
 void Tile::addTower()
 {
-	if(!build) {
-		printf("invalid tile\n");
-		return;
-	}
+	Tower *temp = new Tower(&towerBasic, x, y, g.towerWidth, g.towerHeight, 1);
+	tower = *temp;
+	delete [] temp;
+	numOfTowers++;
+}
 
-	if(numOfTowers == 3) {
-		//tower limit reached
-		printf("max tower limit reached\n");
-		return;
-	} else if(numOfTowers < 1) {
-		//add new tower
-		Tower *temp = new Tower(&towerBasic, x, y, g.towerWidth, g.towerHeight, 1);
-		tower = *temp;
-		delete [] temp;
-		//tower = new Tower(&towerBasic, x, y, g.towerWidth, g.towerHeight);
-		numOfTowers++;
-	} else {
-		//upgrade tower
-		numOfTowers++;
-	}
+void Tile::upgradeTower()
+{
+	tower.range += 25;
+	numOfTowers++;
 }
 
 
