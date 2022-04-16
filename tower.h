@@ -42,7 +42,7 @@ Tower::Tower(Image *img, float x, float y, int width, int height, bool active) {
 	this->height = height;
 	this->active = active;
 	range = 175;
-	dmg = 0.15;
+	dmg = 0.35;
 	currEnemy = nullptr;
 }
 

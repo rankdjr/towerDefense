@@ -67,43 +67,42 @@ void Game::initEnemies(int numEnemies) {
     // }
 }
 
-void Game::pathContinues(TileGrid grid){
-    // printf("here!");
-    
+void Game::pathContinues(TileGrid grid){ 
     for (int i = 0; i<numEnemies; i++){
-        switch(enemy[i].dir){
+        switch(enemy[i].dir)
+        {
             case 0:
-            {
-            Tile *myTile = (grid.getTile((enemy[i].x/64), (int)(enemy[i].y/64)));
-            Tile *nextTileX = grid.getTile((int)(enemy[i].x/64) +1, (int)(enemy[i].y/64));
-            Tile *nextTileY = grid.getTile((int)(enemy[i].x/64) , (int)(enemy[i].y/64)+1);
-            // cout << myTile-> type;
-        if ((nextTileX->type != myTile->type) && (nextTileY-> type != myTile-> type)){ 
-            enemy[i].dir = 3;
-            // cout << "if" << endl;
-        }
-            else if ((nextTileX->type != myTile->type) && (nextTileY-> type == myTile-> type)){
-            enemy[i].dir = 1;
-            // cout << "else" << endl;    
-        }
-        
-        break;
-            }        
+                {
+                Tile *myTile = (grid.getTile((enemy[i].x/64), (int)(enemy[i].y/64)));
+                Tile *nextTileX = grid.getTile((int)(enemy[i].x/64) +1, (int)(enemy[i].y/64));
+                Tile *nextTileY = grid.getTile((int)(enemy[i].x/64) , (int)(enemy[i].y/64)+1);
+                cout << nextTileX ->type << endl;
+                if (((nextTileX->type != myTile->type) && (nextTileX->type != 2)) && (nextTileY-> type != myTile-> type))
+                {
+                    enemy[i].dir = 3;
+                }
+      
+                else if (((nextTileX->type != myTile->type) && (myTile->type !=8 && myTile->type != 9)) && (nextTileY-> type == myTile-> type))
+                {
+                    enemy[i].dir = 1;
+                }
+                break;
+                }        
             case 1:
-            {
-            Tile *myTile = (grid.getTile((enemy[i].x/64), (int)(enemy[i].y/64)));
-            Tile *nextTileX = grid.getTile((int)(enemy[i].x/64) +1, (int)(enemy[i].y/64));
-            Tile *nextTileY = grid.getTile((int)(enemy[i].x/64) , (int)(enemy[i].y/64)+1);
-            // cout << myTile-> type;
+                {
+                Tile *myTile = (grid.getTile((enemy[i].x/64), (int)(enemy[i].y/64)));
+                Tile *nextTileX = grid.getTile((int)(enemy[i].x/64) +1, (int)(enemy[i].y/64));
+                Tile *nextTileY = grid.getTile((int)(enemy[i].x/64) , (int)(enemy[i].y/64)+1);
+  
             if (((nextTileY->type != myTile->type) && myTile->type !=8) && (nextTileX->type == myTile->type)){
                 
                 enemy[i].dir = 0;
-                cout << "if" << endl;
+           
             }
             else if (((nextTileY->type != myTile->type) && myTile->type !=8) && (nextTileX-> type != myTile->type))
                     {
                     enemy[i].dir = 2;
-                    cout << "else" << endl;
+            
                     }
         break;
             }                
@@ -113,11 +112,10 @@ void Game::pathContinues(TileGrid grid){
             {                    
             Tile *myTile = (grid.getTile((enemy[i].x/64), (int)(enemy[i].y/64)));
             Tile *nextTileX = grid.getTile((int)(enemy[i].x/64)-1 , (int)(enemy[i].y/64));
-            // cout << myTile-> type;
+           
             
             if ((nextTileX->type != myTile->type) && myTile->type !=8){
                 enemy[i].dir++;
-                cout << "left" << endl;
             }
             
         break;
@@ -125,16 +123,21 @@ void Game::pathContinues(TileGrid grid){
 
         case 3:
             {
-            Tile *myTile = (grid.getTile((enemy[i].x/64), (int)(enemy[i].y/64)));
-            Tile *nextTileY = grid.getTile((int)(enemy[i].x/64) , (int)(enemy[i].y/64)-1);
-            cout << myTile-> type << endl;
-            cout << nextTileY->type << endl;
-            if ((nextTileY->type != myTile->type) && myTile->type !=8){
-                enemy[i].dir = 0;
-                cout << "down" << endl;
+            Tile *myTile = (grid.getTile((enemy[i].x/64), (int)((enemy[i].y)/64)));
+            Tile *nextTileX  = grid.getTile((int)(enemy[i].x/64)+1 , (int)(enemy[i].y/64));
+            Tile *nextTileY = grid.getTile((int)(enemy[i].x/64) , (int)((enemy[i].y + 48)/64)-1);
+     
+            
+            if (((nextTileY->type != myTile->type) && (myTile->type != 8 && myTile ->type != 9)) && (nextTileX->type == myTile->type)){
+               
+                enemy[i].dir = 0;  
             }
+            else if (((nextTileY->type != myTile->type) && (myTile->type !=8 && myTile->type!= 9)) && (nextTileX-> type != myTile->type))
+                    {
+                    enemy[i].dir = 2;
+                    }
         break;
-            }
+            } 
 
 
         }
@@ -155,6 +158,8 @@ void Game::killEnemy(Enemy *enemy)
     enemy->x = -100;
     enemy->y = -100;
 }
+
+
 
 void Game::sortEnemiesByDistance()
 {
