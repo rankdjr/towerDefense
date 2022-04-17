@@ -39,8 +39,8 @@ void init_texture_alpha(Image *img, int r, int g, int b)
 	glBindTexture(GL_TEXTURE_2D, img->texid);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, img->width, img->height, 0,
-							GL_RGB, GL_UNSIGNED_BYTE, alphaData);
+	glTexImage2D(GL_TEXTURE_2D, 0, 4, img->width, img->height, 0,
+							GL_RGBA, GL_UNSIGNED_BYTE, alphaData);
 	delete alphaData;
 }
 
@@ -50,11 +50,9 @@ void init_graphics()
 	init_texture(&grass);
 	init_texture(&dirt);
 	//intialize tower textures
-	init_texture(&towerBasic);
-	//init_texture_alpha(&towerBasic,0,0,0);
+	init_texture_alpha(&towerBasic,0,0,0);
 	//initialize enemy textures
-	init_texture(&enemyBasic);
-	//init_texture_alpha(&enemyBasic, 0, 0, 0);
+	init_texture_alpha(&enemyBasic, 0, 0, 0);
 }
 
 unsigned long set_color_3i(int r, int g, int b) {

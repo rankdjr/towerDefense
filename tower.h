@@ -61,8 +61,18 @@ void Tower::setwh(int w, int h)
 void Tower::draw()
 {
 	//x and y offset is used to center tower to tile
+	//set an alpha channel
+	//https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glAlphaFunc.xml
+	glEnable(GL_ALPHA_TEST);
+	//
+	//transparent if alpha value is greater than 0.0
+	glAlphaFunc(GL_GREATER, 0.0f);
+	//
+	//Set 4-channels of color intensity
+	glColor4ub(255,255,255,255);
 	int offset = 7;
 	drawQuadTex(*texture, x+offset, y+offset, width, height);
+	glDisable(GL_ALPHA_TEST);
 }
 
 void Tower::showRange()

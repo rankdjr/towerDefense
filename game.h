@@ -76,7 +76,7 @@ void Game::pathContinues(TileGrid grid){
                 Tile *myTile = (grid.getTile((enemy[i].x/64), (int)(enemy[i].y/64)));
                 Tile *nextTileX = grid.getTile((int)(enemy[i].x/64) +1, (int)(enemy[i].y/64));
                 Tile *nextTileY = grid.getTile((int)(enemy[i].x/64) , (int)(enemy[i].y/64)+1);
-                cout << nextTileX ->type << endl;
+                //cout << nextTileX ->type << endl;
                 if (((nextTileX->type != myTile->type) && (nextTileX->type != 2)) && (nextTileY-> type != myTile-> type))
                 {
                     enemy[i].dir = 3;
