@@ -30,21 +30,12 @@ public:
 
     void Draw() {
         //draw sprite texture
-        //set an alpha channel
-        //https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glAlphaFunc.xml
-        glEnable(GL_ALPHA_TEST);
-        //
-        //transparent if alpha value is greater than 0.0
-        glAlphaFunc(GL_GREATER, 0.0f);
-        //
-        //Set 4-channels of color intensity
-        glColor4ub(255,255,255,255);
-        //set white background to make sure colors are accurate
-        glColor3ub(255,255,255);
-        drawQuadTex(*texture,x,y,width,height);
-        glDisable(GL_ALPHA_TEST);
-
-        
+        float tx1 = 0.0f;
+        float tx2 = 1.0f;
+        float ty1 = 0.0f;
+	    float ty2 = 1.0f;
+        drawQuadTexAlpha(*texture, x, y, tx1, tx2, ty1, ty2, width, height);
+                
         //draw health bar
         int xpos = x;
         int ypos = y+height+5;
