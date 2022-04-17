@@ -61,18 +61,17 @@ void Tower::setwh(int w, int h)
 void Tower::draw()
 {
 	//x and y offset is used to center tower to tile
-	//set an alpha channel
-	//https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glAlphaFunc.xml
-	glEnable(GL_ALPHA_TEST);
-	//
-	//transparent if alpha value is greater than 0.0
-	glAlphaFunc(GL_GREATER, 0.0f);
-	//
-	//Set 4-channels of color intensity
-	glColor4ub(255,255,255,255);
 	int offset = 7;
-	drawQuadTex(*texture, x+offset, y+offset, width, height);
-	glDisable(GL_ALPHA_TEST);
+	static int frameNo = 1;
+	float tx1 = 0.0f + (float)((frameNo-1) % 11) * (1.0f/11.0f);
+	float tx2 = tx1 + (1.0f/11.0f);
+	float ty1 = 0.0f;
+	float ty2 = 1.0f;
+	if(frameNo < 11)
+		frameNo++;
+	else
+		frameNo = 0;
+	drawQuadTexAlpha(*texture, x+offset, y+offset, tx1, tx2, ty1, ty2, width, height);
 }
 
 void Tower::showRange()
@@ -93,10 +92,10 @@ void Tower::setCurrEnemy(Enemy *enemy)
 void Tower::attackEnemy()
 {
 	//change below if statement to while loop when implementing thread
-	glColor4ub(255,255,255,255);
+	glColor4ub(255,0,255,255);
 	glPushMatrix();
 	glBegin(GL_LINES);
-		glVertex2f(cx, cy);
+		glVertex2f(cx, cy+18);
 		glVertex2f(currEnemy->x+24, currEnemy->y+24);
 	glEnd();
 	glPopMatrix();
