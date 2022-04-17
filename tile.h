@@ -4,7 +4,7 @@
 #include "image.h"
 #include "draw.h"
 
-enum TileType {grassType, dirtType};
+enum TileType {grassType, dirtType, endType};
 
 class Tile {
 public:

@@ -1,4 +1,4 @@
-//modified by: Douglas Rank
+//modified   by: Douglas Rank
 //date: Spring of 2022
 //
 // Credit to Gordon Griesel for X11 code, libggfontsa, timers.cpp, and timers.h
@@ -70,6 +70,17 @@ int main()
 		}
         //
         game.pathContinues(grid);
+        
+        for (int i =0; i<game.numEnemies; i++)
+        {
+            Tile *myTile = (grid.getTile((game.enemy[i].x/64), (int)(game.enemy[i].y/64)));
+            if ( myTile -> type == 2)
+            {
+               game.killEnemy(&game.enemy[i]);
+               player.updateHP(1);
+            }
+        } 
+       
         clock_gettime(CLOCK_REALTIME, &timeCurrent);
         timeSpan = timeDiff(&timeStart, &timeCurrent);
         timeCopy(&timeStart, &timeCurrent);

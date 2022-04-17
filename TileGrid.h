@@ -55,7 +55,7 @@ void TileGrid::setMap(int newMap[][10])
 					break;
 				case 9:
 					//end tile
-					map[i][j] = Tile(&dirt, i*64, j*64, 64, 64, dirtType);
+					map[i][j] = Tile(&dirt, i*64, j*64, 64, 64, endType);
 					endTile = map[i][j];
 					break;
 				default:
