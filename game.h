@@ -45,7 +45,7 @@ Game::Game() {
     // towerAtkCountdown = 0;
     //
     //enemy vars
-    numEnemies = 4;
+    numEnemies = 10;
 }   
 
 void Game::initEnemies(int numEnemies) {  
