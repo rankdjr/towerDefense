@@ -75,10 +75,10 @@ void TileGrid::draw()
 {
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
-			Tile t = map[i][j];
-			drawQuadTex(*t.texture, t.x, t.y, t.width, t.height);
-			if (t.numOfTowers)
-				t.tower.draw();
+			Tile *t = &map[i][j];
+			drawQuadTex(*(t->texture), t->x, t->y, t->width, t->height);
+			if (t->numOfTowers)
+				t->tower.draw();
 		}
 	}
 }
