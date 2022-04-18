@@ -10,20 +10,22 @@ class Game {
 public:
     int (*currMap)[10];
     int numEnemies;
-    //std::vector<Enemy> enemy;
     Enemy enemy[30];
     
-    //struct timespec timeCurrent, towerAtkStart;
-    //double towerAtkTimeSpan, towerAtkCountdown;
     Game();
     void initEnemies(int);
     void killEnemy(Enemy *enemy);
     void pathContinues(TileGrid grid);
     void sortEnemiesByDistance();
+    void updateTowerCurrEnemy();
     void updateTowerActions();
 } game;
 
 Game::Game() {
+    //
+    //enemy vars
+    numEnemies = 10;
+    //
     //map vars
     int map[10][10] = { 
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -39,32 +41,35 @@ Game::Game() {
 	};
     currMap = map;
     grid.setMap(currMap);
-    //
-    //tower vars
-    // towerAtkTimeSpan = 0;
-    // towerAtkCountdown = 0;
-    //
-    //enemy vars
-    numEnemies = 10;
 }   
 
-void Game::initEnemies(int numEnemies) {  
-    for( int i = 0; i<numEnemies; i++){
+void Game::initEnemies(int numEnemies) { 
+    // static int i = 0;
+    // if (i < numEnemies) {
+    //     enemy[i].x = grid.startTile.x;
+    //     enemy[i].y = grid.startTile.y;
+    //     enemy[i].width = 48;
+    //     enemy[i].height = 48;
+    //     enemy[i].speed = 0.5+(0.025*i);
+    //     enemy[i].health = 100;
+    //     enemy[i].dir = 0;
+    //     enemy[i].alive =1;
+    //     i++;
+    // } else {
+    //     i = 0;
+    // }
+
+
+    for( int i = 0; i<numEnemies; i++) {
         enemy[i].x = grid.startTile.x;
         enemy[i].y = grid.startTile.y;
         enemy[i].width = 48;
         enemy[i].height = 48;
-        enemy[i].speed = 0.5+(0.10*i);
+        enemy[i].speed = 0.5+(0.025*i);
         enemy[i].health = 100;
         enemy[i].dir = 0;
         enemy[i].alive =1;
     }
-
-    // for( int i = 0; i<numEnemies; i++){
-    //     float speed = 0.5+(0.10*i);
-    //     Enemy newEnemy = Enemy(grid.startTile.x, grid.startTile.y, speed, 0);
-    //     enemy.push_back(newEnemy);
-    // }
 }
 
 void Game::pathContinues(TileGrid grid){ 
@@ -146,11 +151,6 @@ void Game::pathContinues(TileGrid grid){
 
 void Game::killEnemy(Enemy *enemy)
 {   
-    // printf("ne,  %p\n", &nullEnemy);
-    // printf("ee,  %p\n", enemy);
-    // enemy = &nullEnemy;
-    // printf("eef, %p\n", enemy);
-
     enemy->width = 0;
     enemy->height = 0;
     enemy->alive = 0;
@@ -158,8 +158,6 @@ void Game::killEnemy(Enemy *enemy)
     enemy->x = -100;
     enemy->y = -100;
 }
-
-
 
 void Game::sortEnemiesByDistance()
 {
@@ -185,55 +183,57 @@ void Game::sortEnemiesByDistance()
     }
 }
 
-void Game::updateTowerActions()
+void Game::updateTowerCurrEnemy()
 {
-    //Loop though towers and set current enemy for any towers that have no target
+    //loop through towers and update all nullptr enemies to active enemies
     for (long unsigned int i = 0; i < player.towers.size(); i++) {
-        //set static range value for current tower
-        int range = player.towers[i].range*player.towers[i].range;
         if (player.towers[i].currEnemy != nullptr) {
-            //if currEnemy has already be targeted, attack target until target is out of range or no longer alive
-            float dx = player.towers[i].cx - ((player.towers[i].currEnemy->x)+24);
-            float dy = player.towers[i].cy - ((player.towers[i].currEnemy->y)+24);
-            float dist = dx*dx + dy*dy;
-            if (dist < range) {
-                //printf("range: %i,  dist: %f\n", range, dist);
-                //printf("%p\n",player.towers[i].currEnemy);
-                player.towers[i].attackEnemy();     
-                if (player.towers[i].currEnemy->health <= 0) {
-                    game.killEnemy(player.towers[i].currEnemy);
-                    player.towers[i].currEnemy = nullptr;
-                }
-
-                //temporary code to test "zap" style attack
-                // clock_gettime(CLOCK_REALTIME, &timeCurrent);
-                // towerAtkTimeSpan = timeDiff(&towerAtkStart, &timeCurrent);
-                // timeCopy(&towerAtkStart, &timeCurrent);
-                // towerAtkCountdown += towerAtkTimeSpan;
-                // printf("%f\n", towerAtkCountdown);
-                // if(towerAtkCountdown >= 1.5) {
-                //     player.towers[i].attackEnemy();
-                //     towerAtkCountdown = 0;
-                // }
-            }
-            else {
-                //enemy is out of range
-                player.towers[i].currEnemy = nullptr;
-            }
-        } 
-        else {
-            //if current tower has not target, then find and select target
-            //loop through sorted enemy array and look for first enemy in range
+            //skip logic as tower will select new target unnecessarily
+        } else {
             sortEnemiesByDistance();
             for (int j = numEnemies; j >= 0; --j) {
                 float dx = player.towers[i].cx - (enemy[j].x+24);
                 float dy = player.towers[i].cy - (enemy[j].y+24);
-                float dist = dx*dx + dy*dy;
+                float dist = sqrt(dx*dx + dy*dy);
                 //printf("{ %i, %f }, ", j, dist);
-                if (dist < range) {
+                if (dist < player.towers[i].range) {
                     player.towers[i].setCurrEnemy(&enemy[j]);
-                    //printf("tower[%li] --> enemy[%i]\n", i, j);
+                    //printf("NAE  --  tower[%li] --> enemy[%i]\n", i, j);
                     j = 0;
+                }
+            }
+        }
+    }
+}
+
+void Game::updateTowerActions()
+{
+    updateTowerCurrEnemy();
+    //Loop though towers and set current enemy for any towers that have no target
+    for (long unsigned int i = 0; i < player.towers.size(); i++) {
+        //tower has a currEnemy; reset enemy if out of range or dead, otherwise attack
+        if (player.towers[i].currEnemy) {
+            float dx = player.towers[i].cx - ((player.towers[i].currEnemy->x)+24);
+            float dy = player.towers[i].cy - ((player.towers[i].currEnemy->y)+24);
+            float dist = sqrt(dx*dx + dy*dy);
+            if (dist > player.towers[i].range) {
+                //enemy is out of range, reset curr enemy ptr
+                //
+                // printf("OOR tower[%li]\t--  range: %f,  dist: %f\n", i, player.towers[i].range, dist);
+                // printf("              \t--  tx: %f, ty: %f,  ex: %f, ey: %f\n", 
+                //                                                                player.towers[i].cx, 
+                //                                                                player.towers[i].cy, 
+                //                                                                player.towers[i].currEnemy->x, 
+                //                                                                player.towers[i].currEnemy->y);
+                //
+                player.towers[i].currEnemy = nullptr;
+            } else {
+                //tower has a currEnemy; reset enemy if out of range or dead, otherwise attack
+                player.towers[i].attackEnemy();
+                if (player.towers[i].currEnemy->health < 0) {
+                    //printf("EK\t--  range: %f,  dist: %f\n", player.towers[i].range, dist);
+                    game.killEnemy(player.towers[i].currEnemy);
+                    player.towers[i].currEnemy = nullptr;
                 }
             }
         }
