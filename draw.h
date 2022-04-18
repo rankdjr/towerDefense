@@ -39,8 +39,8 @@ void init_texture_alpha(Image *img, int r, int g, int b)
 	glBindTexture(GL_TEXTURE_2D, img->texid);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, img->width, img->height, 0,
-							GL_RGB, GL_UNSIGNED_BYTE, alphaData);
+	glTexImage2D(GL_TEXTURE_2D, 0, 4, img->width, img->height, 0,
+							GL_RGBA, GL_UNSIGNED_BYTE, alphaData);
 	delete alphaData;
 }
 
@@ -50,11 +50,9 @@ void init_graphics()
 	init_texture(&grass);
 	init_texture(&dirt);
 	//intialize tower textures
-	init_texture(&towerBasic);
-	//init_texture_alpha(&towerBasic,0,0,0);
+	init_texture_alpha(&towerBasic,0,0,0);
 	//initialize enemy textures
-	init_texture(&enemyBasic);
-	//init_texture_alpha(&enemyBasic, 0, 0, 0);
+	init_texture_alpha(&enemyBasic, 0, 0, 0);
 }
 
 unsigned long set_color_3i(int r, int g, int b) {
@@ -97,7 +95,8 @@ void drawQuadTex(Image img, float x, float y, float width, float height)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void drawQuadTexAlpha(Image img, float x, float y, float width, float height) 
+void drawQuadTexAlpha(Image img, float x, float y, float tx1, float tx2, 
+						float ty1, float ty2, float width, float height) 
 {
 	//draw texture to quad with alpha channel
 	glEnable(GL_ALPHA_TEST);
@@ -107,10 +106,10 @@ void drawQuadTexAlpha(Image img, float x, float y, float width, float height)
 	glPushMatrix();
     glTranslatef(x, y, 0);
 	glBegin(GL_QUADS);
-		glTexCoord2f(0, 1); glVertex2i(0,     0);
-		glTexCoord2f(0, 0); glVertex2i(0,     height);
-		glTexCoord2f(1, 0); glVertex2i(width, height);
-		glTexCoord2f(1, 1); glVertex2i(width, 0);
+		glTexCoord2f(tx1, ty2); glVertex2i(0,     0);
+		glTexCoord2f(tx1, ty1); glVertex2i(0,     height);
+		glTexCoord2f(tx2, ty1); glVertex2i(width, height);
+		glTexCoord2f(tx2, ty2); glVertex2i(width, 0);
 	glEnd();
 	glPopMatrix();
 	glBindTexture(GL_TEXTURE_2D, 0);

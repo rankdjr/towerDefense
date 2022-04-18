@@ -10,8 +10,10 @@ public:
 	float x, y, cx, cy, width, height, range;
 	float dmg;
 	bool active;
+	int frameNo;
 	Image *texture;
 	Enemy *currEnemy;
+	struct timespec frameStart, currentTime;
 
 	Tower();
 	Tower(Image *img, float x, float y, int width, int height, bool active);
@@ -44,6 +46,8 @@ Tower::Tower(Image *img, float x, float y, int width, int height, bool active) {
 	range = 175;
 	dmg = 0.35;
 	currEnemy = nullptr;
+	frameNo = 1;
+	clock_gettime(CLOCK_REALTIME, &frameStart);
 }
 
 void Tower::setxy(int x, int y)
@@ -60,9 +64,27 @@ void Tower::setwh(int w, int h)
 
 void Tower::draw()
 {
-	//x and y offset is used to center tower to tile
+	//offset is used to center tower to tile
+	//tx and ty vars are used to map the frames of the sprite sheet
 	int offset = 7;
-	drawQuadTex(*texture, x+offset, y+offset, width, height);
+	float tx1 = 0.0f + (float)((frameNo-1) % 11) * (1.0f/11.0f);
+	float tx2 = tx1 + (1.0f/11.0f);
+	float ty1 = 0.0f;
+	float ty2 = 1.0f;
+	
+	//timespec to control framerate
+	static double diff = 0;
+	static const double framerate = 0.075;
+	clock_gettime(CLOCK_REALTIME, &currentTime);
+	diff = timeDiff(&frameStart, &currentTime);
+	if (diff > framerate) {
+		frameNo++;
+		timeCopy(&frameStart, &currentTime);
+	}
+	if (frameNo >= 11)
+		frameNo = 0;
+
+	drawQuadTexAlpha(*texture, x+offset, y+offset, tx1, tx2, ty1, ty2, width, height);
 }
 
 void Tower::showRange()
@@ -82,11 +104,10 @@ void Tower::setCurrEnemy(Enemy *enemy)
 
 void Tower::attackEnemy()
 {
-	//change below if statement to while loop when implementing thread
-	glColor4ub(255,255,255,255);
+	glColor4ub(255,0,255,255);
 	glPushMatrix();
 	glBegin(GL_LINES);
-		glVertex2f(cx, cy);
+		glVertex2f(cx, cy+18);
 		glVertex2f(currEnemy->x+24, currEnemy->y+24);
 	glEnd();
 	glPopMatrix();

@@ -30,8 +30,12 @@ public:
 
     void Draw() {
         //draw sprite texture
-        drawQuadTex(*texture,x,y,width,height);
-        
+        float tx1 = 0.0f;
+        float tx2 = 1.0f;
+        float ty1 = 0.0f;
+	    float ty2 = 1.0f;
+        drawQuadTexAlpha(*texture, x, y, tx1, tx2, ty1, ty2, width, height);
+                
         //draw health bar
         int xpos = x;
         int ypos = y+height+5;

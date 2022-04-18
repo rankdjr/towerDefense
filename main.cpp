@@ -14,6 +14,7 @@
 #include <cstring>
 #include <GL/glx.h>
 #include <math.h>
+#include "timers.h"
 #include "fonts.h"
 #include "global.h"
 #include "image.h"
@@ -32,7 +33,7 @@ void render(void);
 void initEnemies(int enemies);
 
 //Setup timers
-const double physicsRate = 1.0 / 30.0;
+const double physicsRate = 1.0 / 60.0;
 const double oobillion = 1.0 / 1e9;
 struct timespec timeStart, timeCurrent, towerAtkStart;
 struct timespec timePause;
