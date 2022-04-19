@@ -6,6 +6,7 @@
 class TileGrid {
 public:
 	int width, height;
+	int pathDist;
 	Tile startTile, endTile;
 	Tile map[10][10]; //**update global vars if changed**
 
