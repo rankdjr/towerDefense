@@ -77,8 +77,6 @@ void TileGrid::draw()
 		for (int j = 0; j < width; j++) {
 			Tile *t = &map[i][j];
 			drawQuadTex(*(t->texture), t->x, t->y, t->width, t->height);
-			if (t->numOfTowers)
-				t->tower.draw();
 		}
 	}
 }
@@ -88,7 +86,7 @@ void TileGrid::drawTileOutline()
 	int i = g.xMousePos/g.tile_pxSize;
 	int j = 9-g.yMousePos/g.tile_pxSize;
 	Tile tile = *grid.getTile(i, j);
-	int weight = 10; //width of outline is 10 px wide
+	int weight = 6; //width of outline is 10 px wide
 	int offset = tile.width - weight;
 	if (g.buildState == BUY)
 		glColor4f(1.0, 1.0, 1.0, 0.50);
