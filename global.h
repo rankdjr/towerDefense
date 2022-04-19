@@ -29,8 +29,8 @@ public:
         tileHeight = 64;
         //
         //tower vars
-		towerWidth = 50;
-        towerHeight = 50;
+		towerWidth = 60;
+        towerHeight = 60;
         towerCost = 10;
         buildTower = 0;
         showTowerRange = 0;

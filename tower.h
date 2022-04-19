@@ -66,11 +66,11 @@ void Tower::draw()
 {
 	//offset is used to center tower to tile
 	//tx and ty vars are used to map the frames of the sprite sheet
-	int offset = 7;
+	static const float offset = (g.tileWidth-g.towerWidth)/2.0f;
 	float tx1 = 0.0f + (float)((frameNo-1) % 11) * (1.0f/11.0f);
 	float tx2 = tx1 + (1.0f/11.0f);
-	float ty1 = 0.0f;
-	float ty2 = 1.0f;
+	static const float ty1 = 0.0f;
+	static const float ty2 = 1.0f;
 	
 	//timespec to control framerate
 	static double diff = 0;
@@ -82,7 +82,7 @@ void Tower::draw()
 		timeCopy(&frameStart, &currentTime);
 	}
 	if (frameNo >= 11)
-		frameNo = 0;
+		frameNo = 1;
 
 	drawQuadTexAlpha(*texture, x+offset, y+offset, tx1, tx2, ty1, ty2, width, height);
 }
