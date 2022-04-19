@@ -2,9 +2,6 @@
 #define _PLAYER_H_
 
 #include <vector>
-// #include "global.h"
-// #include "tower.h"
-// #include "tile.h"
 
 class Player {
 public:
@@ -12,12 +9,13 @@ public:
     int funds;
     char strHp[100];
 	char strFunds[100];
+    int towerHash[99];
     std::vector<Tower> towers;
 
     Player();
     void addFunds(int amt);
-    void addTower(Tile *tile);
-    void removeTower(Tile *tile);
+    void addTower(float x, float y);
+    void removeTower(float x, float y);
     void updateHP(int dmg);
 } player;
 
@@ -25,6 +23,8 @@ Player::Player()
 {
     hp = 10;
     funds = 100;
+    for (int i = 0; i < 99; i++)
+        towerHash[i] = 0;
 }
 
 void Player::addFunds(int amt)
@@ -32,46 +32,51 @@ void Player::addFunds(int amt)
     funds += amt;
 }
 
-void Player::addTower(Tile *tile)
+void Player::addTower(float x, float y)
 {
-    if (!tile->build) {
+    int mapi = g.xMousePos/g.tile_pxSize;
+    int mapj = 9-g.yMousePos/g.tile_pxSize;
+    Tile towerTile = *(grid.getTile(mapi, mapj));
+    if (!towerTile.build) {
         printf("Invalid tile\n");
         return;
     }
     
-    if (funds > g.towerCost) {
-        if(tile->numOfTowers == 3) {
-            //tower limit reached
-            printf("max tower limit reached\n");
-            return;
-        } else if(tile->numOfTowers < 1) {
-            //add new tower
-            tile->addTower();        
-            towers.push_back(tile->tower);
-            funds -= g.towerCost;
-        } else {
-            //upgrade tower
-            tile->upgradeTower();
-            funds -= g.towerCost;
-        }
-    } else {
+    if (funds < g.towerCost) {
         printf("Build tower failed: \tInsufficient funds\n");
+        return;
     }
+    int key = mapi*10 + mapj;
+    bool towerExists = towerHash[key];
+    if (!towerExists) {
+        //add new tower and update hashtable
+        towerHash[key] = towers.size(); // save curr index of vector to hash map
+        towers.push_back(Tower(&towerBasic, towerTile.x, towerTile.y));
+        funds -= g.towerCost;
+    } else {
+        
+        // switch (towerIndex)
+        // {
+        // case 0:
+        //     towerHash[key] = towers.size(); // save curr index of vector to hash map
+        //     towers.push_back(Tower(&towerBasic, x, y));
+        //     funds -= g.towerCost;
+        //     break;
+        
+        // default:
+        //     break;
+        // }
+    }
+       
 }
 
-void Player::removeTower(Tile *tile)
+void Player::removeTower(float x, float y)
 {
-    if (towers.empty())
-        return;
-    //
     //loop through towers and find matching x,y to tile paramater
     //once match is found, remove from vector and add funds to player
-    for (long unsigned int i = 0; i < towers.size(); i++) {
-        if (towers[i].x == tile->x && towers[i].y == tile->y)
-            towers.erase(towers.begin()+i);
-    }
-    tile->tower = nullTower;
-    tile->numOfTowers--;
+
+    //todo list code here
+
     int sellCost = 10;
     funds += sellCost;
 }
