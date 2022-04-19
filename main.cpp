@@ -28,6 +28,8 @@
 #include "X11wrapper.h"
 
 //Function prototypes
+void doGameLogic(void);
+void applyPhysics(void);
 void physics(void);
 void render(void);
 void initEnemies(int enemies);
@@ -59,6 +61,7 @@ int main()
     clock_gettime(CLOCK_REALTIME, &timePause);
     clock_gettime(CLOCK_REALTIME, &timeStart);
 
+    printf("%li", sizeof(Tower));
 	//main game loop
 	int done = 0;
 	while (!done) {
@@ -70,32 +73,42 @@ int main()
 			done = x11.check_keys(&e);
 		}
         //
-        game.pathContinues(grid);
-        
-        for (int i = 0; i<game.numEnemies; i++)
-        {
-            Tile *myTile = (grid.getTile((game.enemy[i].x/g.tile_pxSize), (int)(game.enemy[i].y/g.tile_pxSize)));
-            if ( myTile -> type == 2)
-            {
-               game.killEnemy(&game.enemy[i]);
-               player.updateHP(1);
-            }
-        } 
-       
-        clock_gettime(CLOCK_REALTIME, &timeCurrent);
-        timeSpan = timeDiff(&timeStart, &timeCurrent);
-        timeCopy(&timeStart, &timeCurrent);
-        physicsCountdown += timeSpan;
-        while(physicsCountdown >= physicsRate) {
-            physics();
-            physicsCountdown -= physicsRate;
-        }
-		render();            //draw things
-		x11.swapBuffers();   //make video memory visible
-		usleep(1000);        //pause to let X11 work better
+        doGameLogic();      //function to hold game logic
+        applyPhysics();     //apply physics at consistent rate
+		render();           //draw things
+		x11.swapBuffers();  //make video memory visible
+		usleep(1000);       //pause to let X11 work better
 	}
     cleanup_fonts();
 	return 0;
+}
+
+void doGameLogic()
+{
+    game.updateTowerActions();
+    game.pathContinues(grid);
+    
+    for (int i = 0; i<game.numEnemies; i++)
+    {
+        Tile *myTile = (grid.getTile((game.enemy[i].x/g.tile_pxSize), (int)(game.enemy[i].y/g.tile_pxSize)));
+        if ( myTile -> type == 2)
+        {
+            game.killEnemy(&game.enemy[i]);
+            player.updateHP(1);
+        }
+    } 
+}
+
+void applyPhysics()
+{
+    clock_gettime(CLOCK_REALTIME, &timeCurrent);
+    timeSpan = timeDiff(&timeStart, &timeCurrent);
+    timeCopy(&timeStart, &timeCurrent);
+    physicsCountdown += timeSpan;
+    while(physicsCountdown >= physicsRate) {
+        physics();
+        physicsCountdown -= physicsRate;
+    }
 }
 
 void physics()
@@ -104,6 +117,7 @@ void physics()
     {
         for (int i = 0; i<game.numEnemies; i++)
         {
+            game.enemy[i].distToEnd = grid.pathDist - game.enemy[i].speed;
             switch(game.enemy[i].dir)
             { 
                 case 0:
@@ -127,28 +141,34 @@ void physics()
 
 void render()
 {
+    //draw map
 	grid.draw();
 
+    //draw enemies
     for(int i = 0; i<game.numEnemies; i++){
         game.enemy[i].draw();
     }
 
+    //draw towers
+    if(!player.towers.empty()) {
+        for (int i = 0; i < (int)player.towers.size(); i++) {
+            player.towers[i].draw();                
+        }
+    }
+
+    //show tower range; flag set in x11.checkMouse() (3)right-click
 	if (g.showTowerRange) {
 		int mapi = g.xMousePos/g.tile_pxSize;
 		int mapj = 9-g.yMousePos/g.tile_pxSize;
 		Tile *t = grid.getTile(mapi,mapj);
-		t->tower.showRange();
+		//t->tower.showRange();
 	}
 
+    //show tile outlines; flag set in x11.checkKeys() (b)build/(s)sell
 	if (g.buildState) {
 		//get tile based off of mouse position
 		grid.drawTileOutline();
 	}
-
-    //temporary code to test if function can access enemies and towers
-    if(!player.towers.empty()) {
-        game.updateTowerActions();
-    }
 
     //Game information rendered at top right of screen
     //draw backdrop for text on screen
