@@ -16,7 +16,7 @@ public:
 	struct timespec frameStart, currentTime;
 
 	Tower();
-	Tower(Image *img, float x, float y, int size, bool active);
+	Tower(Image *img, float x, float y);
 	void setxy(int x, int y);
 	void setwh(int w, int h);
 	void draw();
@@ -34,15 +34,15 @@ Tower::Tower()
 	active = 0;
 }
 
-Tower::Tower(Image *img, float x, float y, int size, bool active) {
+Tower::Tower(Image *img, float x, float y) {
 	texture = img;
 	this->x = x;
 	this->y = y;
 	cx = x+g.tile_pxSize/2;
 	cy = y+g.tile_pxSize/2;
-	this->width = size;
-	this->height = size;
-	this->active = active;
+	this->width = g.tower_pxSize;
+	this->height = g.tower_pxSize;
+	this->active = 1;
 	range = 175;
 	dmg = 0.35;
 	currEnemy = nullptr;

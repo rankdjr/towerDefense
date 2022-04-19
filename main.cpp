@@ -130,7 +130,7 @@ void render()
 	grid.draw();
 
     for(int i = 0; i<game.numEnemies; i++){
-        game.enemy[i].Draw();
+        game.enemy[i].draw();
     }
 
 	if (g.showTowerRange) {

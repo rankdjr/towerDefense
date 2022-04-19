@@ -17,8 +17,8 @@ public:
 	int dir;
 	
 	Tile();
-	Tile(Image *img, float x, float y, float width, float height, TileType type);
-	Tile(Image *img, float x, float y, float width, float height, TileType type, int dir);
+	Tile(Image *img, float x, float y, TileType type);
+	Tile(Image *img, float x, float y, TileType type, int dir);
 	void draw();
 	void addTower();
 	void upgradeTower();
@@ -32,13 +32,13 @@ Tile::Tile()
 	build = path = 0;
 }
 
-Tile::Tile(Image *img, float x, float y, float width, float height, TileType type)
+Tile::Tile(Image *img, float x, float y, TileType type)
 {
 	texture = img;
 	this->x = x;
 	this->y = y;
-	this->width = width;
-	this->height = height;
+	this->width = g.tile_pxSize;
+	this->height = g.tile_pxSize;
 	this->type = type;
 	numOfTowers = 0;
 	if (type == dirtType) {
@@ -51,13 +51,13 @@ Tile::Tile(Image *img, float x, float y, float width, float height, TileType typ
 	}
 }
 
-Tile::Tile(Image *img, float x, float y, float width, float height, TileType type, int dir)
+Tile::Tile(Image *img, float x, float y, TileType type, int dir)
 {
 	texture = img;
 	this->x = x;
 	this->y = y;
-	this->width = width;
-	this->height = height;
+	this->width = g.tile_pxSize;
+	this->height = g.tile_pxSize;
 	this->type = type;
 	this-> dir = dir;
 	numOfTowers = 0;
@@ -78,7 +78,7 @@ void Tile::draw()
 
 void Tile::addTower()
 {
-	Tower *temp = new Tower(&towerBasic, x, y, g.tile_pxSize, 1);
+	Tower *temp = new Tower(&towerBasic, x, y);
 	tower = *temp;
 	delete [] temp;
 	numOfTowers++;

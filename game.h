@@ -91,9 +91,9 @@ void Game::pathContinues(TileGrid grid){
         {
             case 0:
                 {
-                Tile *myTile = (grid.getTile((enemy[i].x/64), (int)(enemy[i].y/64)));
-                Tile *nextTileX = grid.getTile((int)(enemy[i].x/64) +1, (int)(enemy[i].y/64));
-                Tile *nextTileY = grid.getTile((int)(enemy[i].x/64) , (int)(enemy[i].y/64)+1);
+                Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
+                Tile *nextTileX = grid.getTile((int)(enemy[i].x/g.tile_pxSize) +1, (int)(enemy[i].y/g.tile_pxSize));
+                Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)(enemy[i].y/g.tile_pxSize)+1);
                 //cout << nextTileX ->type << endl;
                 if (((nextTileX->type != myTile->type) && (nextTileX->type != 2)) && (nextTileY-> type != myTile-> type))
                 {
@@ -108,9 +108,9 @@ void Game::pathContinues(TileGrid grid){
                 }        
             case 1:
                 {
-                Tile *myTile = (grid.getTile((enemy[i].x/64), (int)(enemy[i].y/64)));
-                Tile *nextTileX = grid.getTile((int)(enemy[i].x/64) +1, (int)(enemy[i].y/64));
-                Tile *nextTileY = grid.getTile((int)(enemy[i].x/64) , (int)(enemy[i].y/64)+1);
+                Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
+                Tile *nextTileX = grid.getTile((int)(enemy[i].x/g.tile_pxSize) +1, (int)(enemy[i].y/g.tile_pxSize));
+                Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)(enemy[i].y/g.tile_pxSize)+1);
   
             if (((nextTileY->type != myTile->type) && myTile->type !=8) && (nextTileX->type == myTile->type)){
                 
@@ -128,8 +128,8 @@ void Game::pathContinues(TileGrid grid){
             
             
             {                    
-            Tile *myTile = (grid.getTile((enemy[i].x/64), (int)(enemy[i].y/64)));
-            Tile *nextTileX = grid.getTile((int)(enemy[i].x/64)-1 , (int)(enemy[i].y/64));
+            Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
+            Tile *nextTileX = grid.getTile((int)(enemy[i].x/g.tile_pxSize)-1 , (int)(enemy[i].y/g.tile_pxSize));
            
             
             if ((nextTileX->type != myTile->type) && myTile->type !=8){
@@ -141,9 +141,9 @@ void Game::pathContinues(TileGrid grid){
 
         case 3:
             {
-            Tile *myTile = (grid.getTile((enemy[i].x/64), (int)((enemy[i].y)/64)));
-            Tile *nextTileX  = grid.getTile((int)(enemy[i].x/64)+1 , (int)(enemy[i].y/64));
-            Tile *nextTileY = grid.getTile((int)(enemy[i].x/64) , (int)((enemy[i].y + 48)/64)-1);
+            Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)((enemy[i].y)/g.tile_pxSize)));
+            Tile *nextTileX  = grid.getTile((int)(enemy[i].x/g.tile_pxSize)+1 , (int)(enemy[i].y/g.tile_pxSize));
+            Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)((enemy[i].y + 48)/g.tile_pxSize)-1);
      
             
             if (((nextTileY->type != myTile->type) && (myTile->type != 8 && myTile ->type != 9)) && (nextTileX->type == myTile->type)){
@@ -205,8 +205,8 @@ void Game::updateTowerCurrEnemy()
         } else {
             sortEnemiesByDistance();
             for (int j = numEnemies; j >= 0; --j) {
-                float dx = player.towers[i].cx - (enemy[j].x+24);
-                float dy = player.towers[i].cy - (enemy[j].y+24);
+                float dx = player.towers[i].cx - (enemy[j].x+ g.enemy_pxSize/2);
+                float dy = player.towers[i].cy - (enemy[j].y+ g.enemy_pxSize/2);
                 float dist = sqrt(dx*dx + dy*dy);
                 //printf("{ %i, %f }, ", j, dist);
                 if (dist < player.towers[i].range) {
@@ -226,8 +226,8 @@ void Game::updateTowerActions()
     for (long unsigned int i = 0; i < player.towers.size(); i++) {
         //tower has a currEnemy; reset enemy if out of range or dead, otherwise attack
         if (player.towers[i].currEnemy) {
-            float dx = player.towers[i].cx - ((player.towers[i].currEnemy->x)+24);
-            float dy = player.towers[i].cy - ((player.towers[i].currEnemy->y)+24);
+            float dx = player.towers[i].cx - ((player.towers[i].currEnemy->x)+g.enemy_pxSize/2);
+            float dy = player.towers[i].cy - ((player.towers[i].currEnemy->y)+g.enemy_pxSize/2);
             float dist = sqrt(dx*dx + dy*dy);
             if (dist > player.towers[i].range) {
                 //enemy is out of range, reset curr enemy ptr

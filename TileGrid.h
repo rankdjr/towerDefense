@@ -27,7 +27,7 @@ TileGrid::TileGrid()
 	//allocate 2d array for map tiles
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++)
-			map[i][j] = Tile(&grass, i*64, j*64, 64, 64, grassType);
+			map[i][j] = Tile(&grass, i*g.tile_pxSize, j*g.tile_pxSize, grassType);
 	}
 }
 
@@ -42,20 +42,20 @@ void TileGrid::setMap(int newMap[][10])
 			{
 				case 0:
 					//grass
-					map[i][j] = Tile(&grass, i*64, j*64, 64, 64, grassType);
+					map[i][j] = Tile(&grass, i*g.tile_pxSize, j*g.tile_pxSize, grassType);
 					break;
 				case 1:
 					//dirt
-					map[i][j] = Tile(&dirt, i*64, j*64, 64, 64, dirtType);
+					map[i][j] = Tile(&dirt, i*g.tile_pxSize, j*g.tile_pxSize, dirtType);
 					break;
 				case 8:
 					//start tile
-					map[i][j] = Tile(&dirt, i*64, j*64, 64, 64, dirtType);
+					map[i][j] = Tile(&dirt, i*g.tile_pxSize, j*g.tile_pxSize, dirtType);
 					startTile = map[i][j];
 					break;
 				case 9:
 					//end tile
-					map[i][j] = Tile(&dirt, i*64, j*64, 64, 64, endType);
+					map[i][j] = Tile(&dirt, i*g.tile_pxSize, j*g.tile_pxSize, endType);
 					endTile = map[i][j];
 					break;
 				default:
@@ -85,8 +85,8 @@ void TileGrid::draw()
 
 void TileGrid::drawTileOutline()
 {
-	int i = g.xMousePos/64;
-	int j = 9-g.yMousePos/64;
+	int i = g.xMousePos/g.tile_pxSize;
+	int j = 9-g.yMousePos/g.tile_pxSize;
 	Tile tile = *grid.getTile(i, j);
 	int weight = 10; //width of outline is 10 px wide
 	int offset = tile.width - weight;

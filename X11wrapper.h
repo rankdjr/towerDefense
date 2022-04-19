@@ -166,15 +166,15 @@ void X11_wrapper::check_mouse(XEvent *e)
 		if (e->xbutton.button==1) {
 			//Left button was pressed.
 			if (g.buildState == BUY) {
-				int mapi = g.xMousePos/64;
-				int mapj = 9-g.yMousePos/64;
+				int mapi = g.xMousePos/g.tile_pxSize;
+				int mapj = 9-g.yMousePos/g.tile_pxSize;
 				Tile *t = grid.getTile(mapi,mapj);
 				player.addTower(t);
 				//printf("t.numOfTowers: %i\n", t->numOfTowers);
 			} 
 			else if (g.buildState == SELL) {
-				int mapi = g.xMousePos/64;
-				int mapj = 9-g.yMousePos/64;
+				int mapi = g.xMousePos/g.tile_pxSize;
+				int mapj = 9-g.yMousePos/g.tile_pxSize;
 				Tile *t = grid.getTile(mapi,mapj);
 				player.removeTower(t);
 				//printf("t.numOfTowers: %i\n", t->numOfTowers);			
@@ -183,8 +183,8 @@ void X11_wrapper::check_mouse(XEvent *e)
 		}
 		if (e->xbutton.button==3) {
 			//Right button was pressed.
-			int mapi = g.xMousePos/64;
-			int mapj = 9-g.yMousePos/64;
+			int mapi = g.xMousePos/g.tile_pxSize;
+			int mapj = 9-g.yMousePos/g.tile_pxSize;
 			Tile *t = grid.getTile(mapi,mapj);
 			if (t->numOfTowers > 0)
 				g.showTowerRange = 1;
