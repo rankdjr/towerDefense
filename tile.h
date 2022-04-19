@@ -10,8 +10,6 @@ class Tile {
 public:
 	float x, y, width, height;
 	Image *texture;
-	Tower tower;
-	int numOfTowers;
 	TileType type;
 	bool build, path;
 	int dir;
@@ -20,15 +18,12 @@ public:
 	Tile(Image *img, float x, float y, TileType type);
 	Tile(Image *img, float x, float y, TileType type, int dir);
 	void draw();
-	void addTower();
-	void upgradeTower();
-	
+
 } nullTile;
 
 Tile::Tile()
 {
 	width = height = 0;
-	numOfTowers = 0;
 	build = path = 0;
 }
 
@@ -40,7 +35,6 @@ Tile::Tile(Image *img, float x, float y, TileType type)
 	this->width = g.tile_pxSize;
 	this->height = g.tile_pxSize;
 	this->type = type;
-	numOfTowers = 0;
 	if (type == dirtType) {
 		path = 1;
 		build = 0;
@@ -60,7 +54,6 @@ Tile::Tile(Image *img, float x, float y, TileType type, int dir)
 	this->height = g.tile_pxSize;
 	this->type = type;
 	this-> dir = dir;
-	numOfTowers = 0;
 	if (type == dirtType) {
 		path = 1;
 		build = 0;
@@ -75,20 +68,5 @@ void Tile::draw()
 {
 	drawQuadTex(*texture, x, y, width, height);
 }
-
-void Tile::addTower()
-{
-	Tower *temp = new Tower(&towerBasic, x, y);
-	tower = *temp;
-	delete [] temp;
-	numOfTowers++;
-}
-
-void Tile::upgradeTower()
-{
-	tower.range += 25;
-	numOfTowers++;
-}
-
 
 #endif //_TILE_H_
