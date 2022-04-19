@@ -54,6 +54,12 @@ Game::Game() {
 	};
     currMap = map;
     grid.setMap(currMap);
+    for (int i = 0; i < g.mapHeight; i++) {
+        for (int j = 0; j<g.mapWidth; j++) {
+            if (map[i][j] != 0)
+                grid.pathDist += 64;
+        }
+    }
 }   
 
 void Game::initEnemies(int numEnemies) { 
@@ -174,12 +180,12 @@ void Game::killEnemy(Enemy *enemy)
 
 void Game::sortEnemiesByDistance()
 {
-    //get enemies distance to end tile
-    for (int i = 0; i < numEnemies; i++) {
-        float dx = (grid.endTile.x + g.tile_pxSize)- enemy[i].x;
-        float dy = grid.endTile.y - enemy[i].y;
-        enemy[i].distToEnd = dx*dx + dy*dy;
-    }
+    // //get enemies distance to end tile
+    // for (int i = 0; i < numEnemies; i++) {
+    //     float dx = (grid.endTile.x + g.tile_pxSize)- enemy[i].x;
+    //     float dy = grid.endTile.y - enemy[i].y;
+    //     enemy[i].distToEnd = dx*dx + dy*dy;
+    // }
     //
     //bubble sort enemies in descending order by distance to end tile
     if (g.gameState == PLAYING) {
@@ -201,8 +207,16 @@ void Game::updateTowerCurrEnemy()
     //loop through towers and update all nullptr enemies to active enemies
     for (long unsigned int i = 0; i < player.towers.size(); i++) {
         if (player.towers[i].currEnemy != nullptr) {
-            //skip logic as tower will select new target unnecessarily
+            //check distance of enemy
+            float dx = player.towers[i].cx - ((player.towers[i].currEnemy->x)+g.enemy_pxSize/2);
+            float dy = player.towers[i].cy - ((player.towers[i].currEnemy->y)+g.enemy_pxSize/2);
+            float dist = sqrt(dx*dx + dy*dy);
+            if (dist > player.towers[i].range) {
+                //enemy is out of range, reset curr enemy ptr
+                player.towers[i].currEnemy = nullptr;
+            }
         } else {
+            //
             sortEnemiesByDistance();
             for (int j = numEnemies; j >= 0; --j) {
                 float dx = player.towers[i].cx - (enemy[j].x+ g.enemy_pxSize/2);
@@ -224,30 +238,13 @@ void Game::updateTowerActions()
     updateTowerCurrEnemy();
     //Loop though towers and set current enemy for any towers that have no target
     for (long unsigned int i = 0; i < player.towers.size(); i++) {
-        //tower has a currEnemy; reset enemy if out of range or dead, otherwise attack
         if (player.towers[i].currEnemy) {
-            float dx = player.towers[i].cx - ((player.towers[i].currEnemy->x)+g.enemy_pxSize/2);
-            float dy = player.towers[i].cy - ((player.towers[i].currEnemy->y)+g.enemy_pxSize/2);
-            float dist = sqrt(dx*dx + dy*dy);
-            if (dist > player.towers[i].range) {
-                //enemy is out of range, reset curr enemy ptr
-                //
-                // printf("OOR tower[%li]\t--  range: %f,  dist: %f\n", i, player.towers[i].range, dist);
-                // printf("              \t--  tx: %f, ty: %f,  ex: %f, ey: %f\n", 
-                //                                                                player.towers[i].cx, 
-                //                                                                player.towers[i].cy, 
-                //                                                                player.towers[i].currEnemy->x, 
-                //                                                                player.towers[i].currEnemy->y);
-                //
+            //tower has a currEnemy;
+            player.towers[i].attackEnemy();
+            if (player.towers[i].currEnemy->health < 0) {
+                //printf("EK\t--  range: %f,  dist: %f\n", player.towers[i].range, dist);
+                game.killEnemy(player.towers[i].currEnemy);
                 player.towers[i].currEnemy = nullptr;
-            } else {
-                //tower has a currEnemy; reset enemy if out of range or dead, otherwise attack
-                player.towers[i].attackEnemy();
-                if (player.towers[i].currEnemy->health < 0) {
-                    //printf("EK\t--  range: %f,  dist: %f\n", player.towers[i].range, dist);
-                    game.killEnemy(player.towers[i].currEnemy);
-                    player.towers[i].currEnemy = nullptr;
-                }
             }
         }
     }
