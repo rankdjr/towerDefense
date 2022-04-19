@@ -78,7 +78,7 @@ void Tile::draw()
 
 void Tile::addTower()
 {
-	Tower *temp = new Tower(&towerBasic, x, y, g.towerWidth, g.towerHeight, 1);
+	Tower *temp = new Tower(&towerBasic, x, y, g.tile_pxSize, 1);
 	tower = *temp;
 	delete [] temp;
 	numOfTowers++;

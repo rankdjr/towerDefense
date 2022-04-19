@@ -16,7 +16,7 @@ public:
 	struct timespec frameStart, currentTime;
 
 	Tower();
-	Tower(Image *img, float x, float y, int width, int height, bool active);
+	Tower(Image *img, float x, float y, int size, bool active);
 	void setxy(int x, int y);
 	void setwh(int w, int h);
 	void draw();
@@ -34,14 +34,14 @@ Tower::Tower()
 	active = 0;
 }
 
-Tower::Tower(Image *img, float x, float y, int width, int height, bool active) {
+Tower::Tower(Image *img, float x, float y, int size, bool active) {
 	texture = img;
 	this->x = x;
 	this->y = y;
-	cx = x+g.tileWidth/2;
-	cy = y+g.tileHeight/2;
-	this->width = width;
-	this->height = height;
+	cx = x+g.tile_pxSize/2;
+	cy = y+g.tile_pxSize/2;
+	this->width = size;
+	this->height = size;
 	this->active = active;
 	range = 175;
 	dmg = 0.35;
@@ -66,7 +66,7 @@ void Tower::draw()
 {
 	//offset is used to center tower to tile
 	//tx and ty vars are used to map the frames of the sprite sheet
-	static const float offset = (g.tileWidth-g.towerWidth)/2.0f;
+	static const float offset = (g.tile_pxSize - g.tower_pxSize)/2.0f;
 	float tx1 = 0.0f + (float)((frameNo-1) % 11) * (1.0f/11.0f);
 	float tx2 = tx1 + (1.0f/11.0f);
 	static const float ty1 = 0.0f;
@@ -89,7 +89,7 @@ void Tower::draw()
 
 void Tower::showRange()
 {
-	int offset = g.tileWidth/2;
+	int offset = g.tile_pxSize/2;
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glColor4f(0.68, 0.85, 0.90, 0.60);

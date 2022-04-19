@@ -72,9 +72,9 @@ int main()
         //
         game.pathContinues(grid);
         
-        for (int i =0; i<game.numEnemies; i++)
+        for (int i = 0; i<game.numEnemies; i++)
         {
-            Tile *myTile = (grid.getTile((game.enemy[i].x/64), (int)(game.enemy[i].y/64)));
+            Tile *myTile = (grid.getTile((game.enemy[i].x/g.tile_pxSize), (int)(game.enemy[i].y/g.tile_pxSize)));
             if ( myTile -> type == 2)
             {
                game.killEnemy(&game.enemy[i]);
@@ -134,8 +134,8 @@ void render()
     }
 
 	if (g.showTowerRange) {
-		int mapi = g.xMousePos/64;
-		int mapj = 9-g.yMousePos/64;
+		int mapi = g.xMousePos/g.tile_pxSize;
+		int mapj = 9-g.yMousePos/g.tile_pxSize;
 		Tile *t = grid.getTile(mapi,mapj);
 		t->tower.showRange();
 	}

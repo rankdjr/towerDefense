@@ -8,8 +8,9 @@ class Global {
 public:
 	int xres, yres;
     int xMousePos, yMousePos;
-    int towerWidth, towerHeight, towerCost;
-    int tileWidth, tileHeight;
+    int tower_pxSize, towerCost;
+    int tile_pxSize;
+    int enemy_pxSize;
     int mapWidth, mapHeight;
     bool buildTower, showTowerRange;
     GameState gameState;
@@ -25,19 +26,20 @@ public:
         mapHeight = 10;
         //
         //tile vars
-        tileWidth = 64;
-        tileHeight = 64;
+        tile_pxSize = 64;
         //
         //tower vars
-		towerWidth = 60;
-        towerHeight = 60;
+		tower_pxSize = 60;
         towerCost = 10;
         buildTower = 0;
         showTowerRange = 0;
         //
+        //enemy vars
+        enemy_pxSize = 32;
+        //
         //initialize x,y resolution
-        xres = mapWidth * tileWidth; //640px
-        yres = mapHeight * tileHeight; //640px
+        xres = mapWidth * tile_pxSize; //640px
+        yres = mapHeight * tile_pxSize; //640px
     }
 }g;
 

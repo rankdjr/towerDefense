@@ -76,12 +76,12 @@ void Game::initEnemies(int numEnemies) {
     for( int i = 0; i<numEnemies; i++) {
         enemy[i].x = grid.startTile.x;
         enemy[i].y = grid.startTile.y;
-        enemy[i].width = 32;
-        enemy[i].height = 32;
+        enemy[i].width = g.enemy_pxSize;
+        enemy[i].height = g.enemy_pxSize;
+        enemy[i].health = enemy[i].maxHealth;
+        enemy[i].alive = 1;
         enemy[i].speed = 0.5+(0.025*i);
-        enemy[i].health = 100;
         enemy[i].dir = 0;
-        enemy[i].alive =1;
     }
 }
 
@@ -176,7 +176,7 @@ void Game::sortEnemiesByDistance()
 {
     //get enemies distance to end tile
     for (int i = 0; i < numEnemies; i++) {
-        float dx = (grid.endTile.x + g.tileWidth)- enemy[i].x;
+        float dx = (grid.endTile.x + g.tile_pxSize)- enemy[i].x;
         float dy = grid.endTile.y - enemy[i].y;
         enemy[i].distToEnd = dx*dx + dy*dy;
     }
