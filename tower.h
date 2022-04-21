@@ -25,7 +25,6 @@ public:
 	void showRange();
 	void setCurrEnemy(Enemy *enemy);
 	void attackEnemy();
-	void upgradeTower();
 } nullTower;
 
 Tower::Tower()
@@ -96,11 +95,14 @@ void Tower::draw()
 
 	//draw attack
 	if (currEnemy) {
+		//get center of enemy texture
+		int e_cx = currEnemy->x+12;
+		int e_cy = currEnemy->y+15;
 		glColor4ub(255,0,255,255);
 		glPushMatrix();
 		glBegin(GL_LINES);
 			glVertex2f(cx, cy+18);
-			glVertex2f(currEnemy->x+24, currEnemy->y+24);
+			glVertex2f(e_cx, e_cy);
 		glEnd();
 		glPopMatrix();
 	}
@@ -108,7 +110,7 @@ void Tower::draw()
 
 void Tower::showRange()
 {
-	int offset = g.tile_pxSize/2;
+	const int offset = g.tile_pxSize/2;
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glColor4f(0.68, 0.85, 0.90, 0.60);
@@ -126,8 +128,4 @@ void Tower::attackEnemy()
 	currEnemy->health -= dmg;
 }
 
-void Tower::upgradeTower()
-{
-
-}
 #endif //_TOWER_H_
