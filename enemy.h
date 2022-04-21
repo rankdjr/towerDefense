@@ -47,17 +47,14 @@ public:
         drawQuad(xpos, ypos, hpWidth, 5);
 
         //draw sprite texture
-        //float offset = (g.tileWidth-g.towerWidth)/2.0f;
-        // static float tx1 = 0.0f + (float)((frameNo-1) % 7) * (1.0f/7.0f);
-        // static float tx2 = tx1 + (1.0f/7.0f);
-        float tx1 = 0.0f;
-        float tx2 = tx1 + (1.0f);
+        float tx1 = 0.0f + (float)((frameNo-1) % 7) * (1.0f/7.0f);
+        float tx2 = tx1 + (1.0f/7.0f);
         float ty1 = 0.0f;
         float ty2 = 1.0f;
         //
         //timespec to control framerate
-        static double diff = 0;
-        static const double framerate = 0.075;
+        double diff = 0;
+        const double framerate = 0.075;
         clock_gettime(CLOCK_REALTIME, &currentTime);
         diff = timeDiff(&frameStart, &currentTime);
         if (diff > framerate) {
