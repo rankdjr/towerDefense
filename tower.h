@@ -47,7 +47,7 @@ Tower::Tower(Image *img, float x, float y) {
 	cy = y+g.tile_pxSize/2;
 	width = g.tower_pxSize;
 	height = g.tower_pxSize;
-	id = (x/g.tile_pxSize)*10 + (y/g.tile_pxSize);
+	id = (x/g.tile_pxSize)*10 + (9 - (y/g.tile_pxSize));
 	level = 1;
 	active = 1;
 	range = 175;

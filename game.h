@@ -9,7 +9,7 @@ void timeCopy(struct timespec *dest, struct timespec *source);
 class Game {
 public:
     int (*currMap)[10];
-    int numEnemies;
+    int numEnemies, enemiesalive;
     Enemy enemy[30];
     
     Game();
@@ -17,7 +17,7 @@ public:
     void killEnemy(Enemy *enemy);
     void pathContinues(TileGrid grid);
     void sortEnemiesByDistance();
-    void updateTowerCurrEnemy();
+    void checkCurrEnemy();
     void updateTowerActions();
 } game;
 
@@ -25,6 +25,7 @@ Game::Game() {
     //
     //enemy vars
     numEnemies = 10;
+    enemiesalive = 0;
     //
     //map vars
     // int map[10][10] = { 
@@ -88,6 +89,7 @@ void Game::initEnemies(int numEnemies) {
         enemy[i].alive = 1;
         enemy[i].speed = 0.5+(0.025*i);
         enemy[i].dir = 0;
+        enemiesalive++;
     }
 }
 
@@ -176,33 +178,28 @@ void Game::killEnemy(Enemy *enemy)
     enemy->speed = 0;
     enemy->x = -100;
     enemy->y = -100;
+    enemy->distToEnd = 0;
+    enemiesalive--;
 }
 
 void Game::sortEnemiesByDistance()
 {
-    // //get enemies distance to end tile
-    // for (int i = 0; i < numEnemies; i++) {
-    //     float dx = (grid.endTile.x + g.tile_pxSize)- enemy[i].x;
-    //     float dy = grid.endTile.y - enemy[i].y;
-    //     enemy[i].distToEnd = dx*dx + dy*dy;
-    // }
-    //
     //bubble sort enemies in descending order by distance to end tile
-    if (g.gameState == PLAYING) {
+    if (enemiesalive > 1) {
         for (int i = 0; i < numEnemies-1; i++) {
             for (int j = i+1; j < numEnemies; j++) {
                 if (enemy[i].distToEnd < enemy[j].distToEnd) {
                     Enemy temp = enemy[j];
                     enemy[j] = enemy[i];
                     enemy[i] = temp;
-                    // printf("swapped in t[%i]\n", i);
+                    //printf("swap %i\n",j);
                 }
             }
         }  
     }
 }
 
-void Game::updateTowerCurrEnemy()
+void Game::checkCurrEnemy()
 {
     //loop through towers and update all nullptr enemies to active enemies
     for (long unsigned int i = 0; i < player.towers.size(); i++) {
@@ -235,8 +232,8 @@ void Game::updateTowerCurrEnemy()
 
 void Game::updateTowerActions()
 {
-    updateTowerCurrEnemy();
-    //Loop though towers and set current enemy for any towers that have no target
+    checkCurrEnemy();
+    //Loop though towers + attack
     for (long unsigned int i = 0; i < player.towers.size(); i++) {
         if (player.towers[i].currEnemy) {
             //tower has a currEnemy;

@@ -1,12 +1,18 @@
 #ifndef _X11wrapper_H_
 #define _X11wrapper_H_
 
+/*
+	This code was originally written by Gordon Griesel
+	of California State Univ, Bakersfield
+
+	Modifed by Douglas Rank and Kenneth wood in Spring of 2022
+*/
+
 #include <iostream>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xdbe.h>
 #include <GL/glx.h>
 #include "global.h"
-//#include "draw.h"
 #include "player.h"
 using namespace std;
 

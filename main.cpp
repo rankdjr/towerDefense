@@ -1,7 +1,8 @@
-//modified   by: Douglas Rank
+//modified   by: Douglas Rank and Kenneth Wood
 //date: Spring of 2022
 //
-// Credit to Gordon Griesel for X11 code, libggfontsa, timers.cpp, and timers.h
+// Credit to Gordon Griesel for X11 code, libggfontsa, timers.cpp, timers.h, and portions of the main loop in main.cpp
+// as well as the basis of the OpenGL compenents in draw.h
 //
 #include <stdlib.h>
 #include <stdio.h>
@@ -61,7 +62,6 @@ int main()
     clock_gettime(CLOCK_REALTIME, &timePause);
     clock_gettime(CLOCK_REALTIME, &timeStart);
 
-    printf("%li", sizeof(Tower));
 	//main game loop
 	int done = 0;
 	while (!done) {
@@ -160,8 +160,14 @@ void render()
 	if (g.showTowerRange) {
 		int mapi = g.xMousePos/g.tile_pxSize;
 		int mapj = 9-g.yMousePos/g.tile_pxSize;
-		Tile *t = grid.getTile(mapi,mapj);
-		//t->tower.showRange();
+        const int towerLvl = 0;
+        const int towerIndex = 1;
+        int towerId = mapi*10 + mapj;
+        int towerExists = player.towerHash[towerId][towerLvl];
+		if (towerExists) {
+            int vecIndex = player.towerHash[towerId][towerIndex]; // get index of tower in player.towers vector
+            player.towers[vecIndex].showRange();
+        }
 	}
 
     //show tile outlines; flag set in x11.checkKeys() (b)build/(s)sell
