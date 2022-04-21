@@ -1,12 +1,18 @@
 #ifndef _X11wrapper_H_
 #define _X11wrapper_H_
 
+/*
+	This code was originally written by Gordon Griesel
+	of California State Univ, Bakersfield
+
+	Modifed by Douglas Rank and Kenneth wood in Spring of 2022
+*/
+
 #include <iostream>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xdbe.h>
 #include <GL/glx.h>
 #include "global.h"
-//#include "draw.h"
 #include "player.h"
 using namespace std;
 
@@ -166,27 +172,19 @@ void X11_wrapper::check_mouse(XEvent *e)
 		if (e->xbutton.button==1) {
 			//Left button was pressed.
 			if (g.buildState == BUY) {
-				int mapi = g.xMousePos/64;
-				int mapj = 9-g.yMousePos/64;
-				Tile *t = grid.getTile(mapi,mapj);
-				player.addTower(t);
-				printf("t.numOfTowers: %i\n", t->numOfTowers);
+				player.addTower(g.xMousePos, g.yMousePos);
 			} 
 			else if (g.buildState == SELL) {
-				int mapi = g.xMousePos/64;
-				int mapj = 9-g.yMousePos/64;
-				Tile *t = grid.getTile(mapi,mapj);
-				player.removeTower(t);
-				printf("t.numOfTowers: %i\n", t->numOfTowers);			
+				player.removeTower(g.xMousePos, g.yMousePos);
 			}
 			return;
 		}
 		if (e->xbutton.button==3) {
 			//Right button was pressed.
-			int mapi = g.xMousePos/64;
-			int mapj = 9-g.yMousePos/64;
-			Tile *t = grid.getTile(mapi,mapj);
-			if (t->numOfTowers > 0)
+			int mapi = g.xMousePos/g.tile_pxSize;
+			int mapj = 9-g.yMousePos/g.tile_pxSize;
+			int key = mapi*10 + mapj;
+			if (player.towerHash[key])
 				g.showTowerRange = 1;
 			return;
 		}

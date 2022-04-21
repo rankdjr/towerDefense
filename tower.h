@@ -11,18 +11,21 @@ public:
 	float dmg;
 	bool active;
 	int frameNo;
+	int level;
+	int id;
 	Image *texture;
 	Enemy *currEnemy;
 	struct timespec frameStart, currentTime;
 
 	Tower();
-	Tower(Image *img, float x, float y, int width, int height, bool active);
+	Tower(Image *img, float x, float y);
 	void setxy(int x, int y);
 	void setwh(int w, int h);
 	void draw();
 	void showRange();
 	void setCurrEnemy(Enemy *enemy);
 	void attackEnemy();
+	void upgradeTower();
 } nullTower;
 
 Tower::Tower()
@@ -32,17 +35,21 @@ Tower::Tower()
 	width = height = 0;
 	range = 0;
 	active = 0;
+	level = 0;
+	id = -1;
 }
 
-Tower::Tower(Image *img, float x, float y, int width, int height, bool active) {
+Tower::Tower(Image *img, float x, float y) {
 	texture = img;
 	this->x = x;
 	this->y = y;
-	cx = x+g.tileWidth/2;
-	cy = y+g.tileHeight/2;
-	this->width = width;
-	this->height = height;
-	this->active = active;
+	cx = x+g.tile_pxSize/2;
+	cy = y+g.tile_pxSize/2;
+	width = g.tower_pxSize;
+	height = g.tower_pxSize;
+	id = (x/g.tile_pxSize)*10 + (9 - (y/g.tile_pxSize));
+	level = 1;
+	active = 1;
 	range = 175;
 	dmg = 0.35;
 	currEnemy = nullptr;
@@ -66,13 +73,13 @@ void Tower::draw()
 {
 	//offset is used to center tower to tile
 	//tx and ty vars are used to map the frames of the sprite sheet
-	int offset = 7;
+	static const float offset = (g.tile_pxSize - g.tower_pxSize)/2.0f;
 	float tx1 = 0.0f + (float)((frameNo-1) % 11) * (1.0f/11.0f);
 	float tx2 = tx1 + (1.0f/11.0f);
-	float ty1 = 0.0f;
-	float ty2 = 1.0f;
+	static const float ty1 = 0.0f;
+	static const float ty2 = 1.0f;
 	
-	//timespec to control framerate
+	//timespec to control sprite frames
 	static double diff = 0;
 	static const double framerate = 0.075;
 	clock_gettime(CLOCK_REALTIME, &currentTime);
@@ -82,14 +89,26 @@ void Tower::draw()
 		timeCopy(&frameStart, &currentTime);
 	}
 	if (frameNo >= 11)
-		frameNo = 0;
-
+		frameNo = 1;
+	
+	//draw tower
 	drawQuadTexAlpha(*texture, x+offset, y+offset, tx1, tx2, ty1, ty2, width, height);
+
+	//draw attack
+	if (currEnemy) {
+		glColor4ub(255,0,255,255);
+		glPushMatrix();
+		glBegin(GL_LINES);
+			glVertex2f(cx, cy+18);
+			glVertex2f(currEnemy->x+24, currEnemy->y+24);
+		glEnd();
+		glPopMatrix();
+	}
 }
 
 void Tower::showRange()
 {
-	int offset = g.tileWidth/2;
+	int offset = g.tile_pxSize/2;
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glColor4f(0.68, 0.85, 0.90, 0.60);
@@ -103,15 +122,12 @@ void Tower::setCurrEnemy(Enemy *enemy)
 }
 
 void Tower::attackEnemy()
-{
-	glColor4ub(255,0,255,255);
-	glPushMatrix();
-	glBegin(GL_LINES);
-		glVertex2f(cx, cy+18);
-		glVertex2f(currEnemy->x+24, currEnemy->y+24);
-	glEnd();
-	glPopMatrix();
-	
+{	
 	currEnemy->health -= dmg;
+}
+
+void Tower::upgradeTower()
+{
+
 }
 #endif //_TOWER_H_

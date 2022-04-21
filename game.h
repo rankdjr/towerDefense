@@ -9,7 +9,7 @@ void timeCopy(struct timespec *dest, struct timespec *source);
 class Game {
 public:
     int (*currMap)[10];
-    int numEnemies;
+    int numEnemies, enemiesalive;
     Enemy enemy[30];
     
     Game();
@@ -17,7 +17,7 @@ public:
     void killEnemy(Enemy *enemy);
     void pathContinues(TileGrid grid);
     void sortEnemiesByDistance();
-    void updateTowerCurrEnemy();
+    void checkCurrEnemy();
     void updateTowerActions();
 } game;
 
@@ -25,22 +25,42 @@ Game::Game() {
     //
     //enemy vars
     numEnemies = 10;
+    enemiesalive = 0;
     //
     //map vars
+    // int map[10][10] = { 
+	// 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	// 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	// 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	// 	{0, 0, 0, 1, 1, 1, 1, 1, 0, 0},
+	// 	{0, 0, 0, 1, 0, 0, 0, 1, 0, 0},
+	// 	{8, 1, 1, 1, 0, 0, 0, 1, 1, 9},
+	// 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	// 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	// 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	// 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	// };
+
     int map[10][10] = { 
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 1, 1, 1, 1, 1, 0, 0},
-		{0, 0, 0, 1, 0, 0, 0, 1, 0, 0},
-		{8, 1, 1, 1, 0, 0, 0, 1, 1, 9},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 1, 1, 1, 0, 0, 0, 0},
+		{0, 0, 0, 1, 0, 1, 0, 0, 0, 0},
+		{8, 1, 1, 1, 0, 1, 0, 1, 1, 9},
+		{0, 0, 0, 0, 0, 1, 0, 1, 0, 0},
+		{0, 0, 0, 0, 0, 1, 1, 1, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 	};
     currMap = map;
     grid.setMap(currMap);
+    for (int i = 0; i < g.mapHeight; i++) {
+        for (int j = 0; j<g.mapWidth; j++) {
+            if (map[i][j] != 0)
+                grid.pathDist += 64;
+        }
+    }
 }   
 
 void Game::initEnemies(int numEnemies) { 
@@ -63,12 +83,13 @@ void Game::initEnemies(int numEnemies) {
     for( int i = 0; i<numEnemies; i++) {
         enemy[i].x = grid.startTile.x;
         enemy[i].y = grid.startTile.y;
-        enemy[i].width = 48;
-        enemy[i].height = 48;
+        enemy[i].width = g.enemy_pxSize;
+        enemy[i].height = g.enemy_pxSize;
+        enemy[i].health = enemy[i].maxHealth;
+        enemy[i].alive = 1;
         enemy[i].speed = 0.5+(0.025*i);
-        enemy[i].health = 100;
         enemy[i].dir = 0;
-        enemy[i].alive =1;
+        enemiesalive++;
     }
 }
 
@@ -78,9 +99,9 @@ void Game::pathContinues(TileGrid grid){
         {
             case 0:
                 {
-                Tile *myTile = (grid.getTile((enemy[i].x/64), (int)(enemy[i].y/64)));
-                Tile *nextTileX = grid.getTile((int)(enemy[i].x/64) +1, (int)(enemy[i].y/64));
-                Tile *nextTileY = grid.getTile((int)(enemy[i].x/64) , (int)(enemy[i].y/64)+1);
+                Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
+                Tile *nextTileX = grid.getTile((int)(enemy[i].x/g.tile_pxSize) +1, (int)(enemy[i].y/g.tile_pxSize));
+                Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)(enemy[i].y/g.tile_pxSize)+1);
                 //cout << nextTileX ->type << endl;
                 if (((nextTileX->type != myTile->type) && (nextTileX->type != 2)) && (nextTileY-> type != myTile-> type))
                 {
@@ -95,9 +116,9 @@ void Game::pathContinues(TileGrid grid){
                 }        
             case 1:
                 {
-                Tile *myTile = (grid.getTile((enemy[i].x/64), (int)(enemy[i].y/64)));
-                Tile *nextTileX = grid.getTile((int)(enemy[i].x/64) +1, (int)(enemy[i].y/64));
-                Tile *nextTileY = grid.getTile((int)(enemy[i].x/64) , (int)(enemy[i].y/64)+1);
+                Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
+                Tile *nextTileX = grid.getTile((int)(enemy[i].x/g.tile_pxSize) +1, (int)(enemy[i].y/g.tile_pxSize));
+                Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)(enemy[i].y/g.tile_pxSize)+1);
   
             if (((nextTileY->type != myTile->type) && myTile->type !=8) && (nextTileX->type == myTile->type)){
                 
@@ -115,8 +136,8 @@ void Game::pathContinues(TileGrid grid){
             
             
             {                    
-            Tile *myTile = (grid.getTile((enemy[i].x/64), (int)(enemy[i].y/64)));
-            Tile *nextTileX = grid.getTile((int)(enemy[i].x/64)-1 , (int)(enemy[i].y/64));
+            Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
+            Tile *nextTileX = grid.getTile((int)(enemy[i].x/g.tile_pxSize)-1 , (int)(enemy[i].y/g.tile_pxSize));
            
             
             if ((nextTileX->type != myTile->type) && myTile->type !=8){
@@ -128,9 +149,9 @@ void Game::pathContinues(TileGrid grid){
 
         case 3:
             {
-            Tile *myTile = (grid.getTile((enemy[i].x/64), (int)((enemy[i].y)/64)));
-            Tile *nextTileX  = grid.getTile((int)(enemy[i].x/64)+1 , (int)(enemy[i].y/64));
-            Tile *nextTileY = grid.getTile((int)(enemy[i].x/64) , (int)((enemy[i].y + 48)/64)-1);
+            Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)((enemy[i].y)/g.tile_pxSize)));
+            Tile *nextTileX  = grid.getTile((int)(enemy[i].x/g.tile_pxSize)+1 , (int)(enemy[i].y/g.tile_pxSize));
+            Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)((enemy[i].y + 48)/g.tile_pxSize)-1);
      
             
             if (((nextTileY->type != myTile->type) && (myTile->type != 8 && myTile ->type != 9)) && (nextTileX->type == myTile->type)){
@@ -157,43 +178,46 @@ void Game::killEnemy(Enemy *enemy)
     enemy->speed = 0;
     enemy->x = -100;
     enemy->y = -100;
+    enemy->distToEnd = 0;
+    enemiesalive--;
 }
 
 void Game::sortEnemiesByDistance()
 {
-    //get enemies distance to end tile
-    for (int i = 0; i < numEnemies; i++) {
-        float dx = (grid.endTile.x + g.tileWidth)- enemy[i].x;
-        float dy = grid.endTile.y - enemy[i].y;
-        enemy[i].distToEnd = dx*dx + dy*dy;
-    }
-    //
     //bubble sort enemies in descending order by distance to end tile
-    if (g.gameState == PLAYING) {
+    if (enemiesalive > 1) {
         for (int i = 0; i < numEnemies-1; i++) {
             for (int j = i+1; j < numEnemies; j++) {
                 if (enemy[i].distToEnd < enemy[j].distToEnd) {
                     Enemy temp = enemy[j];
                     enemy[j] = enemy[i];
                     enemy[i] = temp;
-                    // printf("swapped in t[%i]\n", i);
+                    //printf("swap %i\n",j);
                 }
             }
         }  
     }
 }
 
-void Game::updateTowerCurrEnemy()
+void Game::checkCurrEnemy()
 {
     //loop through towers and update all nullptr enemies to active enemies
     for (long unsigned int i = 0; i < player.towers.size(); i++) {
         if (player.towers[i].currEnemy != nullptr) {
-            //skip logic as tower will select new target unnecessarily
+            //check distance of enemy
+            float dx = player.towers[i].cx - ((player.towers[i].currEnemy->x)+g.enemy_pxSize/2);
+            float dy = player.towers[i].cy - ((player.towers[i].currEnemy->y)+g.enemy_pxSize/2);
+            float dist = sqrt(dx*dx + dy*dy);
+            if (dist > player.towers[i].range) {
+                //enemy is out of range, reset curr enemy ptr
+                player.towers[i].currEnemy = nullptr;
+            }
         } else {
+            //
             sortEnemiesByDistance();
             for (int j = numEnemies; j >= 0; --j) {
-                float dx = player.towers[i].cx - (enemy[j].x+24);
-                float dy = player.towers[i].cy - (enemy[j].y+24);
+                float dx = player.towers[i].cx - (enemy[j].x+ g.enemy_pxSize/2);
+                float dy = player.towers[i].cy - (enemy[j].y+ g.enemy_pxSize/2);
                 float dist = sqrt(dx*dx + dy*dy);
                 //printf("{ %i, %f }, ", j, dist);
                 if (dist < player.towers[i].range) {
@@ -208,33 +232,16 @@ void Game::updateTowerCurrEnemy()
 
 void Game::updateTowerActions()
 {
-    updateTowerCurrEnemy();
-    //Loop though towers and set current enemy for any towers that have no target
+    checkCurrEnemy();
+    //Loop though towers + attack
     for (long unsigned int i = 0; i < player.towers.size(); i++) {
-        //tower has a currEnemy; reset enemy if out of range or dead, otherwise attack
         if (player.towers[i].currEnemy) {
-            float dx = player.towers[i].cx - ((player.towers[i].currEnemy->x)+24);
-            float dy = player.towers[i].cy - ((player.towers[i].currEnemy->y)+24);
-            float dist = sqrt(dx*dx + dy*dy);
-            if (dist > player.towers[i].range) {
-                //enemy is out of range, reset curr enemy ptr
-                //
-                // printf("OOR tower[%li]\t--  range: %f,  dist: %f\n", i, player.towers[i].range, dist);
-                // printf("              \t--  tx: %f, ty: %f,  ex: %f, ey: %f\n", 
-                //                                                                player.towers[i].cx, 
-                //                                                                player.towers[i].cy, 
-                //                                                                player.towers[i].currEnemy->x, 
-                //                                                                player.towers[i].currEnemy->y);
-                //
+            //tower has a currEnemy;
+            player.towers[i].attackEnemy();
+            if (player.towers[i].currEnemy->health < 0) {
+                //printf("EK\t--  range: %f,  dist: %f\n", player.towers[i].range, dist);
+                game.killEnemy(player.towers[i].currEnemy);
                 player.towers[i].currEnemy = nullptr;
-            } else {
-                //tower has a currEnemy; reset enemy if out of range or dead, otherwise attack
-                player.towers[i].attackEnemy();
-                if (player.towers[i].currEnemy->health < 0) {
-                    //printf("EK\t--  range: %f,  dist: %f\n", player.towers[i].range, dist);
-                    game.killEnemy(player.towers[i].currEnemy);
-                    player.towers[i].currEnemy = nullptr;
-                }
             }
         }
     }
