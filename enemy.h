@@ -6,7 +6,7 @@
 
 class Enemy {
 public:
-    float x, y, distToEnd; 
+    float x, y, cx, cy, distToEnd; 
     int width, height;
     float health, speed;
     static const int maxHealth = 100;
@@ -34,7 +34,7 @@ public:
     }
 
     void draw() {
-        //draw health bar
+        //health bar
         int xpos = x;
         int ypos = y+height+5;
         //static const int maxHealth = 100;
@@ -46,29 +46,26 @@ public:
         glColor3ub(255,0,0);
         drawQuad(xpos, ypos, hpWidth, 5);
 
-        //draw sprite texture
-        //float offset = (g.tileWidth-g.towerWidth)/2.0f;
-        // static float tx1 = 0.0f + (float)((frameNo-1) % 7) * (1.0f/7.0f);
-        // static float tx2 = tx1 + (1.0f/7.0f);
-        float tx1 = 0.0f;
-        float tx2 = tx1 + (1.0f);
+        //sprite texture
+        float tx1 = 0.0f + (float)((frameNo-1) % 7) * (1.0f/7.0f);
+        float tx2 = tx1 + (1.0f/7.0f);
         float ty1 = 0.0f;
         float ty2 = 1.0f;
         //
         //timespec to control framerate
         static double diff = 0;
-        static const double framerate = 0.075;
+        static const double framerate = 0.15;
         clock_gettime(CLOCK_REALTIME, &currentTime);
         diff = timeDiff(&frameStart, &currentTime);
         if (diff > framerate) {
             frameNo++;
             timeCopy(&frameStart, &currentTime);
         }
-        if (frameNo >= 11)
+        if (frameNo >= 7)
             frameNo = 1;
+        //
+        //draw texture
         drawQuadTexAlpha(*texture, x, y, tx1, tx2, ty1, ty2, width, height);
-                
-
     } 
 } nullEnemy;
 

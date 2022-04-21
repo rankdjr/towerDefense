@@ -35,7 +35,7 @@ Tile::Tile(Image *img, float x, float y, TileType type)
 	this->width = g.tile_pxSize;
 	this->height = g.tile_pxSize;
 	this->type = type;
-	if (type == dirtType) {
+	if (type == dirtType || type == endType) {
 		path = 1;
 		build = 0;
 	}

@@ -2,6 +2,7 @@
 #define _PLAYER_H_
 
 #include <vector>
+#include <algorithm>
 
 class Player {
 public:
@@ -53,7 +54,6 @@ void Player::addTower(float x, float y)
     const int towerIndex = 1;
     int towerId = mapi*10 + mapj;
     int towerExists = towerHash[towerId][towerLvl];
-    printf("id: %i, lvl: %i\n", towerId, towerExists);
     switch (towerExists)
     {
         case 0:
@@ -69,7 +69,8 @@ void Player::addTower(float x, float y)
         {
             //tower level 1 --> upgrade tower
             int vecIndex = towerHash[towerId][towerIndex]; // get index of tower in player.towers vector
-            towers[vecIndex].upgradeTower();
+            towers[vecIndex].range *= 1.15;
+            towers[vecIndex].dmg *= 1.25;
             towerHash[towerId][towerLvl]++; //update tower level in hash
             funds -= g.towerCost;
             break;
@@ -78,7 +79,8 @@ void Player::addTower(float x, float y)
         {
             //tower level 2 --> upgrade tower
             int vecIndex = towerHash[towerId][towerIndex]; // get index of tower in player.towers vector
-            towers[vecIndex].upgradeTower();
+            towers[vecIndex].range *= 1.15;
+            towers[vecIndex].dmg *= 1.25;
             towerHash[towerId][towerLvl]++;
             funds -= g.towerCost;  //update tower level in hash
             break;
@@ -96,6 +98,7 @@ void Player::addTower(float x, float y)
         }
     }
 
+    printf("id: %i, lvl: %i\n", towerId, towerExists);
     return;
        
 }
@@ -114,16 +117,16 @@ void Player::removeTower(float x, float y)
     if (towerExists) {
         //remove tower from player
         int vecIndex = towerHash[towerId][towerIndex];  // get index of tower in player.towers vector
-        towers.erase(towers.begin() + vecIndex);
+        swap(towers[vecIndex], towers.back());          // swap tower that is to be deleted, to the end of the vector
+        towers.pop_back();                              // pop deleted tower 
+        printf("id: %i, lvl: %i\n", towers[vecIndex].id, towers[vecIndex].level);
         funds += (float)g.towerCost * 0.4;
         //
-        //update hashTable for current tower
-        towerHash[towerId][towerLvl] = 0;
-        towerHash[towerId][towerIndex] = -1;
-        //
-        //update vector index values in tower hash table for active towers
-        for (int i = 0; i < (int)towers.size(); i++) {
+        //update vector values in tower hash table for active towers
+        for (int i = 0; i < (int)towers.size()-1; i++) {
             int currTowerID = towers[i].id;
+            int currTowerLvl = towers[i].level;
+            towerHash[currTowerID][towerLvl] = currTowerLvl;
             towerHash[currTowerID][towerIndex] = i;
         }
     }
