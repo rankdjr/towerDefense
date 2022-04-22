@@ -46,7 +46,7 @@ Tower::Tower(Image *img, float x, float y) {
 	cy = y+g.tile_pxSize/2;
 	width = g.tower_pxSize;
 	height = g.tower_pxSize;
-	id = (x/g.tile_pxSize)*10 + (9 - (y/g.tile_pxSize));
+	id = (x/g.tile_pxSize)*10 + (y/g.tile_pxSize);
 	level = 1;
 	active = 1;
 	range = 175;
@@ -82,7 +82,7 @@ void Tower::draw()
 	static double diff = 0;
 	static const double framerate = 0.075;
 	clock_gettime(CLOCK_REALTIME, &currentTime);
-	diff = timeDiff(&frameStart, &currentTime);
+	diff = timeDiff(&frameStart, &currentTime); //initial diff will always be greater than frame rate
 	if (diff > framerate) {
 		frameNo++;
 		timeCopy(&frameStart, &currentTime);
@@ -98,6 +98,7 @@ void Tower::draw()
 		//get center of enemy texture
 		int e_cx = currEnemy->x+12;
 		int e_cy = currEnemy->y+15;
+		//draw line
 		glColor4ub(255,0,255,255);
 		glPushMatrix();
 		glBegin(GL_LINES);
