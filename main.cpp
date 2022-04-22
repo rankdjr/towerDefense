@@ -2,7 +2,6 @@
 //date: Spring of 2022
 //
 // Credit to Gordon Griesel for X11 code, libggfontsa, timers.cpp, timers.h, and portions of the main loop in main.cpp
-// as well as the basis of the OpenGL compenents in draw.h
 //
 #include <stdlib.h>
 #include <stdio.h>
@@ -178,10 +177,10 @@ void render()
 
     //Game information rendered at top right of screen
     //draw backdrop for text on screen
-    static int recWidth = 100;
-    static int recHeight = 40;
-    static int xpos = g.xres-recWidth-10;
-    static int ypos = g.yres-recHeight-10;
+    const int recWidth = 100;
+    const int recHeight = 40;
+    const int xpos = g.xres-recWidth-10;
+    const int ypos = g.yres-recHeight-10;
     glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glColor4f(0, 0, 0, 0.70);
