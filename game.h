@@ -201,7 +201,9 @@ void Game::sortEnemiesByDistance()
 
 void Game::checkCurrEnemy()
 {
-    //loop through towers and update all nullptr enemies to active enemies
+    //loop through towers and:
+    //1. check range of towers to current enemy and reset when necessary
+    //2. update all nullptr enemies to active enemies
     for (long unsigned int i = 0; i < player.towers.size(); i++) {
         if (player.towers[i].currEnemy != nullptr) {
             //check distance of enemy
