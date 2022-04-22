@@ -56,7 +56,7 @@ public:
         static double diff = 0;
         static const double framerate = 0.15;
         clock_gettime(CLOCK_REALTIME, &currentTime);
-        diff = timeDiff(&frameStart, &currentTime);
+        diff = timeDiff(&frameStart, &currentTime); //initial diff will always be greater than frame rate
         if (diff > framerate) {
             frameNo++;
             timeCopy(&frameStart, &currentTime);
