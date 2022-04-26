@@ -215,7 +215,7 @@ void Game::checkCurrEnemy()
                 player.towers[i].currEnemy = nullptr;
             }
         } else {
-            //
+            //update all nullptr enemies in tower vector
             sortEnemiesByDistance();
             for (int j = numEnemies; j >= 0; --j) {
                 float dx = player.towers[i].cx - (enemy[j].x+ g.enemy_pxSize/2);
