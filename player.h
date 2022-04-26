@@ -64,7 +64,7 @@ void Player::addTower(float x, float y)
     {
         case 0:
         {
-            //not tower exists --> add new tower and update hashtable
+            //no tower exists --> add new tower and update hashtable
             towerHash[towerId][towerIndex] = towers.size(); // save curr index of vector to hash map
             towers.push_back(Tower(&towerBasic, towerTile.x, towerTile.y)); //push new tower
             towerHash[towerId][towerLvl]++; //update tower level in hash
@@ -97,8 +97,8 @@ void Player::addTower(float x, float y)
             int vecIndex = towerHash[towerId][towerIndex]; // get index of tower in player.towers vector
             towers[vecIndex].range *= 1.15;
             towers[vecIndex].dmg *= 1.25;
-            towerHash[towerId][towerLvl]++;
-            funds -= g.towerCost;  //update tower level in hash
+            towerHash[towerId][towerLvl]++; //update tower level in hash
+            funds -= g.towerCost;
 
             //debug
             // printf("towrX: %f,  towrY: %f\n", towers[towers.size()-1].x, towers[towers.size()-1].y);
@@ -147,8 +147,8 @@ void Player::removeTower(float x, float y)
         //printf("id: %i, lvl: %i\n", towers[vecIndex].id, towers[vecIndex].level);
         
         swap(towers[vecIndex], towers.back());          // swap tower that is to be deleted, to the end of the vector
-        towerHash[towers.back().id][towerLvl] = 0;      // reset hash table for tower to be deleted
-        towerHash[towers.back().id][towerIndex] = -1;   // reset hash table for tower to be deleted
+        towerHash[towers.back().id][towerLvl] = 0;      // reset hash table
+        towerHash[towers.back().id][towerIndex] = -1;   // reset hash table
         //printf("id: %i, lvl: %i\n",towers.back().id, towers.back().level);
         
         towers.pop_back();                              // pop deleted tower 
