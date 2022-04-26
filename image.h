@@ -29,9 +29,9 @@ public:
 			strcat(newfile, ".ppm");
 			sprintf(str, "convert %s %s", fname, newfile);
 			system(str);
-			fin.open(newfile);
+			fin.open(newfile, ios::in|ios::out);
 		} else {
-			fin.open(fname);
+			fin.open(fname, ios::in|ios::out);
 		}
 
 		char p6[10];
