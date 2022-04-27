@@ -195,4 +195,9 @@ void render()
 	sprintf(player.strFunds, "Gold:    %i", player.funds);
 	ggprint8b(&r, 20, set_color_3i(255, 255, 0), "%s", player.strHp);
 	ggprint8b(&r, 20, set_color_3i(255, 255, 0), "%s", player.strFunds);
+    r.left = 200;
+    r.bot = 600;
+    ggprint8b(&r, 20, set_color_3i(255,0,255),"temp instructions, making instruction page");
+     ggprint8b(&r, 20, set_color_3i(255,0,255), "S to spawn enemies");        
+     ggprint8b(&r, 20, set_color_3i(255,0,255), "B to build towers");
 }
