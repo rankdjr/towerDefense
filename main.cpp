@@ -125,11 +125,9 @@ void physics()
                 case 1:
                     game.enemy[i].y += game.enemy[i].speed;
                     break;
-                /*    
                 case 2: 
                     game.enemy[i].x -= game.enemy[i].speed;
                     break;
-                */
                 case 3:
                     game.enemy[i].y -= game.enemy[i].speed;
                     break;

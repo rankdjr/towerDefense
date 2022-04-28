@@ -49,9 +49,9 @@ Game::Game() {
 		{0, 0, 0, 1, 0, 1, 0, 0, 0, 0},
 		{8, 1, 1, 1, 0, 1, 0, 1, 1, 9},
 		{0, 0, 0, 0, 0, 1, 0, 1, 0, 0},
-		{0, 0, 0, 0, 0, 1, 1, 1, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 1, 1, 1, 0, 1, 0, 0},
+		{0, 0, 0, 1, 0, 0, 0, 1, 0, 0},
+		{0, 0, 0, 1, 1, 1, 1, 1, 0, 0},
 	};
     currMap = map;
     grid.setMap(currMap);
@@ -97,8 +97,9 @@ void Game::pathContinues(TileGrid grid){
     for (int i = 0; i<numEnemies; i++){
         switch(enemy[i].dir)
         {
+            //right
             case 0:
-                {
+            {
                 Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
                 Tile *nextTileX = grid.getTile((int)(enemy[i].x/g.tile_pxSize) +1, (int)(enemy[i].y/g.tile_pxSize));
                 Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)(enemy[i].y/g.tile_pxSize)+1);
@@ -113,56 +114,57 @@ void Game::pathContinues(TileGrid grid){
                     enemy[i].dir = 1;
                 }
                 break;
-                }        
+            }
+            //down        
             case 1:
-                {
+            {
                 Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
                 Tile *nextTileX = grid.getTile((int)(enemy[i].x/g.tile_pxSize) +1, (int)(enemy[i].y/g.tile_pxSize));
                 Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)(enemy[i].y/g.tile_pxSize)+1);
   
-            if (((nextTileY->type != myTile->type) && myTile->type !=8) && (nextTileX->type == myTile->type)){
-                
-                enemy[i].dir = 0;
-           
+                if (((nextTileY->type != myTile->type) && myTile->type !=8) && (nextTileX->type == myTile->type)){
+                    enemy[i].dir = 0;
+               }
+               else if (((nextTileY->type != myTile->type) && myTile->type !=8) && (nextTileX-> type != myTile->type))
+               {
+               enemy[i].dir = 2;
+               }
+               break;
             }
-            else if (((nextTileY->type != myTile->type) && myTile->type !=8) && (nextTileX-> type != myTile->type))
-                    {
-                    enemy[i].dir = 2;
-            
-                    }
-        break;
-            }                
-        case 2:
-            
-            
+            //left                
+            case 2:
             {                    
-            Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
-            Tile *nextTileX = grid.getTile((int)(enemy[i].x/g.tile_pxSize)-1 , (int)(enemy[i].y/g.tile_pxSize));
-           
-            
-            if ((nextTileX->type != myTile->type) && myTile->type !=8){
-                enemy[i].dir++;
+                Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
+                Tile *nextTileX = grid.getTile((int)((enemy[i].x+48)/g.tile_pxSize)-1 , (int)(enemy[i].y/g.tile_pxSize));
+                Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)(enemy[i].y/g.tile_pxSize)+1); 
+                if (((nextTileX->type != myTile->type) && (nextTileX->type != 2)) && (nextTileY-> type == myTile-> type))
+                {
+                    enemy[i].dir = 1;
+                }
+      
+                else if (((nextTileX->type != myTile->type) && (myTile->type !=8 && myTile->type != 9)) && (nextTileY-> type != myTile-> type))
+                {
+                    enemy[i].dir = 3;
+                }
+                break;
             }
             
-        break;
-            }
-
-        case 3:
+            //up
+            case 3:
             {
-            Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)((enemy[i].y)/g.tile_pxSize)));
-            Tile *nextTileX  = grid.getTile((int)(enemy[i].x/g.tile_pxSize)+1 , (int)(enemy[i].y/g.tile_pxSize));
-            Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)((enemy[i].y + 48)/g.tile_pxSize)-1);
-     
-            
-            if (((nextTileY->type != myTile->type) && (myTile->type != 8 && myTile ->type != 9)) && (nextTileX->type == myTile->type)){
-               
-                enemy[i].dir = 0;  
-            }
-            else if (((nextTileY->type != myTile->type) && (myTile->type !=8 && myTile->type!= 9)) && (nextTileX-> type != myTile->type))
-                    {
+                Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)((enemy[i].y)/g.tile_pxSize)));
+                Tile *nextTileX  = grid.getTile((int)(enemy[i].x/g.tile_pxSize)+1 , (int)(enemy[i].y/g.tile_pxSize));
+                Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)((enemy[i].y + 48)/g.tile_pxSize)-1);
+           
+                if (((nextTileY->type != myTile->type) && (myTile->type != 8 && myTile ->type != 9)) && (nextTileX->type == myTile->type))
+                {   
+                    enemy[i].dir = 0;  
+                }
+                else if (((nextTileY->type != myTile->type) && (myTile->type !=8 && myTile->type!= 9)) && (nextTileX-> type != myTile->type))
+                {
                     enemy[i].dir = 2;
-                    }
-        break;
+                }
+                 break;
             } 
 
 

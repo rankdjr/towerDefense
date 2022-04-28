@@ -35,7 +35,7 @@ public:
         showTowerRange = 0;
         //
         //enemy vars
-        enemy_pxSize = 30;
+        enemy_pxSize = 45;
         //
         //initialize x,y resolution
         xres = mapWidth * tile_pxSize; //640px
