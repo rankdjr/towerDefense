@@ -9,7 +9,7 @@ void timeCopy(struct timespec *dest, struct timespec *source);
 class Game {
 public:
     int (*currMap)[10];
-    int numEnemies, enemiesalive;
+    int numEnemies, enemiesalive, baseEnemies;
     Enemy enemy[30];
     
     Game();
@@ -19,12 +19,13 @@ public:
     void sortEnemiesByDistance();
     void checkCurrEnemy();
     void updateTowerActions();
-} game;
+} game;                     
 
 Game::Game() {
     //
     //enemy vars
-    numEnemies = 10;
+    //baseEnemies = 5;
+    numEnemies = 5;
     enemiesalive = 0;
     //
     //map vars

@@ -176,7 +176,7 @@ void render()
     //Game information rendered at top right of screen
     //draw backdrop for text on screen
     const int recWidth = 100;
-    const int recHeight = 40;
+    const int recHeight = 60;
     const int xpos = g.xres-recWidth-10;
     const int ypos = g.yres-recHeight-10;
     glEnable(GL_BLEND);
@@ -187,15 +187,21 @@ void render()
     //print game text
     Rect r;
 	r.left = xpos+10;
-	r.bot = ypos+recHeight-15;
+	r.bot = ypos+recHeight - 15;
 	r.center = 0;
     sprintf(player.strHp,    "Health:  %i", player.hp);
 	sprintf(player.strFunds, "Gold:    %i", player.funds);
 	ggprint8b(&r, 20, set_color_3i(255, 255, 0), "%s", player.strHp);
 	ggprint8b(&r, 20, set_color_3i(255, 255, 0), "%s", player.strFunds);
-    r.left = 200;
-    r.bot = 600;
+    sprintf(g.strWave, "Wave:    %i", g.wave);
+    ggprint8b(&r, 20, set_color_3i(255,255,0), "%s", g.strWave); 
+    /*
+     *
+    
     ggprint8b(&r, 20, set_color_3i(255,0,255),"temp instructions, making instruction page");
-     ggprint8b(&r, 20, set_color_3i(255,0,255), "S to spawn enemies");        
-     ggprint8b(&r, 20, set_color_3i(255,0,255), "B to build towers");
+    ggprint8b(&r, 20, set_color_3i(255,0,255), "S to spawn enemies");        
+    ggprint8b(&r, 20, set_color_3i(255,0,255), "B to build to towers");
+    */
+
+
 }

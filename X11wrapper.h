@@ -217,8 +217,11 @@ int X11_wrapper::check_keys(XEvent *e)
 				g.buildState = NONE;
 				break;
 			case XK_s:
-				game.initEnemies(game.numEnemies);
+				game.initEnemies(game.numEnemies +g.wave);
 				g.gameState = PLAYING;
+                game.numEnemies += 1;
+                g.wave += 1;
+               // printf("%i", g.wave);
 				break;
             case XK_k:
                 game.killEnemy(&game.enemy[0]);
