@@ -23,7 +23,7 @@ public:
 Player::Player()
 {
     hp = 10;
-    funds = 100;
+    funds = 50;
     for (int i = 0; i < 99; i++) {
         towerHash[i][0] = 0;
         towerHash[i][1] = -1;

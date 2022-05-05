@@ -83,7 +83,7 @@ void Game::initEnemies(int numEnemies) {
 
     for( int i = 0; i<numEnemies; i++) {
         enemy[i].x = grid.startTile.x;
-        enemy[i].y = grid.startTile.y;
+        enemy[i].y = grid.startTile.y + 24;
         enemy[i].width = g.enemy_pxSize;
         enemy[i].height = g.enemy_pxSize;
         enemy[i].health = enemy[i].maxHealth;
@@ -102,7 +102,7 @@ void Game::pathContinues(TileGrid grid){
             case 0:
             {
                 Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
-                Tile *nextTileX = grid.getTile((int)(enemy[i].x/g.tile_pxSize) +1, (int)(enemy[i].y/g.tile_pxSize));
+                Tile *nextTileX = grid.getTile((int)((enemy[i].x- 16)/g.tile_pxSize) +1, (int)(enemy[i].y/g.tile_pxSize));
                 Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)(enemy[i].y/g.tile_pxSize)+1);
                 //cout << nextTileX ->type << endl;
                 if (((nextTileX->type != myTile->type) && (nextTileX->type != 2)) && (nextTileY-> type != myTile-> type))
@@ -110,7 +110,7 @@ void Game::pathContinues(TileGrid grid){
                     enemy[i].dir = 3;
                 }
       
-                else if (((nextTileX->type != myTile->type) && (myTile->type !=8 && myTile->type != 9)) && (nextTileY-> type == myTile-> type))
+                else if (((nextTileX->type != myTile->type)) && (nextTileY-> type == myTile-> type))
                 {
                     enemy[i].dir = 1;
                 }
@@ -121,7 +121,7 @@ void Game::pathContinues(TileGrid grid){
             {
                 Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
                 Tile *nextTileX = grid.getTile((int)(enemy[i].x/g.tile_pxSize) +1, (int)(enemy[i].y/g.tile_pxSize));
-                Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)(enemy[i].y/g.tile_pxSize)+1);
+                Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)((enemy[i].y -16)/g.tile_pxSize)+1);
   
                 if (((nextTileY->type != myTile->type) && myTile->type !=8) && (nextTileX->type == myTile->type)){
                     enemy[i].dir = 0;
@@ -182,6 +182,7 @@ void Game::killEnemy(Enemy *enemy)
     enemy->x = -100;
     enemy->y = -100;
     enemy->distToEnd = 0;
+    player.funds++;
     enemiesalive--;
 }
 
@@ -243,7 +244,7 @@ void Game::updateTowerActions()
         if (player.towers[i].currEnemy) {
             //tower has a currEnemy;
             player.towers[i].attackEnemy();
-            if (player.towers[i].currEnemy->health < 0) {
+            if (player.towers[i].currEnemy->health < 0 && ( player.towers[i].currEnemy-> alive != 0)) {
                 //printf("EK\t--  range: %f,  dist: %f\n", player.towers[i].range, dist);
                 game.killEnemy(player.towers[i].currEnemy);
                 player.towers[i].currEnemy = nullptr;
