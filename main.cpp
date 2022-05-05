@@ -148,16 +148,16 @@ void render()
         //draw map
         grid.draw();
 
-        //draw enemies
-        for(int i = 0; i<game.numEnemies; i++){
-            game.enemy[i].draw();
-        }
-
         //draw towers
         if(!player.towers.empty()) {
             for (int i = 0; i < (int)player.towers.size(); i++) {
                 player.towers[i].draw();                
             }
+        }
+
+        //draw enemies
+        for(int i = 0; i<game.numEnemies; i++){
+            game.enemy[i].draw();
         }
 
         //show tower range; flag set in x11.checkMouse() (3)right-click
