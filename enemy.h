@@ -9,7 +9,7 @@ public:
     float x, y, cx, cy, distToEnd; 
     int width, height;
     float health, speed;
-    static const int maxHealth = 100;
+    static const int maxHealth = 50;
     int dir;
     int frameNo;
     bool alive;
