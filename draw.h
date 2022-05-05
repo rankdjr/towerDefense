@@ -47,10 +47,12 @@ void init_texture_alpha(Image *img, int r, int g, int b)
 void init_graphics()
 {
 	//intialize tile textures
+	init_texture(&startup);
+	//intialize tile textures
 	init_texture(&grass);
 	init_texture(&dirt);
 	//intialize tower textures
-	init_texture_alpha(&towerBasic,0,0,0);
+	init_texture_alpha(&towerBasic, 0, 0, 0);
 	//initialize enemy textures
 	init_texture_alpha(&enemyBasic, 0, 0, 0);
 }

@@ -171,7 +171,22 @@ void X11_wrapper::check_mouse(XEvent *e)
 	if (e->type == ButtonPress) {
 		if (e->xbutton.button==1) {
 			//Left button was pressed.
-			if (g.buildState == BUY) {
+			if (g.gameState == START) {
+				if (g.xMousePos >= 270 && g.xMousePos <= 270+startButton.width) {
+					if (g.yMousePos <= 420 && g.yMousePos >= 420-startButton.height) {
+						g.gameState = PLAYING;
+					}
+            	}
+				if (g.xMousePos >= 278 && g.xMousePos <= 278+ctrlButton.width) {
+					if (g.yMousePos <= 475 && g.yMousePos >= 475-startButton.height) {
+						printf("s - spawn enemy wave\n");
+						printf("b - build mode (left click tile to add towers)\n");
+						printf("x - sell mode  (left click tower to sell\n");
+						printf("right-click (on tower) - show tower range\n");
+					}
+            	}
+			}
+			else if (g.buildState == BUY) {
 				player.addTower(g.xMousePos, g.yMousePos);
 			} 
 			else if (g.buildState == SELL) {
@@ -223,9 +238,6 @@ int X11_wrapper::check_keys(XEvent *e)
                 g.wave += 1;
                // printf("%i", g.wave);
 				break;
-            case XK_k:
-                game.killEnemy(&game.enemy[0]);
-                break;
             case XK_x:
 				if(g.buildState != SELL) {
 					g.buildState = SELL;
