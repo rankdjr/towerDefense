@@ -62,7 +62,7 @@ int main()
     initialize_fonts();
     clock_gettime(CLOCK_REALTIME, &timePause);
     clock_gettime(CLOCK_REALTIME, &timeStart);
-    
+
 	//manually declare map
 	int map[10][10] = { 
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -90,12 +90,8 @@ int main()
 			done = x11.check_keys(&e);
 		}
         //
-<<<<<<< Updated upstream
         //Below is a process to apply physics at a consistent rate.
         //1. Get the time right now.
-=======
-        game.pathContinues(grid);
->>>>>>> Stashed changes
         clock_gettime(CLOCK_REALTIME, &timeCurrent);
         //2. How long since we were here last?
         timeSpan = timeDiff(&timeStart, &timeCurrent);
@@ -129,7 +125,6 @@ int main()
 
 void physics()
 {
-<<<<<<< Updated upstream
    //  int i;    
     static struct timespec towerTime;
     static int firsttime=1;
@@ -174,59 +169,13 @@ void physics()
         
      }
      */
-=======
-    if (g.gameState == PLAYING)     
-    {
-        for (int i = 0; i<game.numEnemies; i++)
-        {
-            switch(game.enemy[i].dir)
-            { 
-                case 0:
-                    game.enemy[i].x += game.enemy[i].speed;
-                    break;
-                case 1:
-                    game.enemy[i].y += game.enemy[i].speed;
-                    break;
-                /*    
-                case 2: 
-                    game.enemy[i].x -= game.enemy[i].speed;
-                    break;
-                */
-                case 3:
-                    game.enemy[i].y -= game.enemy[i].speed;
-                    break;
-            }
-        }   
-    }
->>>>>>> Stashed changes
 }
-
 
 void render()
 {
 	grid.draw();
-<<<<<<< Updated upstream
 	enemy->Draw();
 	if (g.gameState == BUILD) {
-=======
-
-    for(int i = 0; i<game.numEnemies; i++){
-        
-        if (game.enemy[i].alive == 1 ) {
-        game.enemy[i].Draw();
-        
-        }
-    }
-
-	if (g.showTowerRange) {
-		int mapi = g.xMousePos/64;
-		int mapj = 9-g.yMousePos/64;
-		Tile *t = grid.getTile(mapi,mapj);
-		t->tower.showRange();
-	}
-
-	if (g.buildState == 1) {
->>>>>>> Stashed changes
 		//get tile based off of mouse position
 		grid.drawTileOutline();
 	}

@@ -1,16 +1,7 @@
 #ifndef _ENEMY_H_
 #define _ENEMY_H_
-<<<<<<< Updated upstream
 #include "global.h"
 #include "draw.h"
-=======
-
-//#include "global.h"
-//#include "draw.h"
-//#include "tower.h"
-//#include "TileGrid.h"
-//#include "tile.h"
->>>>>>> Stashed changes
 
 class Enemy {
 public:
@@ -29,7 +20,6 @@ public:
         // 0= right, 1= down, 2= left, 3=up
         this->dir = dir;
     }
-    
 
     void Draw() {
     
