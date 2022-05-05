@@ -84,18 +84,20 @@ int main()
 
 void doGameLogic()
 {
-    game.updateTowerActions();
-    game.pathContinues(grid);
-    
-    for (int i = 0; i<game.numEnemies; i++)
-    {
-        Tile *myTile = (grid.getTile((game.enemy[i].x/g.tile_pxSize), (int)(game.enemy[i].y/g.tile_pxSize)));
-        if ( myTile -> type == 2)
+    if (g.gameState != START) {
+        game.updateTowerActions();
+        game.pathContinues(grid);
+        
+        for (int i = 0; i<game.numEnemies; i++)
         {
-            game.killEnemy(&game.enemy[i]);
-            player.updateHP(1);
+            Tile *myTile = (grid.getTile((game.enemy[i].x/g.tile_pxSize), (int)(game.enemy[i].y/g.tile_pxSize)));
+            if ( myTile -> type == 2)
+            {
+                game.killEnemy(&game.enemy[i]);
+                player.updateHP(1);
+            }
         }
-    } 
+    }
 }
 
 void applyPhysics()
@@ -138,70 +140,76 @@ void physics()
 
 void render()
 {
-    //draw map
-	grid.draw();
+    if (g.gameState == START) {
+        //draw title screen
+        drawQuadTex(startup, 0.0, 0.0, 640.0, 640.0);
+    } 
+    else {
+        //draw map
+        grid.draw();
 
-    //draw enemies
-    for(int i = 0; i<game.numEnemies; i++){
-        game.enemy[i].draw();
-    }
-
-    //draw towers
-    if(!player.towers.empty()) {
-        for (int i = 0; i < (int)player.towers.size(); i++) {
-            player.towers[i].draw();                
+        //draw enemies
+        for(int i = 0; i<game.numEnemies; i++){
+            game.enemy[i].draw();
         }
-    }
 
-    //show tower range; flag set in x11.checkMouse() (3)right-click
-	if (g.showTowerRange) {
-		int mapi = g.xMousePos/g.tile_pxSize;
-		int mapj = 9-g.yMousePos/g.tile_pxSize;
-        const int towerLvl = 0;
-        const int towerIndex = 1;
-        int towerId = mapi*10 + mapj;
-        int towerExists = player.towerHash[towerId][towerLvl];
-		if (towerExists) {
-            int vecIndex = player.towerHash[towerId][towerIndex]; // get index of tower in player.towers vector
-            player.towers[vecIndex].showRange();
+        //draw towers
+        if(!player.towers.empty()) {
+            for (int i = 0; i < (int)player.towers.size(); i++) {
+                player.towers[i].draw();                
+            }
         }
-	}
 
-    //show tile outlines; flag set in x11.checkKeys() (b)build/(s)sell
-	if (g.buildState) {
-		//get tile based off of mouse position
-		grid.drawTileOutline();
-	}
+        //show tower range; flag set in x11.checkMouse() (3)right-click
+        if (g.showTowerRange) {
+            int mapi = g.xMousePos/g.tile_pxSize;
+            int mapj = 9-g.yMousePos/g.tile_pxSize;
+            const int towerLvl = 0;
+            const int towerIndex = 1;
+            int towerId = mapi*10 + mapj;
+            int towerExists = player.towerHash[towerId][towerLvl];
+            if (towerExists) {
+                int vecIndex = player.towerHash[towerId][towerIndex]; // get index of tower in player.towers vector
+                player.towers[vecIndex].showRange();
+            }
+        }
 
-    //Game information rendered at top right of screen
-    //draw backdrop for text on screen
-    const int recWidth = 100;
-    const int recHeight = 60;
-    const int xpos = g.xres-recWidth-10;
-    const int ypos = g.yres-recHeight-10;
-    glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glColor4f(0, 0, 0, 0.70);
-    drawQuad(xpos, ypos, recWidth, recHeight);
-    glDisable(GL_BLEND);
-    //print game text
-    Rect r;
-	r.left = xpos+10;
-	r.bot = ypos+recHeight - 15;
-	r.center = 0;
-    sprintf(player.strHp,    "Health:  %i", player.hp);
-	sprintf(player.strFunds, "Gold:    %i", player.funds);
-	ggprint8b(&r, 20, set_color_3i(255, 255, 0), "%s", player.strHp);
-	ggprint8b(&r, 20, set_color_3i(255, 255, 0), "%s", player.strFunds);
-    sprintf(g.strWave, "Wave:    %i", g.wave);
-    ggprint8b(&r, 20, set_color_3i(255,255,0), "%s", g.strWave); 
-    /*
-     *
-    
-    ggprint8b(&r, 20, set_color_3i(255,0,255),"temp instructions, making instruction page");
-    ggprint8b(&r, 20, set_color_3i(255,0,255), "S to spawn enemies");        
-    ggprint8b(&r, 20, set_color_3i(255,0,255), "B to build to towers");
-    */
+        //show tile outlines; flag set in x11.checkKeys() (b)build/(s)sell
+        if (g.buildState) {
+            //get tile based off of mouse position
+            grid.drawTileOutline();
+        }
+
+        //Game information rendered at top right of screen
+        //draw backdrop for text on screen
+        const int recWidth = 100;
+        const int recHeight = 60;
+        const int xpos = g.xres-recWidth-10;
+        const int ypos = g.yres-recHeight-10;
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glColor4f(0, 0, 0, 0.70);
+        drawQuad(xpos, ypos, recWidth, recHeight);
+        glDisable(GL_BLEND);
+        //print game text
+        Rect r;
+        r.left = xpos+10;
+        r.bot = ypos+recHeight - 15;
+        r.center = 0;
+        sprintf(player.strHp,    "Health:  %i", player.hp);
+        sprintf(player.strFunds, "Gold:    %i", player.funds);
+        ggprint8b(&r, 20, set_color_3i(255, 255, 0), "%s", player.strHp);
+        ggprint8b(&r, 20, set_color_3i(255, 255, 0), "%s", player.strFunds);
+        sprintf(g.strWave, "Wave:    %i", g.wave);
+        ggprint8b(&r, 20, set_color_3i(255,255,0), "%s", g.strWave); 
+        /*
+        *
+        
+        ggprint8b(&r, 20, set_color_3i(255,0,255),"temp instructions, making instruction page");
+        ggprint8b(&r, 20, set_color_3i(255,0,255), "S to spawn enemies");        
+        ggprint8b(&r, 20, set_color_3i(255,0,255), "B to build to towers");
+        */
+    }
 
 
 }

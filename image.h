@@ -48,7 +48,8 @@ public:
 } grass("res/grass.png"),
   dirt("res/dirt.png"),
   towerBasic("res/towerSprite.png"),
-  enemyBasic("res/enemy1Sprite.png");
+  enemyBasic("res/enemy1Sprite.png"),
+  startup("res/startupf.png");
 
 unsigned char *buildAlphaData(Image *img, int r1, int g1, int b1)
 {

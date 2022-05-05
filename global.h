@@ -4,6 +4,22 @@
 enum GameState { START = 0, BUILD, PLAYING, END };
 enum BuildState { NONE = 0, BUY, SELL};
 
+class button {
+public:
+	float pos[2];
+	float width, height;
+	bool clicked;
+    button();
+	button(float w, float p0, float p1) {
+		width = w;
+        height = 40;
+        pos[0] = p0;
+        pos[1] = p1;
+		clicked = 0;
+	}
+} startButton(105, 270, 220),
+  ctrlButton(90, 280, 475);
+
 class Global {
 public:
 	int xres, yres;
@@ -13,6 +29,7 @@ public:
     int enemy_pxSize;
     int mapWidth, mapHeight;
     bool buildTower, showTowerRange;
+
     int wave;
     char strWave[30];
     GameState gameState;
@@ -42,7 +59,7 @@ public:
         //initialize x,y resolution
         xres = mapWidth * tile_pxSize; //640px
         yres = mapHeight * tile_pxSize; //640px
-
+        //
         // wave counter;
         wave = 0;
     }
