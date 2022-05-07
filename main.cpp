@@ -208,7 +208,7 @@ void render()
         //Game information rendered at top right of screen
         //draw backdrop for text on screen
         const int recWidth = 100;
-        const int recHeight = 60;
+        const int recHeight = 80;
         const int xpos = g.xres-recWidth-10;
         const int ypos = g.yres-recHeight-10;
         glEnable(GL_BLEND);
@@ -226,16 +226,12 @@ void render()
         ggprint8b(&gameOverlay, 20, set_color_3i(255, 255, 0), "%s", player.strHp);
         ggprint8b(&gameOverlay, 20, set_color_3i(255, 255, 0), "%s", player.strFunds);
         sprintf(g.strWave, "Wave:    %i", g.wave);
-        ggprint8b(&gameOverlay, 20, set_color_3i(255,255,0), "%s", g.strWave); 
-        /*
-        *
-        
-        ggprint8b(&r, 20, set_color_3i(255,0,255),"temp instructions, making instruction page");
-        ggprint8b(&r, 20, set_color_3i(255,0,255), "S to spawn enemies");        
-        ggprint8b(&r, 20, set_color_3i(255,0,255), "B to build to towers");
-        */
+        ggprint8b(&gameOverlay, 20, set_color_3i(255,255,0), "%s", g.strWave);
+        ggprint07(&gameOverlay, 20, set_color_3i(255,255,0), "Pause Menu (p)");
+
 
         if (g.gameState == PAUSE) {
+            //show pause menu
             const int recWidth = 212;
             const int recHeight = 106;
             const float xpos = g.xres/2.0f-recWidth/2.0f;
@@ -256,6 +252,4 @@ void render()
             ggprint8b(&pauseMenu, 20, set_color_3i(255,255,0), "rmb - show tower range");
         }
     }
-
-
 }
