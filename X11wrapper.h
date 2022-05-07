@@ -179,10 +179,7 @@ void X11_wrapper::check_mouse(XEvent *e)
             	}
 				if (g.xMousePos >= 278 && g.xMousePos <= 278+ctrlButton.width) {
 					if (g.yMousePos <= 475 && g.yMousePos >= 475-startButton.height) {
-						printf("s - spawn enemy wave\n");
-						printf("b - build mode (left click tile to add towers)\n");
-						printf("x - sell mode  (left click tower to sell\n");
-						printf("right-click (on tower) - show tower range\n");
+						g.showControls = 1;
 					}
             	}
 			}
@@ -231,6 +228,13 @@ int X11_wrapper::check_keys(XEvent *e)
 				}
 				g.buildState = NONE;
 				break;
+			case XK_p:
+				if(g.gameState != PAUSE) {
+					g.gameState = PAUSE;
+					break;
+				}
+				g.gameState = PLAYING;
+				break;
 			case XK_s:
 				game.initEnemies(game.numEnemies +g.wave);
 				g.gameState = PLAYING;
@@ -246,7 +250,10 @@ int X11_wrapper::check_keys(XEvent *e)
 				g.buildState = NONE;
 				break;
 			case XK_Escape:
-				return 1;
+				if (g.gameState == START && g.showControls == 1)
+					g.showControls = 0;
+				else
+					return 1;
 		}
 	}
 	return 0;
