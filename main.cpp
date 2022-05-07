@@ -143,6 +143,7 @@ void render()
     if (g.gameState == START) {
         //draw title screen
         drawQuadTex(startup, 0.0, 0.0, 640.0, 640.0);
+        //draw controls screen when clicked
         if (g.showControls == 1) {
             const int recWidth = 212;
             const int recHeight = 114;

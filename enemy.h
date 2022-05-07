@@ -10,7 +10,7 @@ public:
     int width, height;
     float health, speed;
     static const int maxHealth = 50;
-    int dir;
+    int dir; // 0= right, 1= down, 2= left, 3=up
     int frameNo;
     bool alive;
     Image *texture;
@@ -65,6 +65,8 @@ public:
             frameNo = 1;
         //
         //draw texture
+        if (dir == 2)
+            swap(tx1, tx2);
         drawQuadTexAlpha(*texture, x, y, tx1, tx2, ty1, ty2, width, height);
     } 
 } nullEnemy;
