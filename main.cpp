@@ -148,14 +148,14 @@ void render()
             const int recWidth = 212;
             const int recHeight = 114;
             const float xpos = g.xres/2.0f-recWidth/2.0f;
-            const int ypos = g.yres/2.0f-recHeight/2.0f;
+            const int ypos = g.yres/2.0f-recHeight/2.0f + 50;
             Rect pauseMenu;
             pauseMenu.left = xpos+10;
             pauseMenu.bot = ypos+recHeight - 15;
             pauseMenu.center = 0;
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glColor4f(0, 0, 0, 0.99);
+            glColor4f(0, 0, 0, 0.95);
             drawQuad(0.0, 0.0, 640.0, 640.0);
             drawQuad(xpos, g.yres-(ypos+recHeight), recWidth, recHeight);
             glDisable(GL_BLEND);
