@@ -1,7 +1,7 @@
 #ifndef _GLOBAL_H_
 #define _GLOBAL_H_
 
-enum GameState { START = 0, BUILD, PLAYING, END };
+enum GameState { START = 0, BUILD, PLAYING, PAUSE, END };
 enum BuildState { NONE = 0, BUY, SELL};
 
 class button {
@@ -28,7 +28,7 @@ public:
     int tile_pxSize;
     int enemy_pxSize;
     int mapWidth, mapHeight;
-    bool buildTower, showTowerRange;
+    bool buildTower, showTowerRange, showControls;
 
     int wave;
     char strWave[30];
@@ -39,6 +39,7 @@ public:
         //
         gameState = START;
         buildState = NONE;
+        showControls = 0;
         //
         //map vars **update map var in TileGrid.h if changed**
         mapWidth = 10;
