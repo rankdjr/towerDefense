@@ -246,8 +246,10 @@ void Game::updateTowerActions()
             player.towers[i].attackEnemy();
             if (player.towers[i].currEnemy->health < 0 && ( player.towers[i].currEnemy-> alive != 0)) {
                 //printf("EK\t--  range: %f,  dist: %f\n", player.towers[i].range, dist);
-                game.killEnemy(player.towers[i].currEnemy);
+                Enemy *e = player.towers[i].currEnemy;
                 player.towers[i].currEnemy = nullptr;
+                game.killEnemy(e);
+                
             }
         }
     }
