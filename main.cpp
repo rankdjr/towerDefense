@@ -192,6 +192,7 @@ void render()
                 player.towers[i].drawProjectile();                
             }
         }
+        
         //show tower range; flag set in x11.checkMouse() (3)right-click
         if (g.showTowerRange) {
             int mapi = g.xMousePos/g.tile_pxSize;
