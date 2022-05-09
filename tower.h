@@ -22,6 +22,7 @@ public:
 	void setxy(int x, int y);
 	void setwh(int w, int h);
 	void draw();
+	void drawProjectile();
 	void showRange();
 	void setCurrEnemy(Enemy *enemy);
 	void attackEnemy();
@@ -92,7 +93,10 @@ void Tower::draw()
 	
 	//draw tower
 	drawQuadTexAlpha(*texture, x+offset, y+offset, tx1, tx2, ty1, ty2, width, height);
+}
 
+void Tower::drawProjectile()
+{
 	//draw attack
 	if (currEnemy) {
 		//get center of enemy texture
@@ -108,6 +112,7 @@ void Tower::draw()
 		glPopMatrix();
 	}
 }
+
 
 void Tower::showRange()
 {

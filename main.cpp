@@ -186,6 +186,12 @@ void render()
             game.enemy[i].draw();
         }
 
+        //draw tower attacks
+        if(!player.towers.empty()) {
+            for (int i = 0; i < (int)player.towers.size(); i++) {
+                player.towers[i].drawProjectile();                
+            }
+        }
         //show tower range; flag set in x11.checkMouse() (3)right-click
         if (g.showTowerRange) {
             int mapi = g.xMousePos/g.tile_pxSize;
