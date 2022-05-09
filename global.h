@@ -36,7 +36,7 @@ public:
     BuildState buildState;
 
     Global() {
-        //
+        //Game flow vars
         gameState = START;
         buildState = NONE;
         showControls = 0;
