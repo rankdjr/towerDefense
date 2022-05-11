@@ -25,6 +25,7 @@ public:
     void updateTowerActions();
 } game;                     
 
+
 Game::Game() {
     //initilaize starting values for game start
     sizeOfWave = 5;
@@ -274,21 +275,83 @@ void Game::killEnemy(Enemy *enemy)
     // enemiesalive--;
 }
 
+// void Game::sortEnemiesByDistance()
+// {
+//     //bubble sort enemies in descending order by distance to end tile
+//     if (enemiesalive > 1) {
+//         for (int i = 0; i < numEnemies-1; i++) {
+//             for (int j = i+1; j < numEnemies; j++) {
+//                 if (enemy[i].distToEnd < enemy[j].distToEnd) {
+//                     Enemy temp = enemy[j];
+//                     enemy[j] = enemy[i];
+//                     enemy[i] = temp;
+//                     //printf("swap %i\n",j);
+//                 }
+//             }
+//         }  
+//     }
+// }
+
+// void Game::checkCurrEnemy()
+// {
+//     //loop through towers and:
+//     //1. check range of towers to current enemy and reset when necessary
+//     //2. update all nullptr enemies to active enemies
+//     for (long unsigned int i = 0; i < player.towers.size(); i++) {
+//         if (player.towers[i].currEnemy != nullptr) {
+//             //check distance of enemy
+//             float dx = player.towers[i].cx - ((player.towers[i].currEnemy->x)+g.enemy_pxSize/2);
+//             float dy = player.towers[i].cy - ((player.towers[i].currEnemy->y)+g.enemy_pxSize/2);
+//             float dist = sqrt(dx*dx + dy*dy);
+//             if (dist > player.towers[i].range) {
+//                 //enemy is out of range, reset curr enemy ptr
+//                 player.towers[i].currEnemy = nullptr;
+//             }
+//         } else {
+//             //update all nullptr enemies in tower vector
+//             sortEnemiesByDistance();
+//             for (int j = numEnemies; j >= 0; --j) {
+//                 float dx = player.towers[i].cx - (enemy[j].x+ g.enemy_pxSize/2);
+//                 float dy = player.towers[i].cy - (enemy[j].y+ g.enemy_pxSize/2);
+//                 float dist = sqrt(dx*dx + dy*dy);
+//                 //printf("{ %i, %f }, ", j, dist);
+//                 if (dist < player.towers[i].range) {
+//                     player.towers[i].setCurrEnemy(&enemy[j]);
+//                     //printf("NAE  --  tower[%li] --> enemy[%i]\n", i, j);
+//                     j = 0;
+//                 }
+//             }
+//         }
+//     }
+// }
+
+// void Game::updateTowerActions()
+// {
+//     checkCurrEnemy();
+//     //Loop though towers + attack
+//     for (long unsigned int i = 0; i < player.towers.size(); i++) {
+//         if (player.towers[i].currEnemy) {
+//             //tower has a currEnemy;
+//             player.towers[i].attackEnemy();
+//             if (player.towers[i].currEnemy->health < 0 && ( player.towers[i].currEnemy-> alive != 0)) {
+//                 //printf("EK\t--  range: %f,  dist: %f\n", player.towers[i].range, dist);
+//                 Enemy *e = player.towers[i].currEnemy;
+//                 //set all towers currEnemy that match the dead enemy to nullptr
+//                 for (long unsigned int i = 0; i < player.towers.size(); i++) {
+//                     if (player.towers[i].currEnemy == e)
+//                         player.towers[i].currEnemy = nullptr;
+//                 }
+//                 game.killEnemy(e);
+                
+//             }
+//         }
+//     }
+// }
+
 void Game::sortEnemiesByDistance()
 {
     //bubble sort enemies in descending order by distance to end tile
-    if (enemiesalive > 1) {
-        for (int i = 0; i < numEnemies-1; i++) {
-            for (int j = i+1; j < numEnemies; j++) {
-                if (enemy[i].distToEnd < enemy[j].distToEnd) {
-                    Enemy temp = enemy[j];
-                    enemy[j] = enemy[i];
-                    enemy[i] = temp;
-                    //printf("swap %i\n",j);
-                }
-            }
-        }  
-    }
+    sort(wave.begin(), wave.end(), greater<Enemy>());
 }
 
 void Game::checkCurrEnemy()
@@ -308,16 +371,16 @@ void Game::checkCurrEnemy()
             }
         } else {
             //update all nullptr enemies in tower vector
-            sortEnemiesByDistance();
-            for (int j = numEnemies; j >= 0; --j) {
-                float dx = player.towers[i].cx - (enemy[j].x+ g.enemy_pxSize/2);
-                float dy = player.towers[i].cy - (enemy[j].y+ g.enemy_pxSize/2);
+            sort(wave.begin(), wave.end(), greater<Enemy>());
+            for (int j = 0; j < (int)wave.size(); j++) {
+                float dx = player.towers[i].cx - (wave[j].x + g.enemy_pxSize/2);
+                float dy = player.towers[i].cy - (wave[j].y + g.enemy_pxSize/2);
                 float dist = sqrt(dx*dx + dy*dy);
                 //printf("{ %i, %f }, ", j, dist);
                 if (dist < player.towers[i].range) {
-                    player.towers[i].setCurrEnemy(&enemy[j]);
-                    //printf("NAE  --  tower[%li] --> enemy[%i]\n", i, j);
-                    j = 0;
+                    player.towers[i].setCurrEnemy(&wave[j]);
+                    //printf("NAE  --  tower[%li] --> wave[%i]\n", i, j);
+                    j = (int)wave.size();
                 }
             }
         }

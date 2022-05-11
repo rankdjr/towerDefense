@@ -15,6 +15,11 @@ public:
     bool alive;
     Image *texture;
     struct timespec frameStart, currentTime;
+    
+    bool operator > (const Enemy& e) const
+    {
+        return (distToEnd > e.distToEnd);
+    }
 
     Enemy() : x(-100), y(-100), width(0), height(0), health(0), speed(0), dir(0), alive(0), texture(&enemyBasic)
     {}
