@@ -3,6 +3,7 @@
 //
 // Credit to Gordon Griesel for X11 code, libggfontsa, timers.cpp, timers.h, and portions of the main loop in main.cpp
 //
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
@@ -87,9 +88,13 @@ void doGameLogic()
     if (g.gameState != START && g.gameState != PAUSE) {
         game.updateTowerActions();
         game.pathContinues(grid);
-
-        if (g.spawnWave) {
-            game.initEnemies();
+        
+        //wave will spawn if:
+        // 1. last wave has finished spawning
+        // 2. enough time has passed since last wave spawn
+        game.checkWave();
+        if (g.spawnWave && !g.waitForPlayer) {
+            game.initWave();
         }
 
         //check if enemies have reached the endtile
@@ -102,16 +107,6 @@ void doGameLogic()
                 player.updateHP(1);
             }
         }
-
-        // for (int i = 0; i<game.numEnemies; i++)
-        // {
-        //     Tile *myTile = (grid.getTile((game.enemy[i].x/g.tile_pxSize), (int)(game.enemy[i].y/g.tile_pxSize)));
-        //     if ( myTile -> type == 2)
-        //     {
-        //         game.killEnemy(&game.enemy[i]);
-        //         player.updateHP(1);
-        //     }
-        // }
     }
 }
 
@@ -126,32 +121,6 @@ void applyPhysics()
         physicsCountdown -= physicsRate;
     }
 }
-
-// void physics()
-// {
-//   if (g.gameState == PLAYING && g.gameState != PAUSE)     
-//     {
-//         for (int i = 0; i<game.numEnemies; i++)
-//         {
-//             game.enemy[i].distToEnd = grid.pathDist - game.enemy[i].speed;
-//             switch(game.enemy[i].dir)
-//             { 
-//                 case 0:
-//                     game.enemy[i].x += game.enemy[i].speed;
-//                     break;
-//                 case 1:
-//                     game.enemy[i].y += game.enemy[i].speed;
-//                     break;
-//                 case 2: 
-//                     game.enemy[i].x -= game.enemy[i].speed;
-//                     break;
-//                 case 3:
-//                     game.enemy[i].y -= game.enemy[i].speed;
-//                     break;
-//             }
-//         }   
-//     }
-// }
 
 void physics()
 {
@@ -279,7 +248,7 @@ void render()
         sprintf(player.strFunds, "Gold:    %i", player.funds);
         ggprint8b(&gameOverlay, 20, set_color_3i(255, 255, 0), "%s", player.strHp);
         ggprint8b(&gameOverlay, 20, set_color_3i(255, 255, 0), "%s", player.strFunds);
-        sprintf(g.strWave, "Wave:    %i", g.wave);
+        sprintf(g.strWave, "Wave:    %i", game.waveCtr);
         ggprint8b(&gameOverlay, 20, set_color_3i(255,255,0), "%s", g.strWave);
         ggprint07(&gameOverlay, 20, set_color_3i(255,255,0), "Pause Menu (p)");
 

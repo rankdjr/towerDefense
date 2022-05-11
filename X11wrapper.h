@@ -228,6 +228,13 @@ int X11_wrapper::check_keys(XEvent *e)
 				}
 				g.buildState = NONE;
 				break;
+			case XK_d:
+				if(!g.debug) {
+					g.debug = 1;
+					break;
+				}
+				g.debug = 0;
+				break;
 			case XK_p:
 				if(g.gameState != PAUSE) {
 					g.gameState = PAUSE;
@@ -237,9 +244,12 @@ int X11_wrapper::check_keys(XEvent *e)
 				break;
 			case XK_s:
 				if(!g.spawnWave) {
+					if(!game.saveWaveSpawn) { game.saveWaveSpawn = 1; }
 					g.spawnWave = 1;
 					break;
 				}
+
+				g.waitForPlayer = 0;
 				break;
             case XK_x:
 				if(g.buildState != SELL) {

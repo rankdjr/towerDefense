@@ -10,13 +10,18 @@ void timeCopy(struct timespec *dest, struct timespec *source);
 class Game {
 public:
     int (*currMap)[10];
-    int numEnemies, enemiesalive, baseEnemies;
-    int waveCtr, sizeOfWave;
-    struct timespec lastSpawn, currentTime;
+    int numEnemies;
+    int waveCtr, baseWaveSize;
+    double waveTimer; //updated for new waves; total time to spawn wave and time between waves
+    bool waitForWave, saveWaveSpawn;
+    const double waveRate = 4.0;
+    const double spawnRate = 0.65;
+    struct timespec lastEnemySpawn, lastWaveSpawn, currentTime;
     vector<Enemy> wave;
     
     Game();
-    void initEnemies();
+    void initWave();
+    void checkWave();
     void killEnemy(Enemy *enemy);
     void pathContinues(TileGrid grid);
     void sortEnemiesByDistance();
@@ -27,9 +32,12 @@ public:
 
 Game::Game() {
     //initilaize starting values for game start
-    sizeOfWave = 5;
+    baseWaveSize = 5;
     numEnemies = 0;
     waveCtr = 0;
+    waitForWave = 0;
+    waitForWave = 1;
+    waveTimer = 0;
     //
     //initiliaze starting map
     int map[10][10] = { 
@@ -56,110 +64,57 @@ Game::Game() {
     }
 }   
 
-void Game::initEnemies() {
-    //
-    //timespecs to control enemy spawn
-    static int enemyItr = 0;
-    static double diff = 0;
-    static const double spawnRate = 0.65;
+void Game::checkWave() {
+    static double timeFrLastWvSpawn = 0; //tracks time since last wave
     clock_gettime(CLOCK_REALTIME, &currentTime);
-    diff = timeDiff(&lastSpawn, &currentTime); //initial diff will always be greater than frame rate
-    if (diff > spawnRate) {
-        //spawn enemy up to current wave size (starting wave size + 1 enemy for each wave)
-        if (enemyItr < (sizeOfWave + waveCtr)) {
-            //create new enemy and push to wave
+    timeFrLastWvSpawn = timeDiff(&lastWaveSpawn, &currentTime);
+    if (g.debug) {
+        printf("%f\t\t%i\n", timeFrLastWvSpawn, g.spawnWave);
+    }
+    if (timeFrLastWvSpawn > waveTimer) {
+        g.spawnWave = 1;
+        saveWaveSpawn = 1;
+    }
+}
+
+void Game::initWave() {
+    //
+    int enemyCount = baseWaveSize + waveCtr; // total num of enemies in curr wave
+    static int enemyItr = 0; //iterator to track how many enemies have been spawned
+    static double timeFrLastEnSpawn = 0; //tracks time since last spawn
+
+    //initiliaze timers
+    clock_gettime(CLOCK_REALTIME, &currentTime);
+    timeFrLastEnSpawn = timeDiff(&lastEnemySpawn, &currentTime); //initial diff will always be greater than frame rate
+
+    //save new wave data; flag is reset once waveDiff is greater than waveTimer
+    if (saveWaveSpawn) {
+        waveTimer = (enemyCount * spawnRate) + waveRate; 
+        timeCopy(&lastWaveSpawn, &currentTime);
+        saveWaveSpawn = 0;
+        printf("%f\n",waveTimer);
+    }
+
+    //spawn enemy up to current wave size (starting wave size + 1 enemy for each wave)
+    if (timeFrLastEnSpawn > spawnRate) {
+        //create new enemy and push to wave
+        if (enemyItr < enemyCount) {
+            //num of enemies is less than wave size --> continue adding enemies
             Enemy *e = new Enemy(grid.startTile.x, grid.startTile.y, 1.5, 0);
             wave.push_back(*e);
             delete e;
             enemyItr++;
             numEnemies++;
+            //update time of last spawn
+            timeCopy(&lastEnemySpawn, &currentTime);
         } else {
+            //wave size has been reached --> inc wave ctr, reset enemy itr for next wave and set flags
             waveCtr++;
             g.spawnWave = 0;
             enemyItr = 0;
         }
-        timeCopy(&lastSpawn, &currentTime);
     }
 }
-
-// void Game::pathContinues(TileGrid grid){ 
-//     for (int i = 0; i<numEnemies; i++){
-//         switch(enemy[i].dir)
-//         {
-//             //right
-//             case 0:
-//             {
-//                 Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
-//                 Tile *nextTileX = grid.getTile((int)((enemy[i].x- 16)/g.tile_pxSize) +1, (int)(enemy[i].y/g.tile_pxSize));
-//                 Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)(enemy[i].y/g.tile_pxSize)+1);
-//                 //cout << nextTileX ->type << endl;
-//                 if (((nextTileX->type != myTile->type) && (nextTileX->type != 2)) && (nextTileY-> type != myTile-> type))
-//                 {
-//                     enemy[i].dir = 3;
-//                 }
-      
-//                 else if (((nextTileX->type != myTile->type)) && (nextTileY-> type == myTile-> type))
-//                 {
-//                     enemy[i].dir = 1;
-//                 }
-//                 break;
-//             }
-//             //down        
-//             case 1:
-//             {
-//                 Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
-//                 Tile *nextTileX = grid.getTile((int)(enemy[i].x/g.tile_pxSize) +1, (int)(enemy[i].y/g.tile_pxSize));
-//                 Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)((enemy[i].y -16)/g.tile_pxSize)+1);
-  
-//                 if (((nextTileY->type != myTile->type) && myTile->type !=8) && (nextTileX->type == myTile->type)){
-//                     enemy[i].dir = 0;
-//                }
-//                else if (((nextTileY->type != myTile->type) && myTile->type !=8) && (nextTileX-> type != myTile->type))
-//                {
-//                enemy[i].dir = 2;
-//                }
-//                break;
-//             }
-//             //left                
-//             case 2:
-//             {                    
-//                 Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
-//                 Tile *nextTileX = grid.getTile((int)((enemy[i].x+48)/g.tile_pxSize)-1 , (int)(enemy[i].y/g.tile_pxSize));
-//                 Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)(enemy[i].y/g.tile_pxSize)+1); 
-//                 if (((nextTileX->type != myTile->type) && (nextTileX->type != 2)) && (nextTileY-> type == myTile-> type))
-//                 {
-//                     enemy[i].dir = 1;
-//                 }
-      
-//                 else if (((nextTileX->type != myTile->type) && (myTile->type !=8 && myTile->type != 9)) && (nextTileY-> type != myTile-> type))
-//                 {
-//                     enemy[i].dir = 3;
-//                 }
-//                 break;
-//             }
-            
-//             //up
-//             case 3:
-//             {
-//                 Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)((enemy[i].y)/g.tile_pxSize)));
-//                 Tile *nextTileX  = grid.getTile((int)(enemy[i].x/g.tile_pxSize)+1 , (int)(enemy[i].y/g.tile_pxSize));
-//                 Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)((enemy[i].y + 48)/g.tile_pxSize)-1);
-           
-//                 if (((nextTileY->type != myTile->type) && (myTile->type != 8 && myTile ->type != 9)) && (nextTileX->type == myTile->type))
-//                 {   
-//                     enemy[i].dir = 0;  
-//                 }
-//                 else if (((nextTileY->type != myTile->type) && (myTile->type !=8 && myTile->type!= 9)) && (nextTileX-> type != myTile->type))
-//                 {
-//                     enemy[i].dir = 2;
-//                 }
-//                  break;
-//             } 
-
-
-//         }
-//     }
-// }
 
 
 void Game::pathContinues(TileGrid grid) { 
@@ -251,90 +206,7 @@ void Game::killEnemy(Enemy *enemy)
             wave.pop_back();
         }
     }
-
-    // enemy->width = 0;
-    // enemy->height = 0;
-    // enemy->alive = 0;
-    // enemy->speed = 0;
-    // enemy->x = -100;
-    // enemy->y = -100;
-    // enemy->distToEnd = 0;
-    // player.funds++;
-    // enemiesalive--;
 }
-
-// void Game::sortEnemiesByDistance()
-// {
-//     //bubble sort enemies in descending order by distance to end tile
-//     if (enemiesalive > 1) {
-//         for (int i = 0; i < numEnemies-1; i++) {
-//             for (int j = i+1; j < numEnemies; j++) {
-//                 if (enemy[i].distToEnd < enemy[j].distToEnd) {
-//                     Enemy temp = enemy[j];
-//                     enemy[j] = enemy[i];
-//                     enemy[i] = temp;
-//                     //printf("swap %i\n",j);
-//                 }
-//             }
-//         }  
-//     }
-// }
-
-// void Game::checkCurrEnemy()
-// {
-//     //loop through towers and:
-//     //1. check range of towers to current enemy and reset when necessary
-//     //2. update all nullptr enemies to active enemies
-//     for (long unsigned int i = 0; i < player.towers.size(); i++) {
-//         if (player.towers[i].currEnemy != nullptr) {
-//             //check distance of enemy
-//             float dx = player.towers[i].cx - ((player.towers[i].currEnemy->x)+g.enemy_pxSize/2);
-//             float dy = player.towers[i].cy - ((player.towers[i].currEnemy->y)+g.enemy_pxSize/2);
-//             float dist = sqrt(dx*dx + dy*dy);
-//             if (dist > player.towers[i].range) {
-//                 //enemy is out of range, reset curr enemy ptr
-//                 player.towers[i].currEnemy = nullptr;
-//             }
-//         } else {
-//             //update all nullptr enemies in tower vector
-//             sortEnemiesByDistance();
-//             for (int j = numEnemies; j >= 0; --j) {
-//                 float dx = player.towers[i].cx - (enemy[j].x+ g.enemy_pxSize/2);
-//                 float dy = player.towers[i].cy - (enemy[j].y+ g.enemy_pxSize/2);
-//                 float dist = sqrt(dx*dx + dy*dy);
-//                 //printf("{ %i, %f }, ", j, dist);
-//                 if (dist < player.towers[i].range) {
-//                     player.towers[i].setCurrEnemy(&enemy[j]);
-//                     //printf("NAE  --  tower[%li] --> enemy[%i]\n", i, j);
-//                     j = 0;
-//                 }
-//             }
-//         }
-//     }
-// }
-
-// void Game::updateTowerActions()
-// {
-//     checkCurrEnemy();
-//     //Loop though towers + attack
-//     for (long unsigned int i = 0; i < player.towers.size(); i++) {
-//         if (player.towers[i].currEnemy) {
-//             //tower has a currEnemy;
-//             player.towers[i].attackEnemy();
-//             if (player.towers[i].currEnemy->health < 0 && ( player.towers[i].currEnemy-> alive != 0)) {
-//                 //printf("EK\t--  range: %f,  dist: %f\n", player.towers[i].range, dist);
-//                 Enemy *e = player.towers[i].currEnemy;
-//                 //set all towers currEnemy that match the dead enemy to nullptr
-//                 for (long unsigned int i = 0; i < player.towers.size(); i++) {
-//                     if (player.towers[i].currEnemy == e)
-//                         player.towers[i].currEnemy = nullptr;
-//                 }
-//                 game.killEnemy(e);
-                
-//             }
-//         }
-//     }
-// }
 
 void Game::sortEnemiesByDistance()
 {
