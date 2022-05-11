@@ -86,6 +86,11 @@ int main()
 void doGameLogic()
 {
     if (g.gameState != START && g.gameState != PAUSE) {
+        if (player.hp <= 0) {
+            g.gameState = END;
+            return;
+        }
+
         game.updateTowerActions();
         game.pathContinues(grid);
         
@@ -180,6 +185,28 @@ void render()
 
         }
     } 
+    else if (g.gameState == END) {
+        const int recWidth = 250;
+        const int recHeight = 114;
+        const float xpos = g.xres/2.0f-recWidth/2.0f;
+        const int ypos = g.yres/2.0f-recHeight/2.0f + 50;
+        Rect endScreen;
+        endScreen.left = xpos+10;
+        endScreen.bot = ypos+recHeight - 15;
+        endScreen.center = 0;
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glColor4f(0, 0, 0, 0.95);
+        drawQuad(0.0, 0.0, 640.0, 640.0);
+        drawQuad(xpos, g.yres-(ypos+recHeight), recWidth, recHeight);
+        glDisable(GL_BLEND);
+        ggprint8b(&endScreen, 20, set_color_3i(255,255,0), "                         Game Over");
+        ggprint8b(&endScreen, 20, set_color_3i(255,255,0), "");
+        sprintf(g.strWave, "After %i waves, the Horde overwhelmed you", game.waveCtr);
+        ggprint8b(&endScreen, 20, set_color_3i(255,255,0), "%s", g.strWave);        
+        ggprint8b(&endScreen, 20, set_color_3i(255,255,0), "");        
+        ggprint8b(&endScreen, 20, set_color_3i(255,255,0), "                         Close (esc)"); 
+    }
     else {
         //draw map
         grid.draw();
