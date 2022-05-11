@@ -19,12 +19,11 @@ public:
     Enemy() : x(-100), y(-100), width(0), height(0), health(0), speed(0), dir(0), alive(0), texture(&enemyBasic)
     {}
     Enemy(float x, float y, float speed, int dir){
-        this->x = x*g.tile_pxSize;
-        this->y = y*g.tile_pxSize;
+        this->x = x;
+        this->y = y;
         this->width = g.enemy_pxSize;
         this->height = g.enemy_pxSize;
         this->speed = speed;
-        // 0= right, 1= down, 2= left, 3=up
         this->dir = dir;
         distToEnd = 0;
         health = maxHealth;

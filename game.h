@@ -1,6 +1,7 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 
+#include <vector>
 #include "enemy.h"
 #include "TileGrid.h"
 double timeDiff(struct timespec *start, struct timespec *end);
@@ -10,10 +11,13 @@ class Game {
 public:
     int (*currMap)[10];
     int numEnemies, enemiesalive, baseEnemies;
-    Enemy enemy[30];
+    int waveCtr, sizeOfWave;
+    struct timespec spawnStart, currentTime;
+    Enemy enemy[100];
+    vector<Enemy> wave;
     
     Game();
-    void initEnemies(int);
+    void initEnemies();
     void killEnemy(Enemy *enemy);
     void pathContinues(TileGrid grid);
     void sortEnemiesByDistance();
@@ -22,26 +26,12 @@ public:
 } game;                     
 
 Game::Game() {
+    //initilaize starting values for game start
+    sizeOfWave = 5;
+    numEnemies = 0;
+    waveCtr = 0;
     //
-    //enemy vars
-    //baseEnemies = 5;
-    numEnemies = 5;
-    enemiesalive = 0;
-    //
-    //map vars
-    // int map[10][10] = { 
-	// 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	// 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	// 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	// 	{0, 0, 0, 1, 1, 1, 1, 1, 0, 0},
-	// 	{0, 0, 0, 1, 0, 0, 0, 1, 0, 0},
-	// 	{8, 1, 1, 1, 0, 0, 0, 1, 1, 9},
-	// 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	// 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	// 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	// 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	// };
-
+    //initiliaze starting map
     int map[10][10] = { 
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -54,6 +44,8 @@ Game::Game() {
 		{0, 0, 0, 1, 0, 0, 0, 1, 0, 0},
 		{0, 0, 0, 1, 1, 1, 1, 1, 0, 0},
 	};
+    //
+    //set tilegrid with integer array map
     currMap = map;
     grid.setMap(currMap);
     for (int i = 0; i < g.mapHeight; i++) {
@@ -64,88 +56,175 @@ Game::Game() {
     }
 }   
 
-void Game::initEnemies(int numEnemies) { 
-    // static int i = 0;
-    // if (i < numEnemies) {
-    //     enemy[i].x = grid.startTile.x;
-    //     enemy[i].y = grid.startTile.y;
-    //     enemy[i].width = 48;
-    //     enemy[i].height = 48;
-    //     enemy[i].speed = 0.5+(0.025*i);
-    //     enemy[i].health = 100;
-    //     enemy[i].dir = 0;
-    //     enemy[i].alive =1;
-    //     i++;
-    // } else {
-    //     i = 0;
-    // }
+void Game::initEnemies() {
+    //
+    static int i = 0;
+    if (i < sizeOfWave + waveCtr) {
+        Enemy *e = new Enemy(grid.startTile.x, grid.startTile.y, 1.5, 0);
+        wave.push_back(*e);
+        delete e;
 
-
-    for( int i = 0; i<numEnemies; i++) {
-        enemy[i].x = grid.startTile.x;
-        enemy[i].y = grid.startTile.y + 24;
-        enemy[i].width = g.enemy_pxSize;
-        enemy[i].height = g.enemy_pxSize;
-        enemy[i].health = enemy[i].maxHealth;
-        enemy[i].alive = 1;
-        enemy[i].speed = 0.5+(0.025*i);
-        enemy[i].dir = 0;
-        enemiesalive++;
+        // enemy[i].x = grid.startTile.x;
+        // enemy[i].y = grid.startTile.y;
+        // enemy[i].width = 48;
+        // enemy[i].height = 48;
+        // enemy[i].speed = 0.5+(0.025*i);
+        // enemy[i].health = 100;
+        // enemy[i].dir = 0;
+        // enemy[i].alive =1;
+        
+        i++;
+        numEnemies++;
+    } else {
+        i = 0;
     }
+
+
+    // for( int i = 0; i<numEnemies; i++) {
+    //     enemy[i].x = grid.startTile.x;
+    //     enemy[i].y = grid.startTile.y + 24;
+    //     enemy[i].width = g.enemy_pxSize;
+    //     enemy[i].height = g.enemy_pxSize;
+    //     enemy[i].health = enemy[i].maxHealth;
+    //     enemy[i].alive = 1;
+    //     enemy[i].speed = 0.5+(0.025*i);
+    //     enemy[i].dir = 0;
+    //     enemiesalive++;
+    // }
 }
 
-void Game::pathContinues(TileGrid grid){ 
-    for (int i = 0; i<numEnemies; i++){
-        switch(enemy[i].dir)
+// void Game::pathContinues(TileGrid grid){ 
+//     for (int i = 0; i<numEnemies; i++){
+//         switch(enemy[i].dir)
+//         {
+//             //right
+//             case 0:
+//             {
+//                 Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
+//                 Tile *nextTileX = grid.getTile((int)((enemy[i].x- 16)/g.tile_pxSize) +1, (int)(enemy[i].y/g.tile_pxSize));
+//                 Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)(enemy[i].y/g.tile_pxSize)+1);
+//                 //cout << nextTileX ->type << endl;
+//                 if (((nextTileX->type != myTile->type) && (nextTileX->type != 2)) && (nextTileY-> type != myTile-> type))
+//                 {
+//                     enemy[i].dir = 3;
+//                 }
+      
+//                 else if (((nextTileX->type != myTile->type)) && (nextTileY-> type == myTile-> type))
+//                 {
+//                     enemy[i].dir = 1;
+//                 }
+//                 break;
+//             }
+//             //down        
+//             case 1:
+//             {
+//                 Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
+//                 Tile *nextTileX = grid.getTile((int)(enemy[i].x/g.tile_pxSize) +1, (int)(enemy[i].y/g.tile_pxSize));
+//                 Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)((enemy[i].y -16)/g.tile_pxSize)+1);
+  
+//                 if (((nextTileY->type != myTile->type) && myTile->type !=8) && (nextTileX->type == myTile->type)){
+//                     enemy[i].dir = 0;
+//                }
+//                else if (((nextTileY->type != myTile->type) && myTile->type !=8) && (nextTileX-> type != myTile->type))
+//                {
+//                enemy[i].dir = 2;
+//                }
+//                break;
+//             }
+//             //left                
+//             case 2:
+//             {                    
+//                 Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
+//                 Tile *nextTileX = grid.getTile((int)((enemy[i].x+48)/g.tile_pxSize)-1 , (int)(enemy[i].y/g.tile_pxSize));
+//                 Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)(enemy[i].y/g.tile_pxSize)+1); 
+//                 if (((nextTileX->type != myTile->type) && (nextTileX->type != 2)) && (nextTileY-> type == myTile-> type))
+//                 {
+//                     enemy[i].dir = 1;
+//                 }
+      
+//                 else if (((nextTileX->type != myTile->type) && (myTile->type !=8 && myTile->type != 9)) && (nextTileY-> type != myTile-> type))
+//                 {
+//                     enemy[i].dir = 3;
+//                 }
+//                 break;
+//             }
+            
+//             //up
+//             case 3:
+//             {
+//                 Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)((enemy[i].y)/g.tile_pxSize)));
+//                 Tile *nextTileX  = grid.getTile((int)(enemy[i].x/g.tile_pxSize)+1 , (int)(enemy[i].y/g.tile_pxSize));
+//                 Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)((enemy[i].y + 48)/g.tile_pxSize)-1);
+           
+//                 if (((nextTileY->type != myTile->type) && (myTile->type != 8 && myTile ->type != 9)) && (nextTileX->type == myTile->type))
+//                 {   
+//                     enemy[i].dir = 0;  
+//                 }
+//                 else if (((nextTileY->type != myTile->type) && (myTile->type !=8 && myTile->type!= 9)) && (nextTileX-> type != myTile->type))
+//                 {
+//                     enemy[i].dir = 2;
+//                 }
+//                  break;
+//             } 
+
+
+//         }
+//     }
+// }
+
+
+void Game::pathContinues(TileGrid grid) { 
+    for (int i = 0; i<(int)wave.size(); i++){
+        switch(wave[i].dir)
         {
             //right
             case 0:
             {
-                Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
-                Tile *nextTileX = grid.getTile((int)((enemy[i].x- 16)/g.tile_pxSize) +1, (int)(enemy[i].y/g.tile_pxSize));
-                Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)(enemy[i].y/g.tile_pxSize)+1);
+                Tile *myTile = (grid.getTile((wave[i].x/g.tile_pxSize), (int)(wave[i].y/g.tile_pxSize)));
+                Tile *nextTileX = grid.getTile((int)((wave[i].x- 16)/g.tile_pxSize) +1, (int)(wave[i].y/g.tile_pxSize));
+                Tile *nextTileY = grid.getTile((int)(wave[i].x/g.tile_pxSize) , (int)(wave[i].y/g.tile_pxSize)+1);
                 //cout << nextTileX ->type << endl;
                 if (((nextTileX->type != myTile->type) && (nextTileX->type != 2)) && (nextTileY-> type != myTile-> type))
                 {
-                    enemy[i].dir = 3;
+                    wave[i].dir = 3;
                 }
       
                 else if (((nextTileX->type != myTile->type)) && (nextTileY-> type == myTile-> type))
                 {
-                    enemy[i].dir = 1;
+                    wave[i].dir = 1;
                 }
                 break;
             }
             //down        
             case 1:
             {
-                Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
-                Tile *nextTileX = grid.getTile((int)(enemy[i].x/g.tile_pxSize) +1, (int)(enemy[i].y/g.tile_pxSize));
-                Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)((enemy[i].y -16)/g.tile_pxSize)+1);
+                Tile *myTile = (grid.getTile((wave[i].x/g.tile_pxSize), (int)(wave[i].y/g.tile_pxSize)));
+                Tile *nextTileX = grid.getTile((int)(wave[i].x/g.tile_pxSize) +1, (int)(wave[i].y/g.tile_pxSize));
+                Tile *nextTileY = grid.getTile((int)(wave[i].x/g.tile_pxSize) , (int)((wave[i].y -16)/g.tile_pxSize)+1);
   
                 if (((nextTileY->type != myTile->type) && myTile->type !=8) && (nextTileX->type == myTile->type)){
-                    enemy[i].dir = 0;
+                    wave[i].dir = 0;
                }
                else if (((nextTileY->type != myTile->type) && myTile->type !=8) && (nextTileX-> type != myTile->type))
                {
-               enemy[i].dir = 2;
+               wave[i].dir = 2;
                }
                break;
             }
             //left                
             case 2:
             {                    
-                Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)(enemy[i].y/g.tile_pxSize)));
-                Tile *nextTileX = grid.getTile((int)((enemy[i].x+48)/g.tile_pxSize)-1 , (int)(enemy[i].y/g.tile_pxSize));
-                Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)(enemy[i].y/g.tile_pxSize)+1); 
+                Tile *myTile = (grid.getTile((wave[i].x/g.tile_pxSize), (int)(wave[i].y/g.tile_pxSize)));
+                Tile *nextTileX = grid.getTile((int)((wave[i].x+48)/g.tile_pxSize)-1 , (int)(wave[i].y/g.tile_pxSize));
+                Tile *nextTileY = grid.getTile((int)(wave[i].x/g.tile_pxSize) , (int)(wave[i].y/g.tile_pxSize)+1); 
                 if (((nextTileX->type != myTile->type) && (nextTileX->type != 2)) && (nextTileY-> type == myTile-> type))
                 {
-                    enemy[i].dir = 1;
+                    wave[i].dir = 1;
                 }
       
                 else if (((nextTileX->type != myTile->type) && (myTile->type !=8 && myTile->type != 9)) && (nextTileY-> type != myTile-> type))
                 {
-                    enemy[i].dir = 3;
+                    wave[i].dir = 3;
                 }
                 break;
             }
@@ -153,17 +232,17 @@ void Game::pathContinues(TileGrid grid){
             //up
             case 3:
             {
-                Tile *myTile = (grid.getTile((enemy[i].x/g.tile_pxSize), (int)((enemy[i].y)/g.tile_pxSize)));
-                Tile *nextTileX  = grid.getTile((int)(enemy[i].x/g.tile_pxSize)+1 , (int)(enemy[i].y/g.tile_pxSize));
-                Tile *nextTileY = grid.getTile((int)(enemy[i].x/g.tile_pxSize) , (int)((enemy[i].y + 48)/g.tile_pxSize)-1);
+                Tile *myTile = (grid.getTile((wave[i].x/g.tile_pxSize), (int)((wave[i].y)/g.tile_pxSize)));
+                Tile *nextTileX  = grid.getTile((int)(wave[i].x/g.tile_pxSize)+1 , (int)(wave[i].y/g.tile_pxSize));
+                Tile *nextTileY = grid.getTile((int)(wave[i].x/g.tile_pxSize) , (int)((wave[i].y + 48)/g.tile_pxSize)-1);
            
                 if (((nextTileY->type != myTile->type) && (myTile->type != 8 && myTile ->type != 9)) && (nextTileX->type == myTile->type))
                 {   
-                    enemy[i].dir = 0;  
+                    wave[i].dir = 0;  
                 }
                 else if (((nextTileY->type != myTile->type) && (myTile->type !=8 && myTile->type!= 9)) && (nextTileX-> type != myTile->type))
                 {
-                    enemy[i].dir = 2;
+                    wave[i].dir = 2;
                 }
                  break;
             } 
@@ -175,15 +254,24 @@ void Game::pathContinues(TileGrid grid){
 
 void Game::killEnemy(Enemy *enemy)
 {   
-    enemy->width = 0;
-    enemy->height = 0;
-    enemy->alive = 0;
-    enemy->speed = 0;
-    enemy->x = -100;
-    enemy->y = -100;
-    enemy->distToEnd = 0;
-    player.funds++;
-    enemiesalive--;
+    for (int i = 0; i < (int)game.wave.size(); i++) {
+        if (enemy == &wave[i]) {
+            int end = wave.size()-1;
+            swap(wave[i],wave[end]);
+            wave[end].alive = 0;
+            wave.pop_back();
+        }
+    }
+
+    // enemy->width = 0;
+    // enemy->height = 0;
+    // enemy->alive = 0;
+    // enemy->speed = 0;
+    // enemy->x = -100;
+    // enemy->y = -100;
+    // enemy->distToEnd = 0;
+    // player.funds++;
+    // enemiesalive--;
 }
 
 void Game::sortEnemiesByDistance()
