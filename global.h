@@ -28,8 +28,7 @@ public:
     int tile_pxSize;
     int enemy_pxSize;
     int mapWidth, mapHeight;
-    bool buildTower, showTowerRange, showControls;
-
+    bool buildTower, showTowerRange, showControls, spawnWave;
     int wave;
     char strWave[30];
     GameState gameState;
@@ -62,6 +61,7 @@ public:
         yres = mapHeight * tile_pxSize; //640px
         //
         // wave counter;
+        spawnWave = 0;
         wave = 0;
     }
 }g;
