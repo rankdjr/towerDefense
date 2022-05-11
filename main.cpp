@@ -89,7 +89,6 @@ void doGameLogic()
         game.pathContinues(grid);
 
         if (g.spawnWave) {
-            g.spawnWave = 0;
             game.initEnemies();
         }
 

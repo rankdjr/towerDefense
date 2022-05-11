@@ -12,8 +12,7 @@ public:
     int (*currMap)[10];
     int numEnemies, enemiesalive, baseEnemies;
     int waveCtr, sizeOfWave;
-    struct timespec spawnStart, currentTime;
-    Enemy enemy[100];
+    struct timespec lastSpawn, currentTime;
     vector<Enemy> wave;
     
     Game();
@@ -59,39 +58,28 @@ Game::Game() {
 
 void Game::initEnemies() {
     //
-    static int i = 0;
-    if (i < sizeOfWave + waveCtr) {
-        Enemy *e = new Enemy(grid.startTile.x, grid.startTile.y, 1.5, 0);
-        wave.push_back(*e);
-        delete e;
-
-        // enemy[i].x = grid.startTile.x;
-        // enemy[i].y = grid.startTile.y;
-        // enemy[i].width = 48;
-        // enemy[i].height = 48;
-        // enemy[i].speed = 0.5+(0.025*i);
-        // enemy[i].health = 100;
-        // enemy[i].dir = 0;
-        // enemy[i].alive =1;
-        
-        i++;
-        numEnemies++;
-    } else {
-        i = 0;
+    //timespecs to control enemy spawn
+    static int enemyItr = 0;
+    static double diff = 0;
+    static const double spawnRate = 0.65;
+    clock_gettime(CLOCK_REALTIME, &currentTime);
+    diff = timeDiff(&lastSpawn, &currentTime); //initial diff will always be greater than frame rate
+    if (diff > spawnRate) {
+        //spawn enemy up to current wave size (starting wave size + 1 enemy for each wave)
+        if (enemyItr < (sizeOfWave + waveCtr)) {
+            //create new enemy and push to wave
+            Enemy *e = new Enemy(grid.startTile.x, grid.startTile.y, 1.5, 0);
+            wave.push_back(*e);
+            delete e;
+            enemyItr++;
+            numEnemies++;
+        } else {
+            waveCtr++;
+            g.spawnWave = 0;
+            enemyItr = 0;
+        }
+        timeCopy(&lastSpawn, &currentTime);
     }
-
-
-    // for( int i = 0; i<numEnemies; i++) {
-    //     enemy[i].x = grid.startTile.x;
-    //     enemy[i].y = grid.startTile.y + 24;
-    //     enemy[i].width = g.enemy_pxSize;
-    //     enemy[i].height = g.enemy_pxSize;
-    //     enemy[i].health = enemy[i].maxHealth;
-    //     enemy[i].alive = 1;
-    //     enemy[i].speed = 0.5+(0.025*i);
-    //     enemy[i].dir = 0;
-    //     enemiesalive++;
-    // }
 }
 
 // void Game::pathContinues(TileGrid grid){ 
