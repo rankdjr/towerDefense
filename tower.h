@@ -51,7 +51,7 @@ Tower::Tower(Image *img, float x, float y) {
 	level = 1;
 	active = 1;
 	range = 175;
-	dmg = 0.35;
+	dmg = 0.20;
 	currEnemy = nullptr;
 	frameNo = 1;
 	clock_gettime(CLOCK_REALTIME, &frameStart);
