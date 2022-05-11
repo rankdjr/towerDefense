@@ -192,14 +192,14 @@ void render()
         }
 
         //draw enemies
+        // for (auto &enemyItr : game.wave) {
+        //     enemyItr.draw();
+        // }
         for(int i = 0; i<(int)game.wave.size(); i++) {
             game.wave[i].draw();
         }
 
-        for(int i = 0; i<game.numEnemies; i++) {
-            //game.enemy[i].draw();
-            //printf("%i\n", game.numEnemies);
-        }
+        //printf("%f, %f\n", game.wave[0].tx1, game.wave[0].tx2);
 
         //draw tower attacks
         if(!player.towers.empty()) {
