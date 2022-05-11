@@ -93,7 +93,8 @@ void Game::initWave() {
         waveTimer = (enemyCount * spawnRate) + waveRate; 
         timeCopy(&lastWaveSpawn, &currentTime);
         saveWaveSpawn = 0;
-        printf("%f\n",waveTimer);
+        //printf("%f\n",waveTimer);
+        waveCtr++;
     }
 
     //spawn enemy up to current wave size (starting wave size + 1 enemy for each wave)
@@ -109,8 +110,7 @@ void Game::initWave() {
             //update time of last spawn
             timeCopy(&lastEnemySpawn, &currentTime);
         } else {
-            //wave size has been reached --> inc wave ctr, reset enemy itr for next wave and set flags
-            waveCtr++;
+            //wave size has been reached --> reset enemy itr for next wave and set flags
             g.spawnWave = 0;
             enemyItr = 0;
         }
@@ -214,21 +214,8 @@ void Game::setNewEnemy(Tower *tower)
         float dy = tower->cy - (enemy.y + g.enemy_pxSize/2);
         float dist = sqrt(dx*dx + dy*dy);
         if (dist < tower->range) {
-            tower->setCurrEnemy(&enemy);
+            tower->currEnemy = &enemy;
             return;
-        }
-    }
-}
-
-void Game::checkEnemyDistance(Tower *tower)
-{
-    if (tower->currEnemy != nullptr) {
-        float enemyPos[2] = { tower->currEnemy->x + g.enemy_pxSize/2.0f, tower->currEnemy->y + g.enemy_pxSize/2.0f };
-        float dx = tower->cx - enemyPos[0];
-        float dy = tower->cy - enemyPos[1];
-        float dist = sqrt(dx*dx + dy*dy);
-        if (dist > tower->range) {
-            setNewEnemy(tower);
         }
     }
 }
@@ -243,6 +230,19 @@ void Game::findInitialTarget()
     for (auto &currTower : player.towers) {
         if (currTower.currEnemy == nullptr) {
             setNewEnemy(&currTower);
+        }
+    }
+}
+
+void Game::checkEnemyDistance(Tower *tower)
+{
+    if (tower->currEnemy != nullptr) {
+        float enemyPos[2] = { tower->currEnemy->x + g.enemy_pxSize/2.0f, tower->currEnemy->y + g.enemy_pxSize/2.0f };
+        float dx = tower->cx - enemyPos[0];
+        float dy = tower->cy - enemyPos[1];
+        float dist = sqrt(dx*dx + dy*dy);
+        if (dist > tower->range) {
+            tower->currEnemy = nullptr;
         }
     }
 }
@@ -270,7 +270,6 @@ void Game::updateTowerActions()
                 player.funds++;
             }
         }
-
     }
 }
 
