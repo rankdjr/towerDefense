@@ -69,9 +69,7 @@ void Game::checkWave() {
     static double timeFrLastWvSpawn = 0; //tracks time since last wave
     clock_gettime(CLOCK_REALTIME, &currentTime);
     timeFrLastWvSpawn = timeDiff(&lastWaveSpawn, &currentTime);
-    if (g.debug) {
-        printf("%f\t\t%i\n", timeFrLastWvSpawn, g.spawnWave);
-    }
+
     if (timeFrLastWvSpawn > waveTimer) {
         g.spawnWave = 1;
         saveWaveSpawn = 1;
