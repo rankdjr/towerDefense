@@ -22,6 +22,7 @@ public:
 
 class Global {
 public:
+    bool debug;
 	int xres, yres;
     int xMousePos, yMousePos;
     int tower_pxSize, towerCost;
@@ -29,7 +30,7 @@ public:
     int enemy_pxSize;
     int mapWidth, mapHeight;
     bool buildTower, showTowerRange, showControls;
-
+    bool spawnWave, waitForPlayer;
     int wave;
     char strWave[30];
     GameState gameState;
@@ -40,6 +41,7 @@ public:
         gameState = START;
         buildState = NONE;
         showControls = 0;
+        debug = 0;
         //
         //map vars **update map var in TileGrid.h if changed**
         mapWidth = 10;
@@ -62,6 +64,8 @@ public:
         yres = mapHeight * tile_pxSize; //640px
         //
         // wave counter;
+        spawnWave = 0;
+        waitForPlayer = 1;
         wave = 0;
     }
 }g;
