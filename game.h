@@ -68,9 +68,7 @@ void Game::checkWave() {
     static double timeFrLastWvSpawn = 0; //tracks time since last wave
     clock_gettime(CLOCK_REALTIME, &currentTime);
     timeFrLastWvSpawn = timeDiff(&lastWaveSpawn, &currentTime);
-    if (g.debug) {
-        printf("%f\t\t%i\n", timeFrLastWvSpawn, g.spawnWave);
-    }
+  
     if (timeFrLastWvSpawn > waveTimer) {
         g.spawnWave = 1;
         saveWaveSpawn = 1;
@@ -92,7 +90,7 @@ void Game::initWave() {
         waveTimer = (enemyCount * spawnRate) + waveRate; 
         timeCopy(&lastWaveSpawn, &currentTime);
         saveWaveSpawn = 0;
-        printf("%f\n",waveTimer);
+        waveCtr++;
     }
 
     //spawn enemy up to current wave size (starting wave size + 1 enemy for each wave)
@@ -109,7 +107,6 @@ void Game::initWave() {
             timeCopy(&lastEnemySpawn, &currentTime);
         } else {
             //wave size has been reached --> inc wave ctr, reset enemy itr for next wave and set flags
-            waveCtr++;
             g.spawnWave = 0;
             enemyItr = 0;
         }
