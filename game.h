@@ -24,7 +24,9 @@ public:
     void checkWave();
     void killEnemy(Enemy *enemy);
     void pathContinues(TileGrid grid);
-    void checkCurrEnemy();
+    void setNewEnemy(Tower *tower);
+    void checkEnemyDistance(Tower *tower);
+    void findInitialTarget();
     void updateTowerActions();
 } game;                     
 
@@ -205,59 +207,70 @@ void Game::killEnemy(Enemy *enemy)
     }
 }
 
-void Game::checkCurrEnemy()
+void Game::setNewEnemy(Tower *tower)
+{
+    for (auto &enemy : wave) {
+        float dx = tower->cx - (enemy.x + g.enemy_pxSize/2);
+        float dy = tower->cy - (enemy.y + g.enemy_pxSize/2);
+        float dist = sqrt(dx*dx + dy*dy);
+        if (dist < tower->range) {
+            tower->setCurrEnemy(&enemy);
+            return;
+        }
+    }
+}
+
+void Game::checkEnemyDistance(Tower *tower)
+{
+    if (tower->currEnemy != nullptr) {
+        float enemyPos[2] = { tower->currEnemy->x + g.enemy_pxSize/2.0f, tower->currEnemy->y + g.enemy_pxSize/2.0f };
+        float dx = tower->cx - enemyPos[0];
+        float dy = tower->cy - enemyPos[1];
+        float dist = sqrt(dx*dx + dy*dy);
+        if (dist > tower->range) {
+            setNewEnemy(tower);
+        }
+    }
+}
+
+void Game::findInitialTarget()
 {
     //loop through towers and:
     //1. check range of towers to current enemy and reset when necessary
     //2. update all nullptr enemies to active enemies
-    for (long unsigned int i = 0; i < player.towers.size(); i++) {
-        if (player.towers[i].currEnemy != nullptr) {
-            //check distance of enemy
-            float dx = player.towers[i].cx - ((player.towers[i].currEnemy->x)+g.enemy_pxSize/2);
-            float dy = player.towers[i].cy - ((player.towers[i].currEnemy->y)+g.enemy_pxSize/2);
-            float dist = sqrt(dx*dx + dy*dy);
-            if (dist > player.towers[i].range) {
-                //enemy is out of range, reset curr enemy ptr
-                player.towers[i].currEnemy = nullptr;
-            }
-        } else {
-            //update all nullptr enemies in tower vector
-            sort(wave.begin(), wave.end(), greater<Enemy>());
-            for (int j = 0; j < (int)wave.size(); j++) {
-                float dx = player.towers[i].cx - (wave[j].x + g.enemy_pxSize/2);
-                float dy = player.towers[i].cy - (wave[j].y + g.enemy_pxSize/2);
-                float dist = sqrt(dx*dx + dy*dy);
-                //printf("{ %i, %f }, ", j, dist);
-                if (dist < player.towers[i].range) {
-                    player.towers[i].setCurrEnemy(&wave[j]);
-                    //printf("NAE  --  tower[%li] --> wave[%i]\n", i, j);
-                    j = (int)wave.size();
-                }
-            }
+    sort(wave.begin(), wave.end(), greater<Enemy>());
+
+    for (auto &currTower : player.towers) {
+        if (currTower.currEnemy == nullptr) {
+            setNewEnemy(&currTower);
         }
     }
 }
 
 void Game::updateTowerActions()
 {
-    checkCurrEnemy();
+    findInitialTarget();
     //Loop though towers + attack
-    for (long unsigned int i = 0; i < player.towers.size(); i++) {
-        if (player.towers[i].currEnemy) {
-            //tower has a currEnemy;
-            player.towers[i].attackEnemy();
-            if (player.towers[i].currEnemy->health < 0 && ( player.towers[i].currEnemy-> alive != 0)) {
-                //printf("EK\t--  range: %f,  dist: %f\n", player.towers[i].range, dist);
-                Enemy *e = player.towers[i].currEnemy;
-                //set all towers currEnemy that match the dead enemy to nullptr
-                for (long unsigned int i = 0; i < player.towers.size(); i++) {
-                    if (player.towers[i].currEnemy == e)
-                        player.towers[i].currEnemy = nullptr;
+    for (auto &currTower : player.towers) {
+        if (currTower.currEnemy != nullptr) {
+            currTower.attackEnemy();
+            if (currTower.currEnemy->health > 0) {
+                //enemy is alive, check range and set new enemy when necessary
+                checkEnemyDistance(&currTower);
+            } else {
+                //enemy has died:
+                //1. set all towers currEnemy that match the dead enemy to nullptr
+                //2. pop enemy from wave vector
+                Enemy *e = currTower.currEnemy;
+                for (auto &towItr : player.towers) {
+                    if (towItr.currEnemy == e)
+                        towItr.currEnemy = nullptr;
                 }
                 game.killEnemy(e);
-                
+                player.funds++;
             }
         }
+
     }
 }
 

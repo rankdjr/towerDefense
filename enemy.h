@@ -74,6 +74,15 @@ public:
         if (dir == 2)
             swap(tx1, tx2);
         drawQuadTexAlpha(*texture, x, y, tx1, tx2, ty1, ty2, width, height);
+
+        //debug bounding box
+        if (g.debug) {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glColor4f(0.0, 0.0, 1.0, 0.50);
+            drawQuad(x, y, g.enemy_pxSize, g.enemy_pxSize);
+            glDisable(GL_BLEND);
+        }
     } 
 } nullEnemy;
 
