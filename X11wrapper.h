@@ -236,11 +236,10 @@ int X11_wrapper::check_keys(XEvent *e)
 				g.gameState = PLAYING;
 				break;
 			case XK_s:
-				game.initEnemies(game.numEnemies +g.wave);
-				g.gameState = PLAYING;
-                game.numEnemies += 1;
-                g.wave += 1;
-               // printf("%i", g.wave);
+				if(!g.spawnWave) {
+					g.spawnWave = 1;
+					break;
+				}
 				break;
             case XK_x:
 				if(g.buildState != SELL) {
