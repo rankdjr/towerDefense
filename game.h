@@ -24,9 +24,9 @@ public:
     void checkWave();
     void killEnemy(Enemy *enemy);
     void pathContinues(TileGrid grid);
-    void sortEnemiesByDistance();
     void checkCurrEnemy();
     void updateTowerActions();
+    void sortEnemiesByDistance();
 } game;                     
 
 
@@ -198,12 +198,10 @@ void Game::pathContinues(TileGrid grid) {
 
 void Game::killEnemy(Enemy *enemy)
 {   
-    for (int i = 0; i < (int)game.wave.size(); i++) {
+    int end = wave.size();
+    for (int i = 0; i < end; i++) {
         if (enemy == &wave[i]) {
-            int end = wave.size()-1;
-            swap(wave[i],wave[end]);
-            wave[end].alive = 0;
-            wave.pop_back();
+            wave.erase(wave.begin() + i);
         }
     }
 }
@@ -211,7 +209,15 @@ void Game::killEnemy(Enemy *enemy)
 void Game::sortEnemiesByDistance()
 {
     //bubble sort enemies in descending order by distance to end tile
-    sort(wave.begin(), wave.end(), greater<Enemy>());
+    for (int i = 0; i < (int)wave.size()-1; i++) {
+        for (int j = 0; j < (int)wave.size()-1-i; j++) {
+            if (wave[j].distToEnd < wave[j+1].distToEnd) {
+                Enemy temp = wave[j];
+                wave[j] = wave[j+1];
+                wave[j+1] = temp;
+            }
+        }  
+    }
 }
 
 void Game::checkCurrEnemy()
@@ -231,7 +237,8 @@ void Game::checkCurrEnemy()
             }
         } else {
             //update all nullptr enemies in tower vector
-            sort(wave.begin(), wave.end(), greater<Enemy>());
+            //sort(wave.begin(), wave.end(), greater<Enemy>());
+            sortEnemiesByDistance();
             for (int j = 0; j < (int)wave.size(); j++) {
                 float dx = player.towers[i].cx - (wave[j].x + g.enemy_pxSize/2);
                 float dy = player.towers[i].cy - (wave[j].y + g.enemy_pxSize/2);
