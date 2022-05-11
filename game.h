@@ -100,7 +100,7 @@ void Game::initWave() {
         //create new enemy and push to wave
         if (enemyItr < enemyCount) {
             //num of enemies is less than wave size --> continue adding enemies
-            Enemy *e = new Enemy(grid.startTile.x, grid.startTile.y, 1.5, 0);
+            Enemy *e = new Enemy(grid.startTile.x, grid.startTile.y, 1.5, 0, (int)wave.size());
             wave.push_back(*e);
             delete e;
             enemyItr++;
@@ -198,12 +198,10 @@ void Game::pathContinues(TileGrid grid) {
 
 void Game::killEnemy(Enemy *enemy)
 {   
-    for (int i = 0; i < (int)game.wave.size(); i++) {
+    int end = wave.size();
+    for (int i = 0; i < end; i++) {
         if (enemy == &wave[i]) {
-            int end = wave.size()-1;
-            swap(wave[i],wave[end]);
-            wave[end].alive = 0;
-            wave.pop_back();
+            wave.erase(wave.begin() + i);
         }
     }
 }
