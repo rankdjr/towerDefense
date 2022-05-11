@@ -236,8 +236,8 @@ int X11_wrapper::check_keys(XEvent *e)
 				g.gameState = PLAYING;
 				break;
 			case XK_s:
-				if(!g.firstWave) {
-					g.firstWave = 1;
+				if(!g.firstWaveSpawned) {
+					g.firstWaveSpawned = 1;
 					break;
 				}
 				break;
