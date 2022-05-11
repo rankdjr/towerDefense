@@ -24,7 +24,6 @@ public:
     void checkWave();
     void killEnemy(Enemy *enemy);
     void pathContinues(TileGrid grid);
-    void sortEnemiesByDistance();
     void checkCurrEnemy();
     void updateTowerActions();
 } game;                     
@@ -204,12 +203,6 @@ void Game::killEnemy(Enemy *enemy)
             wave.erase(wave.begin() + i);
         }
     }
-}
-
-void Game::sortEnemiesByDistance()
-{
-    //bubble sort enemies in descending order by distance to end tile
-    sort(wave.begin(), wave.end(), greater<Enemy>());
 }
 
 void Game::checkCurrEnemy()
