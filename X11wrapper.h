@@ -248,7 +248,6 @@ int X11_wrapper::check_keys(XEvent *e)
 					g.spawnWave = 1;
 					break;
 				}
-
 				g.waitForPlayer = 0;
 				break;
             case XK_x:
@@ -257,6 +256,9 @@ int X11_wrapper::check_keys(XEvent *e)
 					break;
 				}
 				g.buildState = NONE;
+				break;
+			case XK_t:
+				g.gameState = END;
 				break;
 			case XK_Escape:
 				if (g.gameState == START && g.showControls == 1)

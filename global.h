@@ -32,7 +32,7 @@ public:
     bool buildTower, showTowerRange, showControls;
     bool spawnWave, waitForPlayer;
     int wave;
-    char strWave[30];
+    char strWave[60];
     GameState gameState;
     BuildState buildState;
 
