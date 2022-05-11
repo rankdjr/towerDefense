@@ -268,7 +268,7 @@ void Game::updateTowerActions()
                         player.towers[i].currEnemy = nullptr;
                 }
                 game.killEnemy(e);
-                
+                player.funds++;
             }
         }
     }
