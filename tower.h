@@ -100,8 +100,8 @@ void Tower::drawProjectile()
 	//draw attack
 	if (currEnemy) {
 		//get center of enemy texture
-		int e_cx = currEnemy->x+12;
-		int e_cy = currEnemy->y+15;
+		float e_cx = currEnemy->x+(float)g.enemy_pxSize/2.0f;
+		float e_cy = currEnemy->y+(float)g.enemy_pxSize/2.0f;;
 		//draw line
 		glColor4ub(255,0,255,255);
 		glPushMatrix();

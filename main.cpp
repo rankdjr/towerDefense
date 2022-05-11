@@ -100,10 +100,10 @@ void doGameLogic()
         //check if enemies have reached the endtile
         for (int i = 0; i<(int)game.wave.size(); i++)
         {
-            Tile *myTile = (grid.getTile((game.wave[i].x/g.tile_pxSize), (int)(game.wave[i].y/g.tile_pxSize)));
+            Tile *myTile = (grid.getTile((game.wave[i]->x/g.tile_pxSize), (int)(game.wave[i]->y/g.tile_pxSize)));
             if ( myTile -> type == 2)
             {
-                game.killEnemy(&game.wave[i]);
+                game.killEnemy(game.wave[i]);
                 player.updateHP(1);
             }
         }
@@ -128,20 +128,20 @@ void physics()
     {
         for (int i = 0; i < (int)game.wave.size(); i++)
         {
-            game.wave[i].distToEnd = grid.pathDist - game.wave[i].speed;
-            switch(game.wave[i].dir)
+            game.wave[i]->distToEnd = grid.pathDist - game.wave[i]->speed;
+            switch(game.wave[i]->dir)
             { 
                 case 0:
-                    game.wave[i].x += game.wave[i].speed;
+                    game.wave[i]->x += game.wave[i]->speed;
                     break;
                 case 1:
-                    game.wave[i].y += game.wave[i].speed;
+                    game.wave[i]->y += game.wave[i]->speed;
                     break;
                 case 2: 
-                    game.wave[i].x -= game.wave[i].speed;
+                    game.wave[i]->x -= game.wave[i]->speed;
                     break;
                 case 3:
-                    game.wave[i].y -= game.wave[i].speed;
+                    game.wave[i]->y -= game.wave[i]->speed;
                     break;
             }
         }   
@@ -193,7 +193,7 @@ void render()
 
         //draw enemies
         for(int i = 0; i<(int)game.wave.size(); i++) {
-            game.wave[i].draw();
+            game.wave[i]->draw();
         }
 
         for(int i = 0; i<game.numEnemies; i++) {

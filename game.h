@@ -17,7 +17,7 @@ public:
     const double waveRate = 4.0;
     const double spawnRate = 0.65;
     struct timespec lastEnemySpawn, lastWaveSpawn, currentTime;
-    vector<Enemy> wave;
+    vector<Enemy*> wave;
     
     Game();
     void initWave();
@@ -98,9 +98,9 @@ void Game::initWave() {
         //create new enemy and push to wave
         if (enemyItr < enemyCount) {
             //num of enemies is less than wave size --> continue adding enemies
-            Enemy *e = new Enemy(grid.startTile.x, grid.startTile.y, 1.5, 0);
-            wave.push_back(*e);
-            delete e;
+            //Enemy *e = new Enemy(grid.startTile.x, grid.startTile.y, 1.5, 0);
+            wave.push_back(new Enemy(grid.startTile.x, grid.startTile.y, 1.5, 0));
+            //delete e;
             enemyItr++;
             numEnemies++;
             //update time of last spawn
@@ -116,56 +116,56 @@ void Game::initWave() {
 
 void Game::pathContinues(TileGrid grid) { 
     for (int i = 0; i<(int)wave.size(); i++){
-        switch(wave[i].dir)
+        switch(wave[i]->dir)
         {
             //right
             case 0:
             {
-                Tile *myTile = (grid.getTile((wave[i].x/g.tile_pxSize), (int)(wave[i].y/g.tile_pxSize)));
-                Tile *nextTileX = grid.getTile((int)((wave[i].x- 16)/g.tile_pxSize) +1, (int)(wave[i].y/g.tile_pxSize));
-                Tile *nextTileY = grid.getTile((int)(wave[i].x/g.tile_pxSize) , (int)(wave[i].y/g.tile_pxSize)+1);
+                Tile *myTile = (grid.getTile((wave[i]->x/g.tile_pxSize), (int)(wave[i]->y/g.tile_pxSize)));
+                Tile *nextTileX = grid.getTile((int)((wave[i]->x- 16)/g.tile_pxSize) +1, (int)(wave[i]->y/g.tile_pxSize));
+                Tile *nextTileY = grid.getTile((int)(wave[i]->x/g.tile_pxSize) , (int)(wave[i]->y/g.tile_pxSize)+1);
                 //cout << nextTileX ->type << endl;
                 if (((nextTileX->type != myTile->type) && (nextTileX->type != 2)) && (nextTileY-> type != myTile-> type))
                 {
-                    wave[i].dir = 3;
+                    wave[i]->dir = 3;
                 }
       
                 else if (((nextTileX->type != myTile->type)) && (nextTileY-> type == myTile-> type))
                 {
-                    wave[i].dir = 1;
+                    wave[i]->dir = 1;
                 }
                 break;
             }
             //down        
             case 1:
             {
-                Tile *myTile = (grid.getTile((wave[i].x/g.tile_pxSize), (int)(wave[i].y/g.tile_pxSize)));
-                Tile *nextTileX = grid.getTile((int)(wave[i].x/g.tile_pxSize) +1, (int)(wave[i].y/g.tile_pxSize));
-                Tile *nextTileY = grid.getTile((int)(wave[i].x/g.tile_pxSize) , (int)((wave[i].y -16)/g.tile_pxSize)+1);
+                Tile *myTile = (grid.getTile((wave[i]->x/g.tile_pxSize), (int)(wave[i]->y/g.tile_pxSize)));
+                Tile *nextTileX = grid.getTile((int)(wave[i]->x/g.tile_pxSize) +1, (int)(wave[i]->y/g.tile_pxSize));
+                Tile *nextTileY = grid.getTile((int)(wave[i]->x/g.tile_pxSize) , (int)((wave[i]->y -16)/g.tile_pxSize)+1);
   
                 if (((nextTileY->type != myTile->type) && myTile->type !=8) && (nextTileX->type == myTile->type)){
-                    wave[i].dir = 0;
+                    wave[i]->dir = 0;
                }
                else if (((nextTileY->type != myTile->type) && myTile->type !=8) && (nextTileX-> type != myTile->type))
                {
-               wave[i].dir = 2;
+               wave[i]->dir = 2;
                }
                break;
             }
             //left                
             case 2:
             {                    
-                Tile *myTile = (grid.getTile((wave[i].x/g.tile_pxSize), (int)(wave[i].y/g.tile_pxSize)));
-                Tile *nextTileX = grid.getTile((int)((wave[i].x+48)/g.tile_pxSize)-1 , (int)(wave[i].y/g.tile_pxSize));
-                Tile *nextTileY = grid.getTile((int)(wave[i].x/g.tile_pxSize) , (int)(wave[i].y/g.tile_pxSize)+1); 
+                Tile *myTile = (grid.getTile((wave[i]->x/g.tile_pxSize), (int)(wave[i]->y/g.tile_pxSize)));
+                Tile *nextTileX = grid.getTile((int)((wave[i]->x+48)/g.tile_pxSize)-1 , (int)(wave[i]->y/g.tile_pxSize));
+                Tile *nextTileY = grid.getTile((int)(wave[i]->x/g.tile_pxSize) , (int)(wave[i]->y/g.tile_pxSize)+1); 
                 if (((nextTileX->type != myTile->type) && (nextTileX->type != 2)) && (nextTileY-> type == myTile-> type))
                 {
-                    wave[i].dir = 1;
+                    wave[i]->dir = 1;
                 }
       
                 else if (((nextTileX->type != myTile->type) && (myTile->type !=8 && myTile->type != 9)) && (nextTileY-> type != myTile-> type))
                 {
-                    wave[i].dir = 3;
+                    wave[i]->dir = 3;
                 }
                 break;
             }
@@ -173,17 +173,17 @@ void Game::pathContinues(TileGrid grid) {
             //up
             case 3:
             {
-                Tile *myTile = (grid.getTile((wave[i].x/g.tile_pxSize), (int)((wave[i].y)/g.tile_pxSize)));
-                Tile *nextTileX  = grid.getTile((int)(wave[i].x/g.tile_pxSize)+1 , (int)(wave[i].y/g.tile_pxSize));
-                Tile *nextTileY = grid.getTile((int)(wave[i].x/g.tile_pxSize) , (int)((wave[i].y + 48)/g.tile_pxSize)-1);
+                Tile *myTile = (grid.getTile((wave[i]->x/g.tile_pxSize), (int)((wave[i]->y)/g.tile_pxSize)));
+                Tile *nextTileX  = grid.getTile((int)(wave[i]->x/g.tile_pxSize)+1 , (int)(wave[i]->y/g.tile_pxSize));
+                Tile *nextTileY = grid.getTile((int)(wave[i]->x/g.tile_pxSize) , (int)((wave[i]->y + 48)/g.tile_pxSize)-1);
            
                 if (((nextTileY->type != myTile->type) && (myTile->type != 8 && myTile ->type != 9)) && (nextTileX->type == myTile->type))
                 {   
-                    wave[i].dir = 0;  
+                    wave[i]->dir = 0;  
                 }
                 else if (((nextTileY->type != myTile->type) && (myTile->type !=8 && myTile->type!= 9)) && (nextTileX-> type != myTile->type))
                 {
-                    wave[i].dir = 2;
+                    wave[i]->dir = 2;
                 }
                  break;
             } 
@@ -197,7 +197,7 @@ void Game::killEnemy(Enemy *enemy)
 {   
     int end = wave.size();
     for (int i = 0; i < end; i++) {
-        if (enemy == &wave[i]) {
+        if (enemy == wave[i]) {
             wave.erase(wave.begin() + i);
         }
     }
@@ -208,10 +208,11 @@ void Game::sortEnemiesByDistance()
     //bubble sort enemies in descending order by distance to end tile
     for (int i = 0; i < (int)wave.size()-1; i++) {
         for (int j = 0; j < (int)wave.size()-1-i; j++) {
-            if (wave[j].distToEnd < wave[j+1].distToEnd) {
-                Enemy temp = wave[j];
+            if (wave[j]->distToEnd > wave[j+1]->distToEnd) {
+                Enemy *temp = wave[j];
                 wave[j] = wave[j+1];
                 wave[j+1] = temp;
+                //printf("swapped\n");
             }
         }  
     }
@@ -232,17 +233,18 @@ void Game::checkCurrEnemy()
                 //enemy is out of range, reset curr enemy ptr
                 player.towers[i].currEnemy = nullptr;
             }
-        } else {
+        } 
+        if (player.towers[i].currEnemy == nullptr) {
             //update all nullptr enemies in tower vector
             //sort(wave.begin(), wave.end(), greater<Enemy>());
-            sortEnemiesByDistance();
+            //sortEnemiesByDistance();
             for (int j = 0; j < (int)wave.size(); j++) {
-                float dx = player.towers[i].cx - (wave[j].x + g.enemy_pxSize/2);
-                float dy = player.towers[i].cy - (wave[j].y + g.enemy_pxSize/2);
+                float dx = player.towers[i].cx - (wave[j]->x + g.enemy_pxSize/2);
+                float dy = player.towers[i].cy - (wave[j]->y + g.enemy_pxSize/2);
                 float dist = sqrt(dx*dx + dy*dy);
                 //printf("{ %i, %f }, ", j, dist);
                 if (dist < player.towers[i].range) {
-                    player.towers[i].setCurrEnemy(&wave[j]);
+                    player.towers[i].currEnemy = wave[j];
                     //printf("NAE  --  tower[%li] --> wave[%i]\n", i, j);
                     j = (int)wave.size();
                 }
