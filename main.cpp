@@ -87,7 +87,14 @@ void doGameLogic()
     if (g.gameState != START && g.gameState != PAUSE) {
         game.updateTowerActions();
         game.pathContinues(grid);
-        
+
+        if(g.spawnWave) {
+            g.spawnWave = 0;
+            game.initEnemies(game.numEnemies + g.wave);
+            game.numEnemies += 1;
+            g.wave += 1;
+        }
+
         for (int i = 0; i<game.numEnemies; i++)
         {
             Tile *myTile = (grid.getTile((game.enemy[i].x/g.tile_pxSize), (int)(game.enemy[i].y/g.tile_pxSize)));
