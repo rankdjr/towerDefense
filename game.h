@@ -258,7 +258,7 @@ void Game::checkCurrEnemy()
         if (player.towers[i].currEnemy == nullptr) {
             //update all nullptr enemies in tower vector
             //sort(wave.begin(), wave.end(), greater<Enemy>());
-            //sortEnemiesByDistance();
+            sortEnemiesByDistance();
             for (int j = 0; j < (int)wave.size(); j++) {
                 float dx = player.towers[i].cx - (wave[j]->x + g.enemy_pxSize/2);
                 float dy = player.towers[i].cy - (wave[j]->y + g.enemy_pxSize/2);
