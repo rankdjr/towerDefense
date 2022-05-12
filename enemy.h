@@ -70,8 +70,10 @@ public:
             frameNo = 1;
         //
         //draw texture
-        if (dir == 2)
+        if (dir == 2) {
             swap(tx1, tx2);
+        }
+        
         drawQuadTexAlpha(*texture, x, y, tx1, tx2, ty1, ty2, width, height);
     } 
 } nullEnemy;
