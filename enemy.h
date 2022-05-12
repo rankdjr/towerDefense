@@ -9,7 +9,7 @@ public:
     float x, y, cx, cy, distToEnd; 
     int width, height;
     float health, speed;
-    static const int maxHealth = 50;
+    static const int maxHealth = 9;
     int dir; // 0= right, 1= down, 2= left, 3=up
     int frameNo;
     bool alive;
@@ -35,6 +35,7 @@ public:
         alive = 1;
         frameNo = 1;
         texture = &enemyBasic;
+        
     }
 
     void draw() {

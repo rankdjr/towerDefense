@@ -16,6 +16,7 @@ public:
     bool waitForWave, saveWaveSpawn;
     const double waveRate = 4.0;
     const double spawnRate = 0.65;
+    int pivot = 0;
     struct timespec lastEnemySpawn, lastWaveSpawn, currentTime;
     vector<Enemy*> wave;
     
@@ -44,13 +45,13 @@ Game::Game() {
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 1, 1, 1, 0, 0, 0, 0},
-		{0, 0, 0, 1, 0, 1, 0, 0, 0, 0},
-		{8, 1, 1, 1, 0, 1, 0, 1, 1, 9},
-		{0, 0, 0, 0, 0, 1, 0, 1, 0, 0},
-		{0, 0, 0, 1, 1, 1, 0, 1, 0, 0},
+		{0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
+		{0, 0, 0, 1, 0, 0, 1, 0, 0, 0},
+		{8, 1, 1, 1, 0, 0, 1, 1, 1, 9},
+		{0, 0, 0, 1, 0, 0, 0, 1, 0, 0},
 		{0, 0, 0, 1, 0, 0, 0, 1, 0, 0},
 		{0, 0, 0, 1, 1, 1, 1, 1, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 	};
     //
     //set tilegrid with integer array map
@@ -99,7 +100,7 @@ void Game::initWave() {
         if (enemyItr < enemyCount) {
             //num of enemies is less than wave size --> continue adding enemies
             //Enemy *e = new Enemy(grid.startTile.x, grid.startTile.y, 1.5, 0);
-            wave.push_back(new Enemy(grid.startTile.x, grid.startTile.y, 1.5, 0));
+            wave.push_back(new Enemy(grid.startTile.x, grid.startTile.y, 1.0+waveCtr/5, 0));
             //delete e;
             enemyItr++;
             numEnemies++;
@@ -121,18 +122,38 @@ void Game::pathContinues(TileGrid grid) {
             //right
             case 0:
             {
+                
                 Tile *myTile = (grid.getTile((wave[i]->x/g.tile_pxSize), (int)(wave[i]->y/g.tile_pxSize)));
                 Tile *nextTileX = grid.getTile((int)((wave[i]->x- 16)/g.tile_pxSize) +1, (int)(wave[i]->y/g.tile_pxSize));
                 Tile *nextTileY = grid.getTile((int)(wave[i]->x/g.tile_pxSize) , (int)(wave[i]->y/g.tile_pxSize)+1);
                 //cout << nextTileX ->type << endl;
+                //if (nextTileX->type!= myTile->type && pivot == 0){
+                //    pivot++;
+                // }
                 if (((nextTileX->type != myTile->type) && (nextTileX->type != 2)) && (nextTileY-> type != myTile-> type))
-                {
-                    wave[i]->dir = 3;
-                }
-      
-                else if (((nextTileX->type != myTile->type)) && (nextTileY-> type == myTile-> type))
-                {
+                {   
+                    if (pivot ==0 ){
                     wave[i]->dir = 1;
+                    pivot++;
+                    }
+                    if (pivot == 1){
+                    wave[i]->dir = 3;
+                    pivot--;
+                     }
+                }
+                
+                else if (((nextTileX->type != myTile->type)) && ((nextTileY-> type == myTile-> type)))
+                {
+                    if (((grid.getTile((int)(wave[i]->x/g.tile_pxSize), (int)(wave[i]->y/g.tile_pxSize)-1)->type != myTile->type))){
+                       wave[i]->dir = 1;
+                    } 
+                       else if (i%2 == 0){
+                    wave[i]->dir = 3;
+                    }
+                    else{
+                        wave[i]->dir = 1;
+                        
+                    }
                 }
                 break;
             }
