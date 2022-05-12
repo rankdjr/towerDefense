@@ -1,3 +1,4 @@
 .vscode/settings.json
 main
 .vscode/dryrun.log
+.vscode/configurationCache.log
